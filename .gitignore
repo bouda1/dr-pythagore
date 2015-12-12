@@ -6,3 +6,8 @@ cmake_install.cmake
 install_manifest.txt
 *.swp
 tags
+drpythagore.tex
+parser/dplexer.cpp
+parser/grammar.c
+parser/grammar.h
+parser/grammar.out
