@@ -1,0 +1,5 @@
+SET(CMAKE_C_FLAGS "-O2")
+
+ADD_EXECUTABLE(lemon lemon.c)
+SET(CMAKE_C_FLAGS)
+
