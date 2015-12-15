@@ -9,5 +9,6 @@ int main()
 
     lexer.parse("Let B:Point");
     lexer.parse("Let A:Point");
+    lexer.parse("Let (CD):Line");
     return 0;
 }
