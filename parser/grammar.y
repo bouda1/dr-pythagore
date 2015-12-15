@@ -4,7 +4,7 @@
 %token_type {char *}
 /*%token_destructor { delete $$; } */
 
-%type boolean { bool }
+%type boolean { int }
 %type point {DPPoint *}
 %type line {DPLine *}
 
@@ -57,6 +57,10 @@ program ::= boolean(A) END. {
 }
 
 boolean(A) ::= IDENT(B) EQUALS IDENT(C). {
+<<<<<<< 3dd2d18a20ffd36083b3860ea9a3f2fc93f88328
+=======
+    cout << "Check equality" << endl;
+>>>>>>> BUG: parser: Fix a compilation difficulty. A first equality test added
     DPPoint *a = token->getPlan().getPoint(B);
     DPPoint *b = token->getPlan().getPoint(C);
     if (!a || !b)
@@ -71,5 +75,9 @@ line(A) ::= LET LPAR IDENT(B) IDENT(C) RPAR COLON LINE. {
 
 point(A) ::= LET IDENT(B) COLON POINT. {
     cout << "Oh ! a point..." << endl;
+<<<<<<< 3dd2d18a20ffd36083b3860ea9a3f2fc93f88328
+=======
+    cout << "Its name is " << B << endl;
+>>>>>>> BUG: parser: Fix a compilation difficulty. A first equality test added
     A = new DPPoint(token->getPlan(), B);
 }

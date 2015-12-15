@@ -1,6 +1,7 @@
 #ifndef __DPPLAN_H__
 #define __DPPLAN_H__
 #include <array>
+#include <unordered_set>
 #include <unordered_map>
 
 class DPElement;
@@ -17,10 +18,13 @@ enum DPBinRel {
 class DPPlan {
 
     std::unordered_map<std::string, DPPoint *> m_pointsList;
-    std::array<std::unordered_map<DPElement *, DPElement *> , BIN_REL_COUNT> m_rules;
+    std::array<std::unordered_map<DPElement *,
+                                  std::unordered_set<DPElement *> >,
+               BIN_REL_COUNT> m_rules;
 
 public:
     DPPoint *getPoint(const char *a);
+    void addPoint(DPPoint *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
     bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);

@@ -17,7 +17,7 @@ class DPLexer {
 public:
     DPLexer();
     ~DPLexer();
-    std::string getTokenValue() const;
+    char *getTokenValue();
     void debug(int a, char b);
     void parse(const char *s);
 };

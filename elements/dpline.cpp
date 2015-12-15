@@ -15,7 +15,7 @@ DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
     else
         aa = new DPPoint(parent, a);
 
-    if (!parent.pointExists(b))
+    if (parent.pointExists(b))
         bb = parent.getPoint(b);
     else
         bb = new DPPoint(parent, b);

@@ -17,9 +17,9 @@ DPLexer::~DPLexer()
     dPParseFree(m_parser, free);
 }
 
-string DPLexer::getTokenValue() const
+char *DPLexer::getTokenValue()
 {
-    return string(m_start, m_cursor - m_start);
+    return strndup(m_start, m_cursor - m_start);
 }
 
 void DPLexer::debug(int a, char b)
@@ -60,7 +60,7 @@ cont:
 
 void DPLexer::parse(const char *s)
 {
-    string word;
+    char *word;
     int op_token;
     m_content = s;
     m_start = m_cursor = m_content;
@@ -69,7 +69,7 @@ void DPLexer::parse(const char *s)
     do {
         op_token = scan();
         word = getTokenValue();
-        dPParse(m_parser, op_token, const_cast<char *>(word.c_str()), &m_token);
+        dPParse(m_parser, op_token, word, &m_token);
     }
     while (op_token != CALC_TOKEN_END);
 

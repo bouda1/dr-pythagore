@@ -12,5 +12,6 @@ int main()
     lexer.parse("Let (CD):Line");
     lexer.parse("Let (AB):Line");
     lexer.parse("A = B");
+    lexer.parse("A = A");
     return 0;
 }
