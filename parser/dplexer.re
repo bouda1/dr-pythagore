@@ -53,6 +53,7 @@ cont:
         "("                 { return CALC_TOKEN_LPAR; }
         ")"                 { return CALC_TOKEN_RPAR; }
         ":"                 { return CALC_TOKEN_COLON; }
+        "="                 { return CALC_TOKEN_EQUALS; }
         " "                 { m_start++; goto cont; }
     */
 }

@@ -23,6 +23,7 @@ public:
     DPPoint *getPoint(const char *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
+    bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);
 };
 
 #endif /* __DPPLAN_H__ */

@@ -22,3 +22,7 @@ string &DPElement::getName(void)
     return _name;
 }
 
+DPPlan &DPElement::getParent() const
+{
+    return _parent;
+}

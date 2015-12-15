@@ -13,6 +13,7 @@ public:
     DPElement(DPPlan &parent, const char *name);
     void setName(const std::string &newName);
     std::string &getName(void);
+    DPPlan &getParent() const;
 };
 
 #endif /* __DPELEMENT_H__ */

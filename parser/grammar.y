@@ -4,6 +4,7 @@
 %token_type {char *}
 /*%token_destructor { delete $$; } */
 
+%type boolean { bool }
 %type point {DPPoint *}
 %type line {DPLine *}
 
@@ -42,7 +43,33 @@ exp(lhs) ::= exp(le) MINUS exp(re). { lhs = le - re; }
 
 exp(lhs) ::= exp(le) PLUS exp(re).  { lhs = le + re; }
 */
-program ::= point(A) END.                  { cout << "Cool a point !" << endl; token->setElement(A); }
-program ::= line(A) END.                  { cout << "Cool a line !" << endl; token->setElement(A); }
-line(A) ::= LET LPAR IDENT(B) IDENT(C) RPAR COLON LINE. { A = new DPLine(token->getPlan(), B, C); }
-point(A) ::= LET IDENT(B) COLON POINT. { cout << "Oh ! a point..." << endl; A = new DPPoint(token->getPlan(), B); }
+program ::= point(A) END.   {
+    cout << "Cool a point !" << endl;
+    token->setElement(A);
+}
+program ::= line(A) END.    {
+    cout << "Cool a line !" << endl;
+    token->setElement(A);
+}
+
+program ::= boolean(A) END. {
+    cout << "A boolean: " << A << endl;
+}
+
+boolean(A) ::= IDENT(B) EQUALS IDENT(C). {
+    DPPoint *a = token->getPlan().getPoint(B);
+    DPPoint *b = token->getPlan().getPoint(C);
+    if (!a || !b)
+        cout << "syntax error: one of those points does not exist" << endl;
+
+    A = (*a == *b);
+}
+
+line(A) ::= LET LPAR IDENT(B) IDENT(C) RPAR COLON LINE. {
+    A = new DPLine(token->getPlan(), B, C);
+}
+
+point(A) ::= LET IDENT(B) COLON POINT. {
+    cout << "Oh ! a point..." << endl;
+    A = new DPPoint(token->getPlan(), B);
+}
