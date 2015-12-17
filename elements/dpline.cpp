@@ -32,3 +32,20 @@ DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
     addPoint(bb);
     parent.addLine(this);
 }
+
+bool DPLine::operator == (const DPLine &b)
+{
+    int count = 0;
+    DPPoint *first_point = nullptr;
+
+    for (DPPoint *p : _singlePoints) {
+        if (count == 0 && const_cast<DPLine&>(b).contains(p)) {
+            count++;
+            first_point = p;
+        }
+        else if (count > 0 && *p != *first_point
+                 && const_cast<DPLine &>(b).contains(p))
+            return true;
+    }
+    return false;
+}

@@ -15,5 +15,6 @@ int main()
     lexer.parse("A = A ?");
     lexer.parse("Assume C In (AB)");
     lexer.parse("C In (AB) ?");
+    lexer.parse("A In (BC) ?");
     return 0;
 }

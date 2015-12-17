@@ -74,11 +74,18 @@ boolean(A) ::= point(B) IN line(C) INTERRO. {
     A = C->contains(B);
 }
 
+boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
+    cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
+    A = (*B == *C);
+}
+
 line(A) ::= LPAR point(B) point(C) RPAR. {
     if (!B || !C)
         cout << "syntax error: one of those points does not exist" << endl;
 
     A = token->getPlan().getLine(B, C);
+    if (!A)
+        cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a line" << endl;
 }
 
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
@@ -92,7 +99,6 @@ point(A) ::= IDENT(B). {
 }
 
 program ::= ASSUME point(A) IN line(B) END. {
-    cout << "Assume a point " << A->getName() << endl;
     cout << "Assume " << A->getName() << " is in the line " << B->getName() << endl;
     B->addPoint(A);
 }

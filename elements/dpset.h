@@ -7,11 +7,11 @@
 class DPPoint;
 
 class DPSet : public DPElement {
-    std::unordered_set<DPPoint *> _single_points;
+protected:
+    std::unordered_set<DPPoint *> _singlePoints;
 
 public:
     bool contains(DPPoint *point);
-    bool contains(const DPSet &set);
     DPSet(DPPlan &parent);
     void addPoint(DPPoint *a);
     void setRelation(DPBinRel rel, DPElement *a, DPElement *b);

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "dpplan.h"
 #include "dppoint.h"
 #include "dpline.h"
@@ -8,12 +9,14 @@ void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
 {
     _rules[op][a].insert(b);
     _rules[op][b].insert(a);
+    cout << "Operator " << op << " size " << _rules[op].size() << endl;
 }
 
 bool DPPlan::hasRelation(DPBinRel op, DPPoint *a, DPPoint *b)
 {
     unordered_map<DPElement *, unordered_set<DPElement *> >::iterator it;
 
+    it = _rules[op].find(a);
     if (it != _rules[op].end()) {
         unordered_set<DPElement *>::iterator sit = it->second.find(b);
         if (sit != it->second.end()) {
@@ -39,11 +42,12 @@ DPPoint *DPPlan::getPoint(const char *a)
 
 DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
 {
-    for (DPLine *l : _linesSet) {
-        if (l->contains(a) && l->contains(b))
-            return l;
+    if (*a != *b) {
+        for (DPLine *l : _linesSet) {
+            if (l->contains(a) && l->contains(b))
+                return l;
+        }
     }
-
     return nullptr;
 }
 
