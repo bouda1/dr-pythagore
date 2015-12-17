@@ -7,35 +7,35 @@
 using namespace std;
 
 DPLexer::DPLexer()
-    : m_content(0), m_plan(), m_token(m_plan), m_start(0), m_limit(0)
+    : _content(0), _plan(), _token(_plan), _start(0), _limit(0)
 {
-    m_parser = dPParseAlloc(malloc);
+    _parser = dPParseAlloc(malloc);
 }
 
 DPLexer::~DPLexer()
 {
-    dPParseFree(m_parser, free);
+    dPParseFree(_parser, free);
 }
 
 char *DPLexer::getTokenValue()
 {
-    return strndup(m_start, m_cursor - m_start);
+    return strndup(_start, _cursor - _start);
 }
 
 void DPLexer::debug(int a, char b)
 {
     cout << "DEBUG " << a << " ; " << b << endl;
-    cout << "m_start = " << m_start << endl;
+    cout << "_start = " << _start << endl;
 }
 
 int DPLexer::scan()
 {
-    m_start = m_cursor;
+    _start = _cursor;
 #define YYCTYPE char
-#define YYCURSOR m_cursor
-#define YYLIMIT m_limit
-#define YYMARKER m_marker
-#define YYCTXMARKER m_ctxmarker
+#define YYCURSOR _cursor
+#define YYLIMIT _limit
+#define YYMARKER _marker
+#define YYCTXMARKER _ctxmarker
 #define YYFILL(n)
 #define YYDEBUG(a,b) debug(a, b)
 
@@ -47,6 +47,8 @@ cont:
         "Let"               { return CALC_TOKEN_LET; }
         "Point"             { return CALC_TOKEN_POINT; }
         "Line"              { return CALC_TOKEN_LINE; }
+        "Assume"            { return CALC_TOKEN_ASSUME; }
+        "In"                { return CALC_TOKEN_IN; }
         [A-Za-z]            { return CALC_TOKEN_IDENT; }
         "+"                 { return CALC_TOKEN_PLUS; }
         "-"                 { return CALC_TOKEN_MINUS; }
@@ -56,7 +58,7 @@ cont:
         "="                 { return CALC_TOKEN_EQUALS; }
         "?"                 { return CALC_TOKEN_INTERRO; }
         "//"                { return CALC_TOKEN_PARALLEL; }
-        " "                 { m_start++; goto cont; }
+        " "                 { _start++; goto cont; }
     */
 }
 
@@ -64,18 +66,18 @@ void DPLexer::parse(const char *s)
 {
     char *word;
     int op_token;
-    m_content = s;
-    m_start = m_cursor = m_content;
-    m_limit = m_content + strlen(m_content);
+    _content = s;
+    _start = _cursor = _content;
+    _limit = _content + strlen(_content);
 
     do {
         op_token = scan();
         word = getTokenValue();
-        dPParse(m_parser, op_token, word, &m_token);
+        dPParse(_parser, op_token, word, &_token);
     }
     while (op_token != CALC_TOKEN_END);
 
-    dPParse(m_parser, 0, NULL, &m_token);
+    dPParse(_parser, 0, NULL, &_token);
 
     cout << "finished!" << endl;
 }

@@ -4,13 +4,15 @@ using namespace std;
 
 DPSet::DPSet(DPPlan &parent)
     : DPElement(parent)
-    , m_single_points()
+    , _single_points()
 {
 }
 
-bool DPSet::contains(const DPPoint &point)
+bool DPSet::contains(DPPoint *point)
 {
-    return false;
+    unordered_set<DPPoint *>::iterator it = _single_points.find(point);
+
+    return it != _single_points.end();
 }
 
 bool DPSet::contains(const DPSet &point)
@@ -20,5 +22,5 @@ bool DPSet::contains(const DPSet &point)
 
 void DPSet::addPoint(DPPoint *a)
 {
-    m_single_points.push_back(a);
+    _single_points.insert(a);
 }

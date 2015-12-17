@@ -18,15 +18,17 @@ enum DPBinRel {
 
 class DPPlan {
 
-    std::unordered_map<std::string, DPPoint *> m_pointsList;
+    std::unordered_set<DPLine *> _linesSet;
+    std::unordered_map<std::string, DPPoint *> _pointsList;
     std::array<std::unordered_map<DPElement *,
                                   std::unordered_set<DPElement *> >,
-               BIN_REL_COUNT> m_rules;
+               BIN_REL_COUNT> _rules;
 
 public:
     DPPoint *getPoint(const char *a);
     DPLine *getLine(DPPoint *a, DPPoint *b);
     void addPoint(DPPoint *a);
+    void addLine(DPLine *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
     bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);

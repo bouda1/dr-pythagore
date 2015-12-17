@@ -1,16 +1,16 @@
 #ifndef __DPSET_H__
 #define __DPSET_H__
-#include <list>
+#include <unordered_set>
 #include "dpplan.h"
 #include "dpelement.h"
 
 class DPPoint;
 
 class DPSet : public DPElement {
-    std::list<DPPoint *> m_single_points;
+    std::unordered_set<DPPoint *> _single_points;
 
 public:
-    bool contains(const DPPoint &point);
+    bool contains(DPPoint *point);
     bool contains(const DPSet &set);
     DPSet(DPPlan &parent);
     void addPoint(DPPoint *a);

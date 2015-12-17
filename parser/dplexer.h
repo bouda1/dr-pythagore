@@ -4,14 +4,14 @@
 #include "grammar-prot.h"
 
 class DPLexer {
-    const char *m_content;
-    DPPlan m_plan;
-    DPParserToken m_token;
-    void *m_parser;
-    const char *m_start;
-    const char *m_marker;
-    const char *m_cursor;
-    const char *m_limit;
+    const char *_content;
+    DPPlan _plan;
+    DPParserToken _token;
+    void *_parser;
+    const char *_start;
+    const char *_marker;
+    const char *_cursor;
+    const char *_limit;
     int scan();
 
 public:

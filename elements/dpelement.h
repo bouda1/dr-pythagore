@@ -12,7 +12,7 @@ public:
     DPElement(DPPlan &parent);
     DPElement(DPPlan &parent, const char *name);
     void setName(const std::string &newName);
-    std::string &getName(void);
+    const std::string &getName(void) const;
     DPPlan &getParent() const;
 };
 

@@ -69,6 +69,11 @@ boolean(A) ::= line PARALLEL line INTERRO. {
     A = 0;
 }
 
+boolean(A) ::= point(B) IN line(C) INTERRO. {
+    cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
+    A = C->contains(B);
+}
+
 line(A) ::= LPAR point(B) point(C) RPAR. {
     if (!B || !C)
         cout << "syntax error: one of those points does not exist" << endl;
@@ -84,6 +89,12 @@ program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
 
 point(A) ::= IDENT(B). {
     A = token->getPlan().getPoint(B);
+}
+
+program ::= ASSUME point(A) IN line(B) END. {
+    cout << "Assume a point " << A->getName() << endl;
+    cout << "Assume " << A->getName() << " is in the line " << B->getName() << endl;
+    B->addPoint(A);
 }
 
 program ::= LET IDENT(A) COLON POINT END. {

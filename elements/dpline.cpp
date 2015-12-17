@@ -1,3 +1,4 @@
+#include <sstream>
 #include "dpplan.h"
 #include "dpline.h"
 #include "dppoint.h"
@@ -20,9 +21,14 @@ DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
     else
         bb = new DPPoint(parent, b);
 
+    stringstream ss;
+    ss << '(' << aa->getName() << bb->getName() << ')';
+    setName(ss.str());
+
     /* We must assume points are distinct. */
     parent.setRelation(BIN_REL_DISTINCT, aa, bb);
 
     addPoint(aa);
     addPoint(bb);
+    parent.addLine(this);
 }
