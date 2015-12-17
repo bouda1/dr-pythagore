@@ -36,6 +36,14 @@ DPPoint *DPPlan::getPoint(const char *a)
     return (it != m_pointsList.end()) ? it->second : nullptr;
 }
 
+DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
+{
+    /* We have to verify that those two points exist and are distinct */
+    /* If there is a line containing those two points, we can take it */
+    /* Otherwise, we create the line and return it */
+    return nullptr;
+}
+
 void DPPlan::addPoint(DPPoint *a)
 {
     m_pointsList[a->getName()] = a;

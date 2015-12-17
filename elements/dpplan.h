@@ -6,6 +6,7 @@
 
 class DPElement;
 class DPPoint;
+class DPLine;
 
 enum DPBinRel {
     BIN_REL_DISTINCT,
@@ -24,6 +25,7 @@ class DPPlan {
 
 public:
     DPPoint *getPoint(const char *a);
+    DPLine *getLine(DPPoint *a, DPPoint *b);
     void addPoint(DPPoint *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);

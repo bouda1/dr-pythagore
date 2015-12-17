@@ -54,6 +54,8 @@ cont:
         ")"                 { return CALC_TOKEN_RPAR; }
         ":"                 { return CALC_TOKEN_COLON; }
         "="                 { return CALC_TOKEN_EQUALS; }
+        "?"                 { return CALC_TOKEN_INTERRO; }
+        "//"                { return CALC_TOKEN_PARALLEL; }
         " "                 { m_start++; goto cont; }
     */
 }

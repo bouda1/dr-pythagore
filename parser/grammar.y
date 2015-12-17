@@ -2,7 +2,7 @@
 %token_prefix CALC_TOKEN_
 
 %token_type {char *}
-/*%token_destructor { delete $$; } */
+%token_destructor { free $$; }
 
 %type boolean { int }
 %type point {DPPoint *}
@@ -53,31 +53,40 @@ program ::= line(A) END.    {
 }
 
 program ::= boolean(A) END. {
-    cout << "A boolean: " << A << endl;
+    cout << "This is a boolean: " << A << endl;
 }
 
-boolean(A) ::= IDENT(B) EQUALS IDENT(C). {
-<<<<<<< 3dd2d18a20ffd36083b3860ea9a3f2fc93f88328
-=======
-    cout << "Check equality" << endl;
->>>>>>> BUG: parser: Fix a compilation difficulty. A first equality test added
-    DPPoint *a = token->getPlan().getPoint(B);
-    DPPoint *b = token->getPlan().getPoint(C);
-    if (!a || !b)
+boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
+    cout << "Check points equality" << endl;
+    if (!B || !C)
         cout << "syntax error: one of those points does not exist" << endl;
 
-    A = (*a == *b);
+    A = (*B == *C);
 }
 
-line(A) ::= LET LPAR IDENT(B) IDENT(C) RPAR COLON LINE. {
-    A = new DPLine(token->getPlan(), B, C);
+boolean(A) ::= line PARALLEL line INTERRO. {
+    cout << "Check if lines are parallel" << endl;
+    A = 0;
 }
 
-point(A) ::= LET IDENT(B) COLON POINT. {
-    cout << "Oh ! a point..." << endl;
-<<<<<<< 3dd2d18a20ffd36083b3860ea9a3f2fc93f88328
-=======
-    cout << "Its name is " << B << endl;
->>>>>>> BUG: parser: Fix a compilation difficulty. A first equality test added
-    A = new DPPoint(token->getPlan(), B);
+line(A) ::= LPAR point(B) point(C) RPAR. {
+    if (!B || !C)
+        cout << "syntax error: one of those points does not exist" << endl;
+
+    A = token->getPlan().getLine(B, C);
+}
+
+program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
+
+    cout << "Let (" << A << B << ") be a line." << endl;
+    DPLine *a = new DPLine(token->getPlan(), A, B);
+}
+
+point(A) ::= IDENT(B). {
+    A = token->getPlan().getPoint(B);
+}
+
+program ::= LET IDENT(A) COLON POINT END. {
+    cout << "Let " << A << " be a point." << endl;
+    DPPoint *a = new DPPoint(token->getPlan(), A);
 }
