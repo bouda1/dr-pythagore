@@ -58,6 +58,7 @@ cont:
         "="                 { return CALC_TOKEN_EQUALS; }
         "?"                 { return CALC_TOKEN_INTERRO; }
         "//"                { return CALC_TOKEN_PARALLEL; }
+        "!="                { return CALC_TOKEN_DISTINCT; }
         " "                 { _start++; goto cont; }
     */
 }
@@ -75,9 +76,10 @@ void DPLexer::parse(const char *s)
         word = getTokenValue();
         dPParse(_parser, op_token, word, &_token);
     }
-    while (op_token != CALC_TOKEN_END);
+    while (!_token.onError() && op_token != CALC_TOKEN_END);
 
-    dPParse(_parser, 0, NULL, &_token);
+    if (!_token.onError())
+        dPParse(_parser, 0, NULL, &_token);
 
     cout << "finished!" << endl;
 }

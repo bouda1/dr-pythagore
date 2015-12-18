@@ -1,7 +1,7 @@
 #include "dpparsertoken.h"
 
 DPParserToken::DPParserToken(DPPlan &plan)
-    : _plan(plan)
+    : _plan(plan), _error(false)
 {
 }
 
@@ -23,4 +23,14 @@ void DPParserToken::setElement(DPElement *element)
 DPElement *DPParserToken::getElement() const
 {
     return _el;
+}
+
+bool DPParserToken::onError() const
+{
+    return _error;
+}
+
+void DPParserToken::setError()
+{
+    _error = true;
 }
