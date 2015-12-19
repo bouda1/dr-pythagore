@@ -5,6 +5,18 @@
 
 using namespace std;
 
+DPLine::DPLine(DPPlan &parent, DPPoint *a, DPPoint *b)
+    : DPSet(parent)
+{
+    stringstream ss;
+    ss << '(' << a->getName() << b->getName() << ')';
+    setName(ss.str());
+
+    addPoint(a);
+    addPoint(b);
+    parent.addLine(this);
+}
+
 DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
     : DPSet(parent)
 
@@ -22,7 +34,7 @@ DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
         bb = new DPPoint(parent, b);
 
     stringstream ss;
-    ss << '(' << aa->getName() << bb->getName() << ')';
+    ss << '(' << a << b << ')';
     setName(ss.str());
 
     /* We must assume points are distinct. */

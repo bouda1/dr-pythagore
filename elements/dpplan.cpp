@@ -42,13 +42,18 @@ DPPoint *DPPlan::getPoint(const char *a)
 
 DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
 {
+    DPLine *retval = nullptr;
     if (*a != *b) {
         for (DPLine *l : _linesSet) {
             if (l->contains(a) && l->contains(b))
                 return l;
         }
+
+        /* It is not already defined, but we can do it since we have the
+         * points and they are distinct */
+        retval = new DPLine(*this, a, b);
     }
-    return nullptr;
+    return retval;
 }
 
 void DPPlan::addPoint(DPPoint *a)

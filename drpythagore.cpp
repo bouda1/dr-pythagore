@@ -19,5 +19,8 @@ int main()
     lexer.parse("A In (BC) ?");
     lexer.parse("Let D:Point");
     lexer.parse("D In (BC) ?");
+    lexer.parse("Assume A != D");
+    lexer.parse("(BC) = (AD) ?");
+    lexer.parse("(BA) = (BC) ?");
     return 0;
 }
