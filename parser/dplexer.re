@@ -47,13 +47,16 @@ cont:
         "Let"               { return CALC_TOKEN_LET; }
         "Point"             { return CALC_TOKEN_POINT; }
         "Line"              { return CALC_TOKEN_LINE; }
+        "Segment"           { return CALC_TOKEN_SEGMENT; }
         "Assume"            { return CALC_TOKEN_ASSUME; }
         "In"                { return CALC_TOKEN_IN; }
         [A-Za-z]            { return CALC_TOKEN_IDENT; }
         "+"                 { return CALC_TOKEN_PLUS; }
         "-"                 { return CALC_TOKEN_MINUS; }
         "("                 { return CALC_TOKEN_LPAR; }
+        "["                 { return CALC_TOKEN_LBRA; }
         ")"                 { return CALC_TOKEN_RPAR; }
+        "]"                 { return CALC_TOKEN_RBRA; }
         ":"                 { return CALC_TOKEN_COLON; }
         "="                 { return CALC_TOKEN_EQUALS; }
         "?"                 { return CALC_TOKEN_INTERRO; }

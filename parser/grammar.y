@@ -7,6 +7,7 @@
 %type boolean { int }
 %type point {DPPoint *}
 %type line {DPLine *}
+%type segment {DPSegment *}
 
 %extra_argument { DPParserToken *token }
 
@@ -18,6 +19,7 @@
 #include "grammar-prot.h"
 #include "dppoint.h"
 #include "dpline.h"
+#include "dpsegment.h"
 
 using namespace std;
 }
@@ -81,6 +83,11 @@ boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
     A = (*B == *C);
 }
 
+boolean(A) ::= segment(B) EQUALS segment(C) INTERRO. {
+    cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
+    A = (*B == *C);
+}
+
 line(A) ::= LPAR point(B) point(C) RPAR. {
     if (!B || !C) {
         cout << "syntax error: one of those points does not exist" << endl;
@@ -95,10 +102,28 @@ line(A) ::= LPAR point(B) point(C) RPAR. {
     }
 }
 
+segment(A) ::= LBRA point(B) point(C) RBRA. {
+    if (!B || !C) {
+        cout << "syntax error: one of those points does not exist" << endl;
+        token->setError();
+    }
+    else {
+        A = token->getPlan().getSegment(B, C);
+        if (!A) {
+            cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a segment" << endl;
+            token->setError();
+        }
+    }
+}
+
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
 
     cout << "Let (" << A << B << ") be a line." << endl;
     DPLine *a = new DPLine(token->getPlan(), A, B);
+}
+
+program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
+    cout << "Let [" << A << B << "] be a segment." << endl;
 }
 
 point(A) ::= IDENT(B). {

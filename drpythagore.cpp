@@ -22,5 +22,9 @@ int main()
     lexer.parse("Assume A != D");
     lexer.parse("(BC) = (AD) ?");
     lexer.parse("(BA) = (BC) ?");
+    lexer.parse("Let [RG]: Segment");
+    lexer.parse("[AB] = [BC] ?");
+    lexer.parse("[AB] = [BA] ?");
+    lexer.parse("[AB] = [AB] ?");
     return 0;
 }

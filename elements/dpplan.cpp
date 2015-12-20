@@ -2,6 +2,7 @@
 #include "dpplan.h"
 #include "dppoint.h"
 #include "dpline.h"
+#include "dpsegment.h"
 
 using namespace std;
 
@@ -56,6 +57,25 @@ DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
     return retval;
 }
 
+DPSegment *DPPlan::getSegment(DPPoint *a, DPPoint *b)
+{
+    DPSegment *retval = nullptr;
+    if (*a != *b) {
+        for (DPSegment *s : _segmentsSet) {
+            DPPoint *begin = s->getBegin();
+            DPPoint *end = s->getEnd();
+            if ((*begin == *a && *end == *b)
+                || (*begin == *b && *end == *a))
+                return s;
+        }
+
+        /* It is not already defined, but we can do it since we have the
+         * points and they are distinct */
+        retval = new DPSegment(*this, a, b);
+    }
+    return retval;
+}
+
 void DPPlan::addPoint(DPPoint *a)
 {
     _pointsList[a->getName()] = a;
@@ -65,3 +85,9 @@ void DPPlan::addLine(DPLine *a)
 {
     _linesSet.insert(a);
 }
+
+void DPPlan::addSegment(DPSegment *a)
+{
+    _segmentsSet.insert(a);
+}
+

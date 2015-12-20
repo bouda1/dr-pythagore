@@ -7,6 +7,7 @@
 class DPElement;
 class DPPoint;
 class DPLine;
+class DPSegment;
 
 enum DPBinRel {
     BIN_REL_DISTINCT,
@@ -19,6 +20,7 @@ enum DPBinRel {
 class DPPlan {
 
     std::unordered_set<DPLine *> _linesSet;
+    std::unordered_set<DPSegment *> _segmentsSet;
     std::unordered_map<std::string, DPPoint *> _pointsList;
     std::array<std::unordered_map<DPElement *,
                                   std::unordered_set<DPElement *> >,
@@ -27,8 +29,10 @@ class DPPlan {
 public:
     DPPoint *getPoint(const char *a);
     DPLine *getLine(DPPoint *a, DPPoint *b);
+    DPSegment *getSegment(DPPoint *a, DPPoint *b);
     void addPoint(DPPoint *a);
     void addLine(DPLine *a);
+    void addSegment(DPSegment *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
     bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);

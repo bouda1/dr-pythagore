@@ -4,6 +4,7 @@ set(OBJ_SRC
     dppoint.cpp dppoint.h
     dpset.cpp dpset.h
     dpline.cpp dpline.h
+    dpsegment.cpp dpsegment.h
     )
 
 ADD_LIBRARY(dpelements STATIC ${OBJ_SRC})
