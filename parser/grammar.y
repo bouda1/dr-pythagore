@@ -8,6 +8,7 @@
 %type point {DPPoint *}
 %type line {DPLine *}
 %type segment {DPSegment *}
+%type set {DPSet *}
 
 %extra_argument { DPParserToken *token }
 
@@ -37,14 +38,6 @@ using namespace std;
 
 %start_symbol program
 
-/*calc ::= exp(e) END.                { std::cout << "= " << e << std::endl; }
-   
-exp(lhs) ::= NUMBER(e).             { lhs = e; }
-exp(lhs) ::= LPAR exp(e) RPAR.      { lhs = e; }
-exp(lhs) ::= exp(le) MINUS exp(re). { lhs = le - re; }
-
-exp(lhs) ::= exp(le) PLUS exp(re).  { lhs = le + re; }
-*/
 program ::= point(A) END.   {
     cout << "Cool a point !" << endl;
     token->setElement(A);
@@ -58,6 +51,7 @@ program ::= boolean(A) END. {
     cout << "This is a boolean: " << A << endl;
 }
 
+/* Checks */
 boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
     cout << "Check points equality" << endl;
     if (!B || !C) {
@@ -68,14 +62,16 @@ boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
         A = (*B == *C);
 }
 
+/* Points in set */
+boolean(A) ::= point(B) IN set(C) INTERRO. {
+    cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
+    A = C->contains(B);
+}
+
+/* Equivalences */
 boolean(A) ::= line PARALLEL line INTERRO. {
     cout << "Check if lines are parallel" << endl;
     A = 0;
-}
-
-boolean(A) ::= point(B) IN line(C) INTERRO. {
-    cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
-    A = C->contains(B);
 }
 
 boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
@@ -86,6 +82,15 @@ boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
 boolean(A) ::= segment(B) EQUALS segment(C) INTERRO. {
     cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
     A = (*B == *C);
+}
+
+/* Getters */
+set(A) ::= line(B). {
+    A = static_cast<DPSet *>(B);
+}
+
+set(A) ::= segment(B). {
+    A = static_cast<DPSet *>(B);
 }
 
 line(A) ::= LPAR point(B) point(C) RPAR. {
@@ -116,22 +121,13 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
     }
 }
 
-program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
-
-    cout << "Let (" << A << B << ") be a line." << endl;
-    DPLine *a = new DPLine(token->getPlan(), A, B);
-}
-
-program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
-    cout << "Let [" << A << B << "] be a segment." << endl;
-}
-
 point(A) ::= IDENT(B). {
     A = token->getPlan().getPoint(B);
 }
 
-program ::= ASSUME point(A) IN line(B) END. {
-    cout << "Assume " << A->getName() << " is in the line " << B->getName() << endl;
+/* Constraints */
+program ::= ASSUME point(A) IN set(B) END. {
+    cout << "Assume " << A->getName() << " is in " << B->getName() << endl;
     B->addPoint(A);
 }
 
@@ -140,7 +136,19 @@ program ::= ASSUME point(A) DISTINCT point(B) END. {
     token->getPlan().setRelation(BIN_REL_DISTINCT, A, B);
 }
 
+/* Definitions */
 program ::= LET IDENT(A) COLON POINT END. {
     cout << "Let " << A << " be a point." << endl;
     DPPoint *a = new DPPoint(token->getPlan(), A);
 }
+
+program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
+    cout << "Let [" << A << B << "] be a segment." << endl;
+}
+
+program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
+
+    cout << "Let (" << A << B << ") be a line." << endl;
+    DPLine *a = new DPLine(token->getPlan(), A, B);
+}
+
