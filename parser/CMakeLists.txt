@@ -16,6 +16,8 @@ ADD_CUSTOM_COMMAND(
   COMMENT "Renaming grammar.c to grammar.cpp"
   COMMAND ${CMAKE_COMMAND}
   ARGS -E rename ${CMAKE_CURRENT_SOURCE_DIR}/grammar.c ${CMAKE_CURRENT_SOURCE_DIR}/grammar.cpp
+  COMMAND sed -i 's/grammar\.c/grammar.cpp/g' ${CMAKE_CURRENT_SOURCE_DIR}/grammar.cpp
+  COMMENT "Updating grammar.cpp"
   OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/grammar.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/grammar.h
 )

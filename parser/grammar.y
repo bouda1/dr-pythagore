@@ -39,16 +39,14 @@ using namespace std;
 %start_symbol program
 
 program ::= point(A) END.   {
-    cout << "Cool a point !" << endl;
-    token->setElement(A);
+    cout << "A new point " << A->getName() << endl;
 }
 program ::= line(A) END.    {
-    cout << "Cool a line !" << endl;
-    token->setElement(A);
+    cout << "A new line " << A->getName() << endl;
 }
 
 program ::= boolean(A) END. {
-    cout << "This is a boolean: " << A << endl;
+    token->setResult(A);
 }
 
 /* Checks */

@@ -20,6 +20,7 @@ public:
     char *getTokenValue();
     void debug(int a, char b);
     void parse(const char *s);
+    bool getResult() const;
 };
 
 #endif /* __DPLEXER_H__ */

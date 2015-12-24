@@ -5,13 +5,13 @@
 
 class DPParserToken {
     DPPlan &_plan;
-    DPElement *_el;
+    bool _result;
     bool _error;
 
 public:
     DPParserToken(DPPlan &plan);
-    void setElement(DPElement *element);
-    DPElement *getElement() const;
+    void setResult(bool result);
+    bool getResult() const;
     void setPlan(DPPlan &plan);
     DPPlan &getPlan() const;
     bool onError() const;

@@ -15,14 +15,14 @@ DPPlan &DPParserToken::getPlan() const
     return _plan;
 }
 
-void DPParserToken::setElement(DPElement *element)
+void DPParserToken::setResult(bool result)
 {
-    _el = element;
+    _result = result;
 }
 
-DPElement *DPParserToken::getElement() const
+bool DPParserToken::getResult() const
 {
-    return _el;
+    return _result;
 }
 
 bool DPParserToken::onError() const

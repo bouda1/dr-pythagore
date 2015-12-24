@@ -84,5 +84,10 @@ void DPLexer::parse(const char *s)
     if (!_token.onError())
         dPParse(_parser, 0, NULL, &_token);
 
-    cout << "finished!" << endl;
 }
+
+bool DPLexer::getResult() const
+{
+    return _token.getResult();
+}
+
