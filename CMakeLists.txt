@@ -30,6 +30,7 @@ ADD_SUBDIRECTORY(lemon)
 ADD_SUBDIRECTORY(parser)
 ADD_SUBDIRECTORY(elements)
 ADD_SUBDIRECTORY(tests)
+ADD_SUBDIRECTORY(pool)
 
 SET(DP_SRC
     drpythagore.cpp
