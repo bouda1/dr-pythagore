@@ -1,6 +1,6 @@
-#ifndef __DPLEXER_H__
-#define __DPLEXER_H__
-#include "dpplan.h"
+#ifndef __LEXER_H__
+#define __LEXER_H__
+#include "plan.h"
 #include "grammar-prot.h"
 
 class DPLexer {
@@ -23,4 +23,4 @@ public:
     bool getResult() const;
 };
 
-#endif /* __DPLEXER_H__ */
+#endif /* __LEXER_H__ */

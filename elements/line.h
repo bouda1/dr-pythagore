@@ -1,6 +1,6 @@
-#ifndef __DPLINE_H__
-#define __DPLINE_H__
-#include "dpset.h"
+#ifndef __LINE_H__
+#define __LINE_H__
+#include "set.h"
 
 class DPLine : public DPSet {
 public:
@@ -9,4 +9,4 @@ public:
     bool operator == (const DPLine &b);
 };
 
-#endif /* __DPLINE_H__ */
+#endif /* __LINE_H__ */

@@ -1,8 +1,8 @@
-#ifndef __DPSET_H__
-#define __DPSET_H__
+#ifndef __SET_H__
+#define __SET_H__
 #include <unordered_set>
-#include "dpplan.h"
-#include "dpelement.h"
+#include "plan.h"
+#include "element.h"
 
 class DPPoint;
 
@@ -17,4 +17,4 @@ public:
     void setRelation(DPBinRel rel, DPElement *a, DPElement *b);
 };
 
-#endif /* __DPSET_H__ */
+#endif /* __SET_H__ */

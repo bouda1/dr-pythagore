@@ -1,6 +1,6 @@
-#ifndef __DPPOINT_H__
-#define __DPPOINT_H__
-#include "dpelement.h"
+#ifndef __POINT_H__
+#define __POINT_H__
+#include "element.h"
 
 class DPPoint : public DPElement
 {
@@ -10,4 +10,4 @@ class DPPoint : public DPElement
         bool operator != (const DPPoint &b);
 };
 
-#endif /* __DPPOINT_H__ */
+#endif /* __POINT_H__ */

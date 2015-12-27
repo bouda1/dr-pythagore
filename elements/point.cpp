@@ -1,4 +1,4 @@
-#include "dppoint.h"
+#include "point.h"
 
 DPPoint::DPPoint(DPPlan &parent, const char *n)
     : DPElement(parent, n)

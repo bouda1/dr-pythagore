@@ -1,7 +1,7 @@
-#ifndef __DPPARSERTOKEN_H__
-#define __DPPARSERTOKEN_H__
-#include "dpelement.h"
-#include "dpplan.h"
+#ifndef __PARSERTOKEN_H__
+#define __PARSERTOKEN_H__
+#include "element.h"
+#include "plan.h"
 
 class DPParserToken {
     DPPlan &_plan;
@@ -18,4 +18,4 @@ public:
     void setError();
 };
 
-#endif /* __DPPARSERTOKEN_H__ */
+#endif /* __PARSERTOKEN_H__ */

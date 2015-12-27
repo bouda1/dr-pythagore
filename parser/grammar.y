@@ -18,9 +18,9 @@
 #include <assert.h>
 #include <iostream>
 #include "grammar-prot.h"
-#include "dppoint.h"
-#include "dpline.h"
-#include "dpsegment.h"
+#include "point.h"
+#include "line.h"
+#include "segment.h"
 
 using namespace std;
 }

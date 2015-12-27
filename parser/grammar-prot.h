@@ -1,6 +1,6 @@
 #ifndef __GRAMMAR_PROT_H__
 #define __GRAMMAR_PROT_H__
-#include "dpparsertoken.h"
+#include "parsertoken.h"
 
 #define dPParseTOKENTYPE char *
 #define dPParseARG_PDECL , DPParserToken *token 

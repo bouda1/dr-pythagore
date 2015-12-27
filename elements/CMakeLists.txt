@@ -1,12 +1,12 @@
 set(OBJ_SRC
-    dpplan.cpp dpplan.h
-    dpelement.cpp dpelement.h
-    dppoint.cpp dppoint.h
-    dpset.cpp dpset.h
-    dpline.cpp dpline.h
-    dpsegment.cpp dpsegment.h
+    plan.cpp plan.h
+    element.cpp element.h
+    point.cpp point.h
+    set.cpp set.h
+    line.cpp line.h
+    segment.cpp segment.h
     )
 
-ADD_LIBRARY(dpelements STATIC ${OBJ_SRC})
+ADD_LIBRARY(elements STATIC ${OBJ_SRC})
 
-TARGET_LINK_LIBRARIES(dpelements)
+TARGET_LINK_LIBRARIES(elements)

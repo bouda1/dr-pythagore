@@ -1,5 +1,5 @@
-#ifndef __DPPLAN_H__
-#define __DPPLAN_H__
+#ifndef __PLAN_H__
+#define __PLAN_H__
 #include <array>
 #include <unordered_set>
 #include <unordered_map>
@@ -38,4 +38,4 @@ public:
     bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);
 };
 
-#endif /* __DPPLAN_H__ */
+#endif /* __PLAN_H__ */

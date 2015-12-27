@@ -41,7 +41,7 @@ ADD_EXECUTABLE(drpythagore
 
 SET_PROPERTY(TARGET drpythagore PROPERTY CXX_STANDARD_REQUIRED ON)
 
-TARGET_LINK_LIBRARIES(drpythagore dpelements dpparser)
+TARGET_LINK_LIBRARIES(drpythagore elements parser)
 
 ENABLE_TESTING()
 

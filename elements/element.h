@@ -1,7 +1,7 @@
-#ifndef __DPELEMENT_H__
-#define __DPELEMENT_H__
+#ifndef __ELEMENT_H__
+#define __ELEMENT_H__
 #include <string>
-#include "dpplan.h"
+#include "plan.h"
 
 class DPElement {
 protected:
@@ -16,5 +16,5 @@ public:
     DPPlan &getParent() const;
 };
 
-#endif /* __DPELEMENT_H__ */
+#endif /* __ELEMENT_H__ */
 

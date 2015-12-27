@@ -1,5 +1,5 @@
 #include <iostream>
-#include "dplexer.h"
+#include "lexer.h"
 #include "test-dr-pythagore.h"
 
 static int OK = 0;

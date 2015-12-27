@@ -1,10 +1,10 @@
 ADD_CUSTOM_COMMAND(
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.re
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.cpp
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lexer.re
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
         COMMAND re2c
-        -o ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.re
-        COMMENT "Generating parser/dplexer.cpp"
+        -o ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/lexer.re
+        COMMENT "Generating parser/lexer.cpp"
         )
 
 ADD_CUSTOM_COMMAND(
@@ -24,14 +24,14 @@ ADD_CUSTOM_COMMAND(
 
 SET(CMAKE_C_COMPILER ${CMAKE_CXX_COMPILER})
 
-ADD_LIBRARY(dpparser STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/dpparsertoken.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/dpparsertoken.h
+ADD_LIBRARY(parser STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/parsertoken.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/parsertoken.h
     ${CMAKE_CURRENT_SOURCE_DIR}/grammar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/grammar.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/dplexer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexer.h
     )
 
-SET_TARGET_PROPERTIES(dpparser PROPERTIES LINKER_LANGUAGE CXX)
-TARGET_LINK_LIBRARIES(dpparser dpelements)
+SET_TARGET_PROPERTIES(parser PROPERTIES LINKER_LANGUAGE CXX)
+TARGET_LINK_LIBRARIES(parser elements)

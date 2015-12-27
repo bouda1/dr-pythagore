@@ -1,6 +1,6 @@
-#ifndef __DPSEGMENT_H__
-#define __DPSEGMENT_H__
-#include "dpset.h"
+#ifndef __SEGMENT_H__
+#define __SEGMENT_H__
+#include "set.h"
 
 class DPSegment : public DPSet {
     DPPoint *_beginPoint;
@@ -15,4 +15,4 @@ public:
     DPPoint *getEnd() const;
 };
 
-#endif /* __DPSEGMENT_H__ */
+#endif /* __SEGMENT_H__ */

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <malloc.h>
-#include "dplexer.h"
+#include "lexer.h"
 #include "grammar.h"
 
 using namespace std;

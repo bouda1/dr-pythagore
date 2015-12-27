@@ -1,7 +1,7 @@
 #include <sstream>
-#include "dpplan.h"
-#include "dpline.h"
-#include "dppoint.h"
+#include "plan.h"
+#include "line.h"
+#include "point.h"
 
 using namespace std;
 

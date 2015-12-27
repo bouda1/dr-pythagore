@@ -1,8 +1,8 @@
 #include <iostream>
-#include "dpplan.h"
-#include "dppoint.h"
-#include "dpline.h"
-#include "dpsegment.h"
+#include "plan.h"
+#include "point.h"
+#include "line.h"
+#include "segment.h"
 
 using namespace std;
 

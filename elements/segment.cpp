@@ -1,8 +1,8 @@
 #include <cassert>
 #include <sstream>
-#include "dpplan.h"
-#include "dpsegment.h"
-#include "dppoint.h"
+#include "plan.h"
+#include "segment.h"
+#include "point.h"
 
 using namespace std;
 
