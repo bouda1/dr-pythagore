@@ -4,15 +4,14 @@
 #include "plan.h"
 
 class DPParserToken {
-    DPPlan &_plan;
+    const DPPlan &_plan;
     bool _result;
     bool _error;
 
 public:
-    DPParserToken(DPPlan &plan);
+    DPParserToken(const DPPlan &plan);
     void setResult(bool result);
     bool getResult() const;
-    void setPlan(DPPlan &plan);
     DPPlan &getPlan() const;
     bool onError() const;
     void setError();

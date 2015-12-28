@@ -1,11 +1,14 @@
 #include <iostream>
 #include "lexer.h"
+#include "pool.h"
 
 using namespace std;
 
 int main()
 {
-    DPLexer lexer;
+    DPPool pool;
+    DPPlan plan(pool);
+    DPLexer lexer(plan);
 
     lexer.parse("Let B:Point");
     lexer.parse("Let A:Point");

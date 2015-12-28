@@ -5,7 +5,7 @@
 
 class DPLexer {
     const char *_content;
-    DPPlan _plan;
+    const DPPlan _plan;
     DPParserToken _token;
     void *_parser;
     const char *_start;
@@ -15,7 +15,7 @@ class DPLexer {
     int scan();
 
 public:
-    DPLexer();
+    DPLexer(const DPPlan &plan);
     ~DPLexer();
     char *getTokenValue();
     void debug(int a, char b);

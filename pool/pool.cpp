@@ -50,11 +50,9 @@ bool DPPool::queueEmpty() const
 
 void DPPool::loop(int time)
 {
-    int i;
-
-    for (i = 0; i < time; i++) {
+    for (int i = 0; i < time; i++)
         enqueueTask(new DPTask());
-    }
+
     sleep(time);
 }
 
@@ -63,10 +61,10 @@ bool DPPool::stopAsked() const
     return _stop;
 }
 
-int main()
+/*int main()
 {
     DPPool pool;
     pool.loop(10);
     cout << "This is the end" << endl;
     return 0;
-}
+}*/

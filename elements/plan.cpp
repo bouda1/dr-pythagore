@@ -6,6 +6,10 @@
 
 using namespace std;
 
+DPPlan::DPPlan(const DPPool &pool)
+    : _pool(pool)
+{}
+
 void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
 {
     _rules[op][a].insert(b);

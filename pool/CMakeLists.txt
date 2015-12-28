@@ -5,7 +5,7 @@ set (POOL_SRC
     task.cpp task.h
     )
 
-ADD_EXECUTABLE(pool
+ADD_LIBRARY(pool STATIC
     ${POOL_SRC})
 
 TARGET_LINK_LIBRARIES(pool -lpthread)

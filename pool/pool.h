@@ -5,6 +5,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include "action.h"
 #include "task.h"
 
 const static int NB_THREAD = 2;
@@ -14,10 +15,11 @@ class DPPool {
     std::deque<DPTask *> _tasks;
     bool _stop;
     void enqueueTask(DPTask *task);
-
-public:
     std::condition_variable _condition;
     std::mutex _mutex;
+
+public:
+    friend void DPAction::operator()() const;
 
     DPPool();
     ~DPPool();
@@ -28,5 +30,4 @@ public:
 };
 
 #endif /* __POOL_H__ */
-
 

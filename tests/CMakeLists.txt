@@ -4,7 +4,7 @@ SET(src_test
 ADD_EXECUTABLE(test-dr-pythagore
     ${src_test})
 
-TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser)
+TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool)
 
 IF (COVERAGE)
     SETUP_TARGET_FOR_COVERAGE(test-coverage

@@ -3,6 +3,7 @@
 #include <array>
 #include <unordered_set>
 #include <unordered_map>
+#include "pool.h"
 
 class DPElement;
 class DPPoint;
@@ -25,8 +26,10 @@ class DPPlan {
     std::array<std::unordered_map<DPElement *,
                                   std::unordered_set<DPElement *> >,
                BIN_REL_COUNT> _rules;
+    const DPPool &_pool;
 
 public:
+    DPPlan(const DPPool &pool);
     DPPoint *getPoint(const char *a);
     DPLine *getLine(DPPoint *a, DPPoint *b);
     DPSegment *getSegment(DPPoint *a, DPPoint *b);

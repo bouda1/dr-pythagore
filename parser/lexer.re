@@ -6,8 +6,8 @@
 
 using namespace std;
 
-DPLexer::DPLexer()
-    : _content(0), _plan(), _token(_plan), _start(0), _limit(0)
+DPLexer::DPLexer(const DPPlan &plan)
+    : _content(0), _plan(plan), _token(_plan), _start(0), _limit(0)
 {
     _parser = dPParseAlloc(malloc);
 }

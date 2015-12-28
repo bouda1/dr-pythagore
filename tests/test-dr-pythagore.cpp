@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lexer.h"
 #include "test-dr-pythagore.h"
+#include "pool.h"
 
 static int OK = 0;
 static int NOK = 0;
@@ -25,7 +26,9 @@ static void summary()
 
 int main()
 {
-    DPLexer lexer;
+    DPPool pool;
+    DPPlan plan(pool);
+    DPLexer lexer(plan);
 
     lexer.parse("Let B:Point");
     lexer.parse("Let A:Point");

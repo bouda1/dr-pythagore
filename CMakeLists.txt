@@ -7,7 +7,7 @@ OPTION(COVERAGE "Set this variable to ON to check coverage of tests" OFF)
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts)
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser pool)
 
 IF(COVERAGE)
     SET(COVERAGE_CXXFLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
@@ -41,7 +41,7 @@ ADD_EXECUTABLE(drpythagore
 
 SET_PROPERTY(TARGET drpythagore PROPERTY CXX_STANDARD_REQUIRED ON)
 
-TARGET_LINK_LIBRARIES(drpythagore elements parser)
+TARGET_LINK_LIBRARIES(drpythagore elements parser pool)
 
 ENABLE_TESTING()
 
