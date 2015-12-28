@@ -12,18 +12,19 @@ const static int NB_THREAD = 2;
 class DPPool {
     std::array<std::thread, NB_THREAD> _thread;
     std::deque<DPTask *> _tasks;
+    bool _stop;
     void enqueueTask(DPTask *task);
 
 public:
     std::condition_variable _condition;
-    bool _stop;
     std::mutex _mutex;
 
     DPPool();
     ~DPPool();
     void loop(int time);
     DPTask *dequeueTask();
-    bool queueEmpty();
+    bool queueEmpty() const;
+    bool stopAsked() const;
 };
 
 #endif /* __POOL_H__ */

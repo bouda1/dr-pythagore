@@ -40,12 +40,11 @@ void DPPool::enqueueTask(DPTask *task)
         _tasks.push_back(task);
     }
 
-    _condition.notify_one(); 
+    _condition.notify_one();
 }
 
-bool DPPool::queueEmpty()
+bool DPPool::queueEmpty() const
 {
-    cout << "queue Empty ?" << endl;
     return _tasks.empty();
 }
 
@@ -57,6 +56,11 @@ void DPPool::loop(int time)
         enqueueTask(new DPTask());
     }
     sleep(time);
+}
+
+bool DPPool::stopAsked() const
+{
+    return _stop;
 }
 
 int main()
