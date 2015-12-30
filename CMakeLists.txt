@@ -31,6 +31,7 @@ ADD_SUBDIRECTORY(parser)
 ADD_SUBDIRECTORY(elements)
 ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(pool)
+ADD_SUBDIRECTORY(tasks)
 
 SET(DP_SRC
     drpythagore.cpp

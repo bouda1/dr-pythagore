@@ -4,7 +4,7 @@
 class DPTask {
 public:
     DPTask();
-    void routine();
+    virtual void routine();
 };
 
 #endif /* __TASK_H__ */

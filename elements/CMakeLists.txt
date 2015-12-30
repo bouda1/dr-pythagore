@@ -1,3 +1,5 @@
+INCLUDE_DIRECTORIES(../tasks)
+
 set(OBJ_SRC
     plan.cpp plan.h
     element.cpp element.h
@@ -9,4 +11,4 @@ set(OBJ_SRC
 
 ADD_LIBRARY(elements STATIC ${OBJ_SRC})
 
-TARGET_LINK_LIBRARIES(elements)
+TARGET_LINK_LIBRARIES(elements tasks)

@@ -14,7 +14,6 @@ class DPPool {
     std::array<std::thread, NB_THREAD> _thread;
     std::deque<DPTask *> _tasks;
     bool _stop;
-    void enqueueTask(DPTask *task);
     std::condition_variable _condition;
     std::mutex _mutex;
 
@@ -27,6 +26,7 @@ public:
     DPTask *dequeueTask();
     bool queueEmpty() const;
     bool stopAsked() const;
+    void enqueueTask(DPTask *task);
 };
 
 #endif /* __POOL_H__ */

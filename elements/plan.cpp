@@ -3,6 +3,7 @@
 #include "point.h"
 #include "line.h"
 #include "segment.h"
+#include "checkequaldistinct.h"
 
 using namespace std;
 
@@ -15,6 +16,8 @@ void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
     _rules[op][a].insert(b);
     _rules[op][b].insert(a);
     cout << "Operator " << op << " size " << _rules[op].size() << endl;
+    if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
+        const_cast<DPPool &>(_pool).enqueueTask(new CheckEqualDistinct(*this));
 }
 
 bool DPPlan::hasRelation(DPBinRel op, DPPoint *a, DPPoint *b)
