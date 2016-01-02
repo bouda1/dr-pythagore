@@ -5,7 +5,7 @@
 class DPPoint : public DPElement
 {
     public:
-        DPPoint(DPPlan &parent, const char *name);
+        DPPoint(DPPlan *parent, const char *name);
         bool operator == (const DPPoint &b);
         bool operator != (const DPPoint &b);
 };

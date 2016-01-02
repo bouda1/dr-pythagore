@@ -1,13 +1,13 @@
 #include "parsertoken.h"
 
-DPParserToken::DPParserToken(const DPPlan &plan)
+DPParserToken::DPParserToken(const DPPlan *plan)
     : _plan(plan), _error(false)
 {
 }
 
-DPPlan &DPParserToken::getPlan() const
+DPPlan *DPParserToken::getPlan() const
 {
-    return const_cast<DPPlan &>(_plan);
+    return const_cast<DPPlan *>(_plan);
 }
 
 void DPParserToken::setResult(bool result)

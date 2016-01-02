@@ -7,28 +7,45 @@
 
 using namespace std;
 
-DPPlan::DPPlan(const DPPool &pool)
-    : _pool(pool)
+DPPlan::DPPlan()
+    : _pool()
 {}
+
+unordered_map<DPElement *, unordered_set<DPElement *> >DPPlan::getRelations(DPBinRel op) const
+{
+    unique_lock<mutex> lock(_rules_mutex);
+    return _rules[op];
+}
 
 void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
 {
+    _rules_mutex.lock();
     _rules[op][a].insert(b);
-    _rules[op][b].insert(a);
+    _rules_mutex.unlock();
+
     cout << "Operator " << op << " size " << _rules[op].size() << endl;
     if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
-        const_cast<DPPool &>(_pool).enqueueTask(new CheckEqualDistinct(*this));
+        _pool.enqueueTask(new CheckEqualDistinct(this));
 }
 
-bool DPPlan::hasRelation(DPBinRel op, DPPoint *a, DPPoint *b)
+bool DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
 {
-    unordered_map<DPElement *, unordered_set<DPElement *> >::iterator it;
+    unordered_map<DPElement *, unordered_set<DPElement *> >::const_iterator it;
 
-    it = _rules[op].find(a);
-    if (it != _rules[op].end()) {
-        unordered_set<DPElement *>::iterator sit = it->second.find(b);
-        if (sit != it->second.end()) {
-            return true;
+    {
+        unique_lock<mutex> lock(_rules_mutex);
+        it = _rules[op].find(a);
+        if (it == _rules[op].end()) {
+            DPElement *tmp = a;
+            a = b;
+            b = tmp;
+            it = _rules[op].find(a);
+        }
+        if (it != _rules[op].end()) {
+            unordered_set<DPElement *>::const_iterator sit = it->second.find(b);
+            if (sit != it->second.end()) {
+                return true;
+            }
         }
     }
     return false;
@@ -59,7 +76,7 @@ DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
 
         /* It is not already defined, but we can do it since we have the
          * points and they are distinct */
-        retval = new DPLine(*this, a, b);
+        retval = new DPLine(this, a, b);
     }
     return retval;
 }
@@ -78,7 +95,7 @@ DPSegment *DPPlan::getSegment(DPPoint *a, DPPoint *b)
 
         /* It is not already defined, but we can do it since we have the
          * points and they are distinct */
-        retval = new DPSegment(*this, a, b);
+        retval = new DPSegment(this, a, b);
     }
     return retval;
 }

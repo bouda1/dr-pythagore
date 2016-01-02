@@ -11,8 +11,8 @@ protected:
     std::unordered_set<DPPoint *> _singlePoints;
 
 public:
-    bool contains(DPPoint *point);
-    DPSet(DPPlan &parent);
+    bool contains(DPPoint *point) const;
+    DPSet(DPPlan *parent);
     void addPoint(DPPoint *a);
     void setRelation(DPBinRel rel, DPElement *a, DPElement *b);
 };

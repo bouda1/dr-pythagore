@@ -4,8 +4,8 @@
 
 class DPLine : public DPSet {
 public:
-    DPLine(DPPlan &parent, DPPoint *a, DPPoint *b);
-    DPLine(DPPlan &parent, const char *a, const char *b);
+    DPLine(DPPlan *parent, DPPoint *a, DPPoint *b);
+    DPLine(DPPlan *parent, const char *a, const char *b);
     bool operator == (const DPLine &b);
 };
 

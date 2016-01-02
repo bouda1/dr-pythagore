@@ -16,7 +16,7 @@ IF(COVERAGE)
 ENDIF()
 
 IF (TSANITIZE)
-    SET(TSANITIZE_CXXFLAGS "-g -O0 -fsanitize=address -fno-omit-frame-pointer")
+    SET(TSANITIZE_CXXFLAGS "-g -O0 -fsanitize=thread -fno-omit-frame-pointer")
     SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF ()
 

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-DPLine::DPLine(DPPlan &parent, DPPoint *a, DPPoint *b)
+DPLine::DPLine(DPPlan *parent, DPPoint *a, DPPoint *b)
     : DPSet(parent)
 {
     stringstream ss;
@@ -14,22 +14,22 @@ DPLine::DPLine(DPPlan &parent, DPPoint *a, DPPoint *b)
 
     addPoint(a);
     addPoint(b);
-    parent.addLine(this);
+    _parent->addLine(this);
 }
 
-DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
+DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
     : DPSet(parent)
 
 {
     DPPoint *aa, *bb;
 
-    if (parent.pointExists(a))
-        aa = parent.getPoint(a);
+    if (_parent->pointExists(a))
+        aa = _parent->getPoint(a);
     else
         aa = new DPPoint(parent, a);
 
-    if (parent.pointExists(b))
-        bb = parent.getPoint(b);
+    if (_parent->pointExists(b))
+        bb = _parent->getPoint(b);
     else
         bb = new DPPoint(parent, b);
 
@@ -38,11 +38,11 @@ DPLine::DPLine(DPPlan &parent, const char *a, const char *b)
     setName(ss.str());
 
     /* We must assume points are distinct. */
-    parent.setRelation(BIN_REL_DISTINCT, aa, bb);
+    _parent->setRelation(BIN_REL_DISTINCT, aa, bb);
 
     addPoint(aa);
     addPoint(bb);
-    parent.addLine(this);
+    _parent->addLine(this);
 }
 
 bool DPLine::operator == (const DPLine &b)
@@ -51,12 +51,11 @@ bool DPLine::operator == (const DPLine &b)
     DPPoint *first_point = nullptr;
 
     for (DPPoint *p : _singlePoints) {
-        if (count == 0 && const_cast<DPLine&>(b).contains(p)) {
+        if (count == 0 && b.contains(p)) {
             count++;
             first_point = p;
         }
-        else if (count > 0 && *p != *first_point
-                 && const_cast<DPLine &>(b).contains(p))
+        else if (count > 0 && *p != *first_point && b.contains(p))
             return true;
     }
     return false;

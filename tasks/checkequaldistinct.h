@@ -4,11 +4,11 @@
 class DPPlan;
 
 class CheckEqualDistinct : public DPTask {
-    const DPPlan &_plan;
+    DPPlan *_plan;
 
 public:
     virtual void routine();
-    CheckEqualDistinct(const DPPlan &plan);
+    CheckEqualDistinct(DPPlan *plan);
 };
 
 #endif /* __CHECKEQUALDISTINCT_H__ */

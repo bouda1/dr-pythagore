@@ -6,9 +6,8 @@ using namespace std;
 
 int main()
 {
-    DPPool pool;
-    DPPlan plan(pool);
-    DPLexer lexer(plan);
+    DPPlan plan;
+    DPLexer lexer(&plan);
 
     lexer.parse("Let B:Point");
     lexer.parse("Let A:Point");

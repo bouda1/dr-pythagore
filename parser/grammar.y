@@ -97,7 +97,7 @@ line(A) ::= LPAR point(B) point(C) RPAR. {
         token->setError();
     }
     else {
-        A = token->getPlan().getLine(B, C);
+        A = token->getPlan()->getLine(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a line" << endl;
             token->setError();
@@ -111,7 +111,7 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
         token->setError();
     }
     else {
-        A = token->getPlan().getSegment(B, C);
+        A = token->getPlan()->getSegment(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a segment" << endl;
             token->setError();
@@ -120,7 +120,7 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
 }
 
 point(A) ::= IDENT(B). {
-    A = token->getPlan().getPoint(B);
+    A = token->getPlan()->getPoint(B);
 }
 
 /* Constraints */
@@ -131,7 +131,12 @@ program ::= ASSUME point(A) IN set(B) END. {
 
 program ::= ASSUME point(A) DISTINCT point(B) END. {
     cout << "Assume " << A->getName() << " is distinct from " << B->getName() << endl;
-    token->getPlan().setRelation(BIN_REL_DISTINCT, A, B);
+    token->getPlan()->setRelation(BIN_REL_DISTINCT, A, B);
+}
+
+program ::= ASSUME point(A) EQUALS point(B) END. {
+    cout << "Assume " << A->getName() << " is distinct from " << B->getName() << endl;
+    token->getPlan()->setRelation(BIN_REL_EQUALS, A, B);
 }
 
 /* Definitions */

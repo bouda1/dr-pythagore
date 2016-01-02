@@ -6,8 +6,8 @@
 
 using namespace std;
 
-DPSegment::DPSegment(DPPlan &parent, DPPoint *a, DPPoint *b)
-    : DPSet(parent)
+DPSegment::DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b)
+    : DPSet(parent), _beginPoint(nullptr), _endPoint(nullptr)
 {
     stringstream ss;
     ss << '[' << a->getName() << b->getName() << ']';
@@ -15,22 +15,22 @@ DPSegment::DPSegment(DPPlan &parent, DPPoint *a, DPPoint *b)
 
     addPoint(a);
     addPoint(b);
-    parent.addSegment(this);
+    _parent->addSegment(this);
 }
 
-DPSegment::DPSegment(DPPlan &parent, const char *a, const char *b)
+DPSegment::DPSegment(DPPlan *parent, const char *a, const char *b)
     : DPSet(parent)
 
 {
     DPPoint *aa, *bb;
 
-    if (parent.pointExists(a))
-        aa = parent.getPoint(a);
+    if (_parent->pointExists(a))
+        aa = _parent->getPoint(a);
     else
         aa = new DPPoint(parent, a);
 
-    if (parent.pointExists(b))
-        bb = parent.getPoint(b);
+    if (_parent->pointExists(b))
+        bb = _parent->getPoint(b);
     else
         bb = new DPPoint(parent, b);
 
@@ -39,11 +39,11 @@ DPSegment::DPSegment(DPPlan &parent, const char *a, const char *b)
     setName(ss.str());
 
     /* We must assume points are distinct. */
-    parent.setRelation(BIN_REL_DISTINCT, aa, bb);
+    _parent->setRelation(BIN_REL_DISTINCT, aa, bb);
 
     addPoint(aa);
     addPoint(bb);
-    parent.addSegment(this);
+    _parent->addSegment(this);
 }
 
 bool DPSegment::operator == (const DPSegment &b)

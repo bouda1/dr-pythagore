@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <unistd.h>
 #include "pool.h"
 #include "action.h"
@@ -15,7 +16,10 @@ DPPool::DPPool()
 
 DPPool::~DPPool()
 {
-    _stop = true;
+    {
+        unique_lock<mutex> lock(_stop_mutex);
+        _stop = true;
+    }
     _condition.notify_all();
 
     for (int i = 0; i < _thread.size(); i++)
@@ -56,15 +60,8 @@ void DPPool::loop(int time)
     sleep(time);
 }
 
-bool DPPool::stopAsked() const
+bool DPPool::stopAsked()
 {
+    unique_lock<mutex> lock(_stop_mutex);
     return _stop;
 }
-
-/*int main()
-{
-    DPPool pool;
-    pool.loop(10);
-    cout << "This is the end" << endl;
-    return 0;
-}*/

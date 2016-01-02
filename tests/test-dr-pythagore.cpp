@@ -26,9 +26,8 @@ static void summary()
 
 int main()
 {
-    DPPool pool;
-    DPPlan plan(pool);
-    DPLexer lexer(plan);
+    DPPlan plan;
+    DPLexer lexer(&plan);
 
     lexer.parse("Let B:Point");
     lexer.parse("Let A:Point");
@@ -59,6 +58,7 @@ int main()
     ASSERT(lexer.getResult());
     lexer.parse("[AB] = [AB] ?");
     ASSERT(lexer.getResult());
+    lexer.parse("Assume A = B");
 
     finalize();
     return 0;

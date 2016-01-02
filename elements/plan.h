@@ -1,6 +1,7 @@
 #ifndef __PLAN_H__
 #define __PLAN_H__
 #include <array>
+#include <mutex>
 #include <unordered_set>
 #include <unordered_map>
 #include "pool.h"
@@ -23,13 +24,15 @@ class DPPlan {
     std::unordered_set<DPLine *> _linesSet;
     std::unordered_set<DPSegment *> _segmentsSet;
     std::unordered_map<std::string, DPPoint *> _pointsList;
+
+    mutable std::mutex _rules_mutex;
     std::array<std::unordered_map<DPElement *,
                                   std::unordered_set<DPElement *> >,
                BIN_REL_COUNT> _rules;
-    const DPPool &_pool;
+    DPPool _pool;
 
 public:
-    DPPlan(const DPPool &pool);
+    DPPlan();
     DPPoint *getPoint(const char *a);
     DPLine *getLine(DPPoint *a, DPPoint *b);
     DPSegment *getSegment(DPPoint *a, DPPoint *b);
@@ -38,7 +41,8 @@ public:
     void addSegment(DPSegment *a);
     bool pointExists(const char *a);
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
-    bool hasRelation(DPBinRel op, DPPoint *a, DPPoint *b);
+    bool hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
+    std::unordered_map<DPElement *, std::unordered_set<DPElement *> >getRelations(DPBinRel op) const;
 };
 
 #endif /* __PLAN_H__ */
