@@ -7,14 +7,12 @@
 using namespace std;
 
 DPSegment::DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b)
-    : DPSet(parent), _beginPoint(nullptr), _endPoint(nullptr)
+    : DPSet(parent), _beginPoint(a), _endPoint(b)
 {
     stringstream ss;
     ss << '[' << a->getName() << b->getName() << ']';
     setName(ss.str());
 
-    addPoint(a);
-    addPoint(b);
     _parent->addSegment(this);
 }
 
@@ -41,8 +39,8 @@ DPSegment::DPSegment(DPPlan *parent, const char *a, const char *b)
     /* We must assume points are distinct. */
     _parent->setRelation(BIN_REL_DISTINCT, aa, bb);
 
-    addPoint(aa);
-    addPoint(bb);
+    _beginPoint = aa;
+    _endPoint = bb;
     _parent->addSegment(this);
 }
 

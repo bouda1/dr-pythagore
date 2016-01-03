@@ -49,17 +49,6 @@ program ::= boolean(A) END. {
     token->setResult(A);
 }
 
-/* Checks */
-boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
-    cout << "Check points equality" << endl;
-    if (!B || !C) {
-        cout << "syntax error: one of those points does not exist" << endl;
-        token->setError();
-    }
-    else
-        A = (*B == *C);
-}
-
 /* Points in set */
 boolean(A) ::= point(B) IN set(C) INTERRO. {
     cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
@@ -67,6 +56,26 @@ boolean(A) ::= point(B) IN set(C) INTERRO. {
 }
 
 /* Equivalences */
+boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
+    cout << "Check points equality" << endl;
+    if (!B || !C) {
+        cout << "syntax error: one of these points does not exist" << endl;
+        token->setError();
+    }
+    else
+        A = (*B == *C);
+}
+
+boolean(A) ::= point(B) DISTINCT point(C) INTERRO. {
+    cout << "Check points equality" << endl;
+    if (!B || !C) {
+        cout << "syntax error: one of these points does not exist" << endl;
+        token->setError();
+    }
+    else
+        A = (*B != *C);
+}
+
 boolean(A) ::= line PARALLEL line INTERRO. {
     cout << "Check if lines are parallel" << endl;
     A = 0;
@@ -107,7 +116,9 @@ line(A) ::= LPAR point(B) point(C) RPAR. {
 
 segment(A) ::= LBRA point(B) point(C) RBRA. {
     if (!B || !C) {
-        cout << "syntax error: one of those points does not exist" << endl;
+        cout << "syntax error (segment): one of those points does not exist" << endl;
+        cout << "First point " << (B ? B->getName(): "No name") << endl;
+        cout << "Second point " << (C ? C->getName(): "No name") << endl;
         token->setError();
     }
     else {
@@ -121,6 +132,10 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
 
 point(A) ::= IDENT(B). {
     A = token->getPlan()->getPoint(B);
+    if (!A) {
+        cout << "Error: The point " << B << " is not recognized." << endl;
+        token->setError();
+    }
 }
 
 /* Constraints */
@@ -147,6 +162,7 @@ program ::= LET IDENT(A) COLON POINT END. {
 
 program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
     cout << "Let [" << A << B << "] be a segment." << endl;
+    DPSegment *a = new DPSegment(token->getPlan(), A, B);
 }
 
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {

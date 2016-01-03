@@ -1,32 +1,45 @@
 #include <iostream>
+#include <readline/history.h>
+#include <readline/readline.h>
 #include "lexer.h"
 #include "pool.h"
 
 using namespace std;
+
+/* The string containing the entered line */
+static char *line_read = nullptr;
+
+char *rl_gets()
+{
+    if (line_read) {
+        free(line_read);
+        line_read = NULL;
+    }
+
+    /* Get a line from the user */
+    line_read = readline(">> ");
+
+    /* If the line has any text in it, save it on the history */
+    if (line_read && *line_read)
+        add_history(line_read);
+
+    return line_read;
+}
 
 int main()
 {
     DPPlan plan;
     DPLexer lexer(&plan);
 
-    lexer.parse("Let B:Point");
-    lexer.parse("Let A:Point");
-    lexer.parse("Let (CD):Line");
-    lexer.parse("Let (AB):Line");
-    lexer.parse("A = B ?");
-    lexer.parse("A = A ?");
-    lexer.parse("Assume C In (AB)");
-    lexer.parse("C In (AB) ?");
-    lexer.parse("Assume C != B");
-    lexer.parse("A In (BC) ?");
-    lexer.parse("Let D:Point");
-    lexer.parse("D In (BC) ?");
-    lexer.parse("Assume A != D");
-    lexer.parse("(BC) = (AD) ?");
-    lexer.parse("(BA) = (BC) ?");
-    lexer.parse("Let [RG]: Segment");
-    lexer.parse("[AB] = [BC] ?");
-    lexer.parse("[AB] = [BA] ?");
-    lexer.parse("[AB] = [AB] ?");
+    do {
+        char *ret = rl_gets();
+        if (ret == NULL || strcmp(ret, "quit") == 0 || *ret == 0)
+            break;
+        lexer.parse(ret);
+        cout << "\t" << lexer.getResult() << endl;
+    }
+    while (true);
+
+    cout << endl;
     return 0;
 }

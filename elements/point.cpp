@@ -1,8 +1,12 @@
+#include <iostream>
 #include "point.h"
+
+using namespace std;
 
 DPPoint::DPPoint(DPPlan *parent, const char *n)
     : DPElement(parent, n)
 {
+    cout << "\x1b[33;1m" << "New point " << n << "\x1b[0m" << endl;
     parent->addPoint(this);
 }
 

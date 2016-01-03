@@ -37,6 +37,13 @@ int main()
     ASSERT(!lexer.getResult());
     lexer.parse("A = A ?");
     ASSERT(lexer.getResult());
+    lexer.parse("Let W:Point");
+    lexer.parse("Let X:Point");
+    lexer.parse("Assume W!=X");
+    lexer.parse("W = X ?");
+    ASSERT(!lexer.getResult());
+    lexer.parse("W != X ?");
+    ASSERT(lexer.getResult());
     lexer.parse("Assume C In (AB)");
     lexer.parse("C In (AB) ?");
     ASSERT(lexer.getResult());
@@ -58,7 +65,10 @@ int main()
     ASSERT(lexer.getResult());
     lexer.parse("[AB] = [AB] ?");
     ASSERT(lexer.getResult());
-    lexer.parse("Assume A = B");
+    lexer.parse("Let [FG]:Segment");
+    lexer.parse("Let [HJ]:Segment");
+    lexer.parse("[FG] = [HJ] ?");
+    ASSERT(lexer.getResult() == false);
 
     finalize();
     return 0;
