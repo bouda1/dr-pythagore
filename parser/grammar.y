@@ -55,6 +55,28 @@ boolean(A) ::= point(B) IN set(C) INTERRO. {
     A = C->contains(B);
 }
 
+/* Distinct */
+boolean(A) ::= point(B) DISTINCT point(C) INTERRO. {
+    cout << "Check points equality" << endl;
+    if (!B || !C) {
+        cout << "syntax error: one of these points does not exist" << endl;
+        token->setError();
+    }
+    else
+        A = (*B != *C);
+}
+
+boolean(A) ::= line(B) DISTINCT line(C) INTERRO. {
+    cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
+    cout << "NOT IMPLEMENTED" << endl;
+    A = false;
+}
+
+boolean(A) ::= segment(B) DISTINCT segment(C) INTERRO. {
+    cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
+    A = (*B != *C);
+}
+
 /* Equivalences */
 boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
     cout << "Check points equality" << endl;
@@ -64,16 +86,6 @@ boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
     }
     else
         A = (*B == *C);
-}
-
-boolean(A) ::= point(B) DISTINCT point(C) INTERRO. {
-    cout << "Check points equality" << endl;
-    if (!B || !C) {
-        cout << "syntax error: one of these points does not exist" << endl;
-        token->setError();
-    }
-    else
-        A = (*B != *C);
 }
 
 boolean(A) ::= line PARALLEL line INTERRO. {

@@ -33,10 +33,12 @@ int main()
 
     do {
         char *ret = rl_gets();
-        if (ret == NULL || strcmp(ret, "quit") == 0 || *ret == 0)
+        if (ret == NULL || strcmp(ret, "quit") == 0)
             break;
-        lexer.parse(ret);
-        cout << "\t" << lexer.getResult() << endl;
+        if (*ret) {
+            lexer.parse(ret);
+            cout << "\t" << lexer.getResult() << endl;
+        }
     }
     while (true);
 

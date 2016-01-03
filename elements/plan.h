@@ -33,16 +33,16 @@ class DPPlan {
 
 public:
     DPPlan();
-    DPPoint *getPoint(const char *a);
+    DPPoint *getPoint(const char *a) const;
     DPLine *getLine(DPPoint *a, DPPoint *b);
     DPSegment *getSegment(DPPoint *a, DPPoint *b);
     void addPoint(DPPoint *a);
     void addLine(DPLine *a);
     void addSegment(DPSegment *a);
-    bool pointExists(const char *a);
+    bool pointExists(const char *a) const;
     void setRelation(DPBinRel op, DPElement *a, DPElement *b);
     bool hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
-    std::unordered_map<DPElement *, std::unordered_set<DPElement *> >getRelations(DPBinRel op) const;
+    std::unordered_map<DPElement *, std::unordered_set<DPElement *> > getRelations(DPBinRel op) const;
 };
 
 #endif /* __PLAN_H__ */

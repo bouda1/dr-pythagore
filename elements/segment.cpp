@@ -54,6 +54,16 @@ bool DPSegment::operator == (const DPSegment &b)
             || (*beginPoint == *_endPoint && *endPoint == *_beginPoint));
 }
 
+bool DPSegment::operator != (const DPSegment &b)
+{
+    int count = 0;
+    DPPoint *beginPoint = b.getBegin();
+    DPPoint *endPoint = b.getEnd();
+
+    return ((*beginPoint != *_beginPoint && *beginPoint != *_endPoint)
+            || (*endPoint != *_beginPoint && *endPoint != *_endPoint));
+}
+
 DPPoint *DPSegment::getEnd() const
 {
     return _endPoint;

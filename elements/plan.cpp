@@ -23,7 +23,6 @@ void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
     _rules[op][a].insert(b);
     _rules_mutex.unlock();
 
-    cout << "Operator " << op << " size " << _rules[op].size() << endl;
     if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
         _pool.enqueueTask(new CheckEqualDistinct(this));
 }
@@ -51,16 +50,16 @@ bool DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
     return false;
 }
 
-bool DPPlan::pointExists(const char *a)
+bool DPPlan::pointExists(const char *a) const
 {
-    unordered_map<string, DPPoint *>::iterator it;
+    unordered_map<string, DPPoint *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end());
 }
 
-DPPoint *DPPlan::getPoint(const char *a)
+DPPoint *DPPlan::getPoint(const char *a) const
 {
-    unordered_map<string, DPPoint *>::iterator it;
+    unordered_map<string, DPPoint *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end()) ? it->second : nullptr;
 }

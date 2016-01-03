@@ -10,6 +10,7 @@ public:
     DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b);
     DPSegment(DPPlan *parent, const char *a, const char *b);
     bool operator == (const DPSegment &b);
+    bool operator != (const DPSegment &b);
     void addPoint(DPPoint *a);
     DPPoint *getBegin() const;
     DPPoint *getEnd() const;
