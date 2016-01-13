@@ -1,5 +1,6 @@
 SET(tasks_SRC
     checkequaldistinct.cpp checkequaldistinct.h
+    checklinesequality.cpp checklinesequality.h
     )
 
 ADD_LIBRARY(tasks STATIC

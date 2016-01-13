@@ -1,81 +1,30 @@
-#include <iostream>
-#include "lexer.h"
-#include "test-dr-pythagore.h"
-#include "pool.h"
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <cppunit/ui/text/TextTestRunner.h>
+#include <cppunit/CompilerOutputter.h>
+#include "test_lexer.h"
+#include "test_dptree.h"
 
-static int OK = 0;
-static int NOK = 0;
+CPPUNIT_TEST_SUITE_REGISTRATION(TestDPLexer);
+CPPUNIT_TEST_SUITE_REGISTRATION(TestDPTree);
 
-void inc_ok()
+int main(int argc, char **argv)
 {
-    OK++;
+    CPPUNIT_NS::TestResult testResult;
+
+    CPPUNIT_NS::TestResultCollector collectedResults;
+    testResult.addListener(&collectedResults);
+
+    CPPUNIT_NS::BriefTestProgressListener progress;
+    testResult.addListener(&progress);
+
+    CPPUNIT_NS::TestRunner runner;
+    runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+    runner.run(testResult);
+
+    CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults, std::cerr);
+    compilerOutputter.write();
+    return collectedResults.wasSuccessful() ? 0 : 1;
 }
 
-void inc_nok()
-{
-    NOK++;
-}
-
-using namespace std;
-
-static void summary()
-{
-    cout << endl << "\x1b[31;1m" << NOK << "\x1b[0m / \x1b[32;1m"
-         << OK + NOK << "\x1b[0m tests failed." << endl;
-}
-
-int main()
-{
-    DPPlan plan;
-    DPLexer lexer(&plan);
-
-    lexer.parse("Let B:Point");
-    lexer.parse("Let A:Point");
-    lexer.parse("Let (CD):Line");
-    lexer.parse("Let (AB):Line");
-    lexer.parse("A = B ?");
-    ASSERT(!lexer.getResult());
-    lexer.parse("A = A ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Let W:Point");
-    lexer.parse("Let X:Point");
-    lexer.parse("Assume W!=X");
-    lexer.parse("W = X ?");
-    ASSERT(!lexer.getResult());
-    lexer.parse("W != X ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Assume C In (AB)");
-    lexer.parse("C In (AB) ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Assume C != B");
-    lexer.parse("A In (BC) ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Let D:Point");
-    lexer.parse("D In (BC) ?");
-    ASSERT(!lexer.getResult());
-    lexer.parse("Assume A != D");
-    lexer.parse("(BC) = (AD) ?");
-    ASSERT(!lexer.getResult());
-    lexer.parse("(BA) = (BC) ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Let [RG]: Segment");
-    lexer.parse("[AB] = [BC] ?");
-    ASSERT(!lexer.getResult());
-    lexer.parse("[AB] = [BA] ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("[AB] = [AB] ?");
-    ASSERT(lexer.getResult());
-    lexer.parse("Let [FG]:Segment");
-    lexer.parse("Let [HJ]:Segment");
-    lexer.parse("[FG] = [HJ] ?");
-    ASSERT(lexer.getResult() == false);
-
-    finalize();
-    return 0;
-}
-
-void finalize()
-{
-    summary();
-    exit(NOK);
-}

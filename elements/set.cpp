@@ -10,6 +10,7 @@ DPSet::DPSet(DPPlan *parent)
 
 bool DPSet::contains(DPPoint *point) const
 {
+    unique_lock<mutex> lock(_singlePointsMutex);
     unordered_set<DPPoint *>::const_iterator it = _singlePoints.find(point);
 
     return it != _singlePoints.end();
@@ -17,5 +18,12 @@ bool DPSet::contains(DPPoint *point) const
 
 void DPSet::addPoint(DPPoint *a)
 {
+    unique_lock<mutex> lock(_singlePointsMutex);
     _singlePoints.insert(a);
+}
+
+unordered_set<DPPoint *> DPSet::getSinglePoints() const
+{
+    unique_lock<mutex> lock(_singlePointsMutex);
+    return _singlePoints;
 }

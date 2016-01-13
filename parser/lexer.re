@@ -83,7 +83,8 @@ void DPLexer::parse(const char *s)
 
     if (!_token.onError())
         dPParse(_parser, 0, NULL, &_token);
-
+    else
+        _token.setResult(false);
 }
 
 bool DPLexer::getResult() const

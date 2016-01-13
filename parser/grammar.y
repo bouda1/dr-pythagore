@@ -88,9 +88,9 @@ boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
         A = (*B == *C);
 }
 
-boolean(A) ::= line PARALLEL line INTERRO. {
-    cout << "Check if lines are parallel" << endl;
-    A = 0;
+boolean(A) ::= line(B) PARALLEL line(C) INTERRO. {
+    cout << "Check if lines " << B->getName() << " and " << C->getName() << " are parallel" << endl;
+    A = B->parallelTo(*C);
 }
 
 boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
@@ -164,6 +164,11 @@ program ::= ASSUME point(A) DISTINCT point(B) END. {
 program ::= ASSUME point(A) EQUALS point(B) END. {
     cout << "Assume " << A->getName() << " is distinct from " << B->getName() << endl;
     token->getPlan()->setRelation(BIN_REL_EQUALS, A, B);
+}
+
+program ::= ASSUME line(A) PARALLEL line(B) END. {
+    cout << "Assume " << A->getName() << " is parallel to " << B->getName() << endl;
+    token->getPlan()->setRelation(BIN_REL_PARALLEL, A, B);
 }
 
 /* Definitions */

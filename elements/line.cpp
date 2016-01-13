@@ -45,7 +45,7 @@ DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
     _parent->addLine(this);
 }
 
-bool DPLine::operator == (const DPLine &b)
+bool DPLine::operator == (const DPLine &b) const
 {
     int count = 0;
     DPPoint *first_point = nullptr;
@@ -59,4 +59,10 @@ bool DPLine::operator == (const DPLine &b)
             return true;
     }
     return false;
+}
+
+bool DPLine::parallelTo(const DPLine &b) const
+{
+    return getParent()->hasRelation(BIN_REL_PARALLEL,
+                                    const_cast<DPLine *>(this), const_cast<DPLine *>(&b));
 }

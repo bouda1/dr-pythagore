@@ -8,6 +8,7 @@ OPTION(COVERAGE "Set this variable to ON to check coverage of tests" OFF)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts)
 
 FIND_PACKAGE(Readline REQUIRED)
+FIND_PACKAGE(CPPUNIT REQUIRED)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser pool ${Readline_INCLUDE_DIR})
 
