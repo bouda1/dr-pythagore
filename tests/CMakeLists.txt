@@ -7,7 +7,7 @@ ADD_EXECUTABLE(test-dr-pythagore
         test_dptree.cpp test_dptree.h
         ${src_test})
 
-TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool ${CPPUNIT_LIBRARY})
+TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool dptree ${CPPUNIT_LIBRARY})
 
 IF (COVERAGE)
     SETUP_TARGET_FOR_COVERAGE(test-coverage
