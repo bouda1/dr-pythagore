@@ -18,7 +18,7 @@ public:
     static int getBit(int *treeData, int range);
     static int compareData(int *treeData, int *userData,
                            int start, int end,
-                           DPTree<int>::DPTreeContinue &cont);
+                           DPNodeContinue &cont);
 
 protected:
     void testTreeSize();

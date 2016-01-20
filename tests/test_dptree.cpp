@@ -18,21 +18,21 @@ int TestDPTree::getBit(int *treeData, int range)
     return ((*treeData) & (1 << range)) != 0;
 }
 
-int TestDPTree::compareData(int *treeData, int *userData, int start, int end, DPTree<int>::DPTreeContinue &cont)
+int TestDPTree::compareData(int *treeData, int *userData, int start, int end, DPNodeContinue &cont)
 {
     int i, bit;
     if (treeData == nullptr)
         return -1;
     for (i = start, bit = 1 << start; i < end; i++, bit <<= 1) {
         if ((*treeData & bit) != (*userData & bit)) {
-            cont = (*userData & bit) ? DPTree<int>::DPTreeRight : DPTree<int>::DPTreeLeft;
+            cont = (*userData & bit) ? DPNodeRight : DPNodeLeft;
             return i;
         }
     }
     if (i < 32)
-        cont = (*userData & bit) ? DPTree<int>::DPTreeRight : DPTree<int>::DPTreeLeft;
+        cont = (*userData & bit) ? DPNodeRight : DPNodeLeft;
     else
-        cont = DPTree<int>::DPTreeLeaf;
+        cont = DPNodeLeaf;
 
     return i;
 }
