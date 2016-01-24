@@ -1,6 +1,13 @@
 #ifndef __DPTREE_H__
 #define __DPTREE_H__
 
+#include <cassert>
+#include <sstream>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
 enum DPNodeContinue {
     DPNodeLeaf,
     DPNodeLeft,
@@ -23,10 +30,28 @@ private:
     bool _leaf;
 
 protected:
-    DPTree<T> *getRoot() const;
-    DPNode<T> *getParent() const;
-    void replaceInParents(T *oldData, T *newData);
-    bool isLeaf() const;
+    DPTree<T> *getRoot() const
+    {
+        return _root;
+    }
+    DPNode<T> *getParent() const
+    {
+        return _parent;
+    }
+    void replaceInParents(T *oldData, T *newData)
+    {
+        if (_data == oldData)
+            _data = newData;
+        DPNode<T> *parent = getParent();
+        while (parent) {
+            parent->replaceInParents(oldData, newData);
+            parent = parent->getParent();
+        }
+    }
+    bool isLeaf() const
+    {
+        return _leaf;
+    }
 
 public:
     void setStart(int start)
@@ -51,7 +76,118 @@ public:
         return retval;
     }
     DPNode(DPTree<T> *root);
-    void insert(T *data);
+
+    void insert(T *data)
+    {
+        DPNodeContinue cont;
+        int cmp = getRoot()->_compareData(_data, data, _start, _end, cont);
+        /* Here nothing to compare, the tree is empty */
+        if (cmp == -1) {
+            _data = data;
+            _start = 0;
+            _end = getRoot()->getMaxKeyLength();
+        }
+        /* They are equal on the range from _start to _end */
+        else if (cmp == _end) {
+            switch (cont) {
+            case DPNodeLeft:
+                if (!_left)
+                    _left = new DPNode<T>(_root);
+                _left->insert(data);
+                break;
+            case DPNodeRight:
+                if (!_right)
+                    _right = new DPNode<T>(_root);
+                _right->insert(data);
+                break;
+            case DPNodeLeaf:
+                if (isLeaf()) {
+                    /* We already are a leaf, it is replaced by the new value */
+                    if (_data != _data) {
+                        replaceInParents(_data, data);
+                        delete _data;
+                    }
+                }
+                else {
+                    setLeaf(true);
+                    _data = data;
+                }
+            }
+        }
+        else {
+            DPNode *newActual = new DPNode<T>(_root);
+            newActual->setStart(cmp);
+            newActual->setEnd(_end);
+            newActual->setData(_data);
+            newActual->setLeaf(_leaf);
+
+            DPNode *newUser = new DPNode<T>(_root);
+            newUser->setStart(cmp);
+            newUser->setEnd(_end);
+            newUser->setData(data);
+            newUser->setLeaf(true);
+            _end = cmp;
+            _leaf = false;
+
+            switch (cont) {
+            case DPNodeLeft:
+                _right = newActual;
+                _left = newUser;
+                break;
+            case DPNodeRight:
+                _right = newUser;
+                _left = newActual;
+                break;
+            case DPNodeLeaf:
+                abort();
+            }
+        }
+    }
+
+    T *lookup(T *key) const
+    {
+        DPNodeContinue cont;
+        int cmp = getRoot()->_compareData(_data, key, _start, _end, cont);
+        /* Here nothing to compare, the tree is empty */
+        if (cmp == -1)
+            return nullptr;
+
+        /* They are equal on the range from _start to _end */
+        else if (cmp == _end) {
+            switch (cont) {
+            case DPNodeLeft:
+                return _left ? _left->lookup(key) : nullptr;
+                break;
+            case DPNodeRight:
+                return _right ? _right->lookup(key) : nullptr;
+                break;
+            case DPNodeLeaf:
+                return isLeaf() ? _data : nullptr;
+            }
+        }
+        else
+            return nullptr;
+    }
+
+    std::string dump() const
+    {
+        stringstream ss;
+        ss << '"' << this << '"' << " [ label = \"";
+        ss << "start: " << _start << "\\n";
+        ss << "end: " << _end << "\\n";
+        ss << "data: " << _data << "\\n";
+        ss << "leaf: " << _leaf;
+        ss << "\" ]" << endl;
+        if (_left) {
+            ss << '"' << this << "\" -> " << '"' << _left << '"' << " [ label = \"left\" ]" << endl;
+            ss << _left->dump();
+        }
+        if (_right) {
+            ss << '"' << this << "\" -> " << '"' << _right << '"' << " [ label = \"right\" ]" << endl;
+            ss << _right->dump();
+        }
+        return ss.str();
+    }
 };
 
 template <typename T>
@@ -75,7 +211,60 @@ public:
     {
         return _maxKeyLength;
     }
-    void insert(T *data);
+    void insert(T *data)
+    {
+        DPNodeContinue cont;
+        int first = _getBit(data, 0);
+
+        if (first == 0)
+            /* this data should go on the left */
+            if (!_left) {
+                _left = new DPNode<T>(this);
+                _left->setStart(0);
+                _left->setEnd(_maxKeyLength);
+                _left->setData(data);
+                _left->setLeaf(true);
+            }
+            else
+                _left->insert(data);
+        else {
+            /* this data should go on the right */
+            if (!_right) {
+                _right = new DPNode<T>(this);
+                _right->setStart(0);
+                _right->setEnd(_maxKeyLength);
+                _right->setData(data);
+                _right->setLeaf(true);
+            }
+            else
+                _right->insert(data);
+        }
+    }
+    T *lookup(T *key) const
+    {
+        if (_getBit(key, 0) == 0)
+            return _left ? _left->lookup(key) : nullptr;
+        else
+            return _right ? _right->lookup(key) : nullptr;
+    }
+    std::string dump() const
+    {
+        std::stringstream ss;
+        ss << "digraph { " << endl;
+        ss << "rankdir=LR;" << endl;
+        ss << '"' << this << '"' << "[ label = \"root\" ]" << endl;
+
+        if (_left) {
+            ss << '"' << this << "\" -> " << '"' << _left << '"' << " [ label = \"left\" ]" << endl;
+            ss << _left->dump();
+        }
+        if (_right) {
+            ss << '"' << this << "\" -> " << '"' << _right << '"' << " [ label = \"right\" ]" << endl;
+            ss << _right->dump();
+        }
+        ss << " } ";
+        return ss.str();
+    }
 };
 
 template <typename T>
@@ -92,36 +281,6 @@ DPNode<T>::DPNode(DPTree<T> *root)
 }
 
 template <typename T>
-bool DPNode<T>::isLeaf() const
-{
-    return _leaf;
-}
-
-template <typename T>
-DPNode<T> *DPNode<T>::getParent() const
-{
-    return _parent;
-}
-
-template <typename T>
-DPTree<T> *DPNode<T>::getRoot() const
-{
-    return _root;
-}
-
-template <typename T>
-void DPNode<T>::replaceInParents(T *oldData, T *newData)
-{
-    if (_data == oldData)
-        _data = newData;
-    DPNode<T> *parent = getParent();
-    while (parent) {
-        parent->replaceInParents(oldData, newData);
-        parent = parent->getParent();
-    }
-}
-
-template <typename T>
 DPTree<T>::DPTree(int (*getBit)(T *, int),
                   int (*compareData)(T *, T *, int, int, DPNodeContinue &),
                   int maxKeyLength)
@@ -131,103 +290,6 @@ DPTree<T>::DPTree(int (*getBit)(T *, int),
     , _compareData(compareData)
     , _maxKeyLength(maxKeyLength)
 {
-}
-
-template <typename T>
-void DPNode<T>::insert(T *data)
-{
-    DPNodeContinue cont;
-    int cmp = getRoot()->_compareData(_data, data, _start, _end, cont);
-    /* Here nothing to compare, the tree is empty */
-    if (cmp == -1) {
-        _data = data;
-        _start = 0;
-        _end = getRoot()->getMaxKeyLength();
-    }
-    /* They are equal on the range from _start to _end */
-    else if (cmp == _end) {
-        switch (cont) {
-        case DPNodeLeft:
-            if (!_left)
-                _left = new DPNode<T>(_root);
-            _left->insert(data);
-            break;
-        case DPNodeRight:
-            if (!_right)
-                _right = new DPNode<T>(_root);
-            _right->insert(data);
-            break;
-        case DPNodeLeaf:
-            if (isLeaf()) {
-                /* We already are a leaf, it is replaced by the new value */
-                replaceInParents(_data, data);
-                delete _data;
-            }
-            else {
-                setLeaf(true);
-                _data = data;
-            }
-        }
-    }
-    else {
-        DPNode *newActual = new DPNode<T>(_root);
-        newActual->setStart(cmp);
-        newActual->setEnd(_end);
-        newActual->setData(_data);
-        newActual->setLeaf(_leaf);
-
-        DPNode *newUser = new DPNode<T>(_root);
-        newUser->setStart(cmp);
-        newUser->setEnd(_end);
-        newUser->setData(data);
-        newUser->setLeaf(true);
-        _end = cmp;
-        _leaf = false;
-
-        switch (cont) {
-        case DPNodeLeft:
-            _left = newActual;
-            _right = newUser;
-            break;
-        case DPNodeRight:
-            _right = newActual;
-            _left = newUser;
-            break;
-        case DPNodeLeaf:
-            abort();
-        }
-    }
-}
-
-template <typename T>
-void DPTree<T>::insert(T *data)
-{
-    DPNodeContinue cont;
-    int first = _getBit(data, 0);
-
-    if (first == 0)
-        /* this data should go on the left */
-        if (!_left) {
-            _left = new DPNode<T>(this);
-            _left->setStart(0);
-            _left->setEnd(_maxKeyLength);
-            _left->setData(data);
-            _left->setLeaf(true);
-        }
-        else
-            _left->insert(data);
-    else {
-        /* this data should go on the right */
-        if (!_right) {
-            _right = new DPNode<T>(this);
-            _right->setStart(0);
-            _right->setEnd(_maxKeyLength);
-            _right->setData(data);
-            _right->setLeaf(true);
-        }
-        else
-            _right->insert(data);
-    }
 }
 
 #endif /* __DPTREE_H__ */

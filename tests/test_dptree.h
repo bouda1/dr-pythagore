@@ -9,6 +9,7 @@
 class TestDPTree : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(TestDPTree);
     CPPUNIT_TEST(testTreeSize);
+    CPPUNIT_TEST(testTreeInsert);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -22,6 +23,7 @@ public:
 
 protected:
     void testTreeSize();
+    void testTreeInsert();
 
 private:
 };

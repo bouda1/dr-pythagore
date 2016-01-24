@@ -46,5 +46,28 @@ void TestDPTree::testTreeSize()
     }
     cout << endl << " ***** Tree size : " << tree.size() << " ***** " << endl;
     CPPUNIT_ASSERT(tree.size() == 10);
+
+    for (int j = 0; j < 10; j++) {
+        int *ret = tree.lookup(&j);
+        CPPUNIT_ASSERT(ret);
+        if (ret)
+            CPPUNIT_ASSERT(j == *ret);
+    }
 }
 
+void TestDPTree::testTreeInsert()
+{
+    int array[] = { 0, 186, 90, 53, 877, 3277, 621 };
+
+    DPTree<int> tree(TestDPTree::getBit, TestDPTree::compareData, sizeof(int) << 3);
+
+    for (int i = 0; i < sizeof(array) / sizeof(int); i++)
+        tree.insert(array + i);
+
+    CPPUNIT_ASSERT(tree.size() == 7);
+    for (int j = 1; j < 20; j++)
+        CPPUNIT_ASSERT(!tree.lookup(&j));
+
+    for (int j = 0; j < sizeof(array) / sizeof(int); j++)
+        CPPUNIT_ASSERT(*tree.lookup(array + j) == array[j]);
+}
