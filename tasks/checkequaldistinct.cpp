@@ -15,19 +15,17 @@ CheckEqualDistinct::CheckEqualDistinct(DPPlan *plan)
 void CheckEqualDistinct::routine()
 {
     cout << "CheckEqualDistinct routine" << endl;
-    unordered_map<DPElement *, unordered_set<DPElement *> > mapEq = _plan->getRelations(BIN_REL_EQUALS);
-    unordered_map<DPElement *, unordered_set<DPElement *> >::iterator it;
-    unordered_set<DPElement *>::iterator sit;
+    deque<DPTRule> mapEq = _plan->getRelations(BIN_REL_EQUALS);
+    deque<DPTRule>::iterator it;
 
     for (it = mapEq.begin(); it != mapEq.end(); ++it) {
         cout << "CheckEqualDistinct CHECK" << endl;
-        DPElement *el = it->first;
 
-        for (sit = it->second.begin(); sit != it->second.end(); ++sit) {
-            if (_plan->hasRelation(BIN_REL_DISTINCT, el, *sit)) {
-                cout << "PROBLEM..." << endl;
-                abort();
-            }
+        DPTRule *rule = _plan->hasRelation(BIN_REL_DISTINCT, get<1>(*it), get<2>(*it));
+        if (rule) {
+            cout << "PROBLEM: " << get<3>(*it) << endl;
+            cout << "\tand " << get<3>(*rule) << endl;
+            abort();
         }
     }
 

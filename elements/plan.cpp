@@ -11,43 +11,42 @@ DPPlan::DPPlan()
     : _pool()
 {}
 
-unordered_map<DPElement *, unordered_set<DPElement *> >DPPlan::getRelations(DPBinRel op) const
+deque<DPTRule> DPPlan::getRelations(DPBinRel op) const
 {
     unique_lock<mutex> lock(_rules_mutex);
-    return _rules[op];
+    deque<DPTRule> retval = deque<DPTRule>();
+    for (DPTRule r : _rules) {
+        if (get<0>(r) == op)
+            retval.push_back(r);
+    }
+    return retval;
 }
 
-void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b)
+void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &explanation)
 {
     _rules_mutex.lock();
-    _rules[op][a].insert(b);
+    DPTRule r(op, a, b, explanation);
+    _rules.push_back(r);
     _rules_mutex.unlock();
 
     if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
         _pool.enqueueTask(new CheckEqualDistinct(this));
 }
 
-bool DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
+DPTRule *DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
 {
-    unordered_map<DPElement *, unordered_set<DPElement *> >::const_iterator it;
-
     {
         unique_lock<mutex> lock(_rules_mutex);
-        it = _rules[op].find(a);
-        if (it == _rules[op].end()) {
-            DPElement *tmp = a;
-            a = b;
-            b = tmp;
-            it = _rules[op].find(a);
-        }
-        if (it != _rules[op].end()) {
-            unordered_set<DPElement *>::const_iterator sit = it->second.find(b);
-            if (sit != it->second.end()) {
-                return true;
+        for (const DPTRule &rule : _rules) {
+            if (get<0>(rule) == op) {
+                if (get<1>(rule) == a && get<2>(rule) == b)
+                    return const_cast<DPTRule *>(&rule);
+                else if (get<1>(rule) == b && get<2>(rule) == a)
+                    return const_cast<DPTRule *>(&rule);
             }
         }
     }
-    return false;
+    return nullptr;
 }
 
 bool DPPlan::pointExists(const char *a) const

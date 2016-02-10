@@ -36,8 +36,10 @@ DPSegment::DPSegment(DPPlan *parent, const char *a, const char *b)
     ss << '[' << a << b << ']';
     setName(ss.str());
 
+    ss << " is a segment";
+
     /* We must assume points are distinct. */
-    _parent->setRelation(BIN_REL_DISTINCT, aa, bb);
+    _parent->setRelation(BIN_REL_DISTINCT, aa, bb, ss.str());
 
     _beginPoint = aa;
     _endPoint = bb;

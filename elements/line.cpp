@@ -12,6 +12,11 @@ DPLine::DPLine(DPPlan *parent, DPPoint *a, DPPoint *b)
     ss << '(' << a->getName() << b->getName() << ')';
     setName(ss.str());
 
+    ss << " is a line";
+
+    /* We must assume points are distinct */
+    _parent->setRelation(BIN_REL_DISTINCT, a, b, ss.str());
+
     addPoint(a);
     addPoint(b);
     _parent->addLine(this);
@@ -37,8 +42,10 @@ DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
     ss << '(' << a << b << ')';
     setName(ss.str());
 
+    ss << " is a line";
+
     /* We must assume points are distinct. */
-    _parent->setRelation(BIN_REL_DISTINCT, aa, bb);
+    _parent->setRelation(BIN_REL_DISTINCT, aa, bb, ss.str());
 
     addPoint(aa);
     addPoint(bb);

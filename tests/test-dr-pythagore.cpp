@@ -4,10 +4,8 @@
 #include <cppunit/ui/text/TextTestRunner.h>
 #include <cppunit/CompilerOutputter.h>
 #include "test_lexer.h"
-#include "test_dptree.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestDPLexer);
-CPPUNIT_TEST_SUITE_REGISTRATION(TestDPTree);
 
 int main(int argc, char **argv)
 {

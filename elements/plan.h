@@ -1,9 +1,10 @@
 #ifndef __PLAN_H__
 #define __PLAN_H__
-#include <array>
+#include <deque>
 #include <mutex>
 #include <unordered_set>
 #include <unordered_map>
+#include <tuple>
 #include "pool.h"
 
 class DPElement;
@@ -19,6 +20,8 @@ enum DPBinRel {
     BIN_REL_COUNT
 };
 
+typedef std::tuple<DPBinRel, DPElement *, DPElement *, std::string> DPTRule;
+
 class DPPlan {
 
     std::unordered_set<DPLine *> _linesSet;
@@ -26,9 +29,11 @@ class DPPlan {
     std::unordered_map<std::string, DPPoint *> _pointsList;
 
     mutable std::mutex _rules_mutex;
-    std::array<std::unordered_map<DPElement *,
-                                  std::unordered_set<DPElement *> >,
-               BIN_REL_COUNT> _rules;
+    std::deque<DPTRule> _rules;
+
+//    std::array<std::unordered_map<DPElement *,
+//                                  std::unordered_set<DPElement *> >,
+//               BIN_REL_COUNT> _rules;
     DPPool _pool;
 
 public:
@@ -40,9 +45,9 @@ public:
     void addLine(DPLine *a);
     void addSegment(DPSegment *a);
     bool pointExists(const char *a) const;
-    void setRelation(DPBinRel op, DPElement *a, DPElement *b);
-    bool hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
-    std::unordered_map<DPElement *, std::unordered_set<DPElement *> > getRelations(DPBinRel op) const;
+    void setRelation(DPBinRel op, DPElement *a, DPElement *b, const std::string &explanation);
+    DPTRule *hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
+    std::deque<DPTRule> getRelations(DPBinRel op) const;
 };
 
 #endif /* __PLAN_H__ */

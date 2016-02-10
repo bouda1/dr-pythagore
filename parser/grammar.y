@@ -16,6 +16,7 @@
 
 %include {
 #include <assert.h>
+#include <sstream>
 #include <iostream>
 #include "grammar-prot.h"
 #include "point.h"
@@ -157,18 +158,21 @@ program ::= ASSUME point(A) IN set(B) END. {
 }
 
 program ::= ASSUME point(A) DISTINCT point(B) END. {
-    cout << "Assume " << A->getName() << " is distinct from " << B->getName() << endl;
-    token->getPlan()->setRelation(BIN_REL_DISTINCT, A, B);
+    stringstream ss;
+    ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
+    token->getPlan()->setRelation(BIN_REL_DISTINCT, A, B, ss.str());
 }
 
 program ::= ASSUME point(A) EQUALS point(B) END. {
-    cout << "Assume " << A->getName() << " is distinct from " << B->getName() << endl;
-    token->getPlan()->setRelation(BIN_REL_EQUALS, A, B);
+    stringstream ss;
+    ss << A->getName() << " and " << B->getName() << " are assumed equal";
+    token->getPlan()->setRelation(BIN_REL_EQUALS, A, B, ss.str());
 }
 
 program ::= ASSUME line(A) PARALLEL line(B) END. {
-    cout << "Assume " << A->getName() << " is parallel to " << B->getName() << endl;
-    token->getPlan()->setRelation(BIN_REL_PARALLEL, A, B);
+    stringstream ss;
+    ss << A->getName() << " is assumed parallel to " << B->getName();
+    token->getPlan()->setRelation(BIN_REL_PARALLEL, A, B, ss.str());
 }
 
 /* Definitions */
@@ -183,8 +187,8 @@ program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
 }
 
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
-
-    cout << "Let (" << A << B << ") be a line." << endl;
+    stringstream ss;
+    ss << '(' << A << B << ") is a line.";
     DPLine *a = new DPLine(token->getPlan(), A, B);
 }
 

@@ -4,10 +4,9 @@ SET(src_test
         )
 ADD_EXECUTABLE(test-dr-pythagore
         test_lexer.cpp test_lexer.h
-        test_dptree.cpp test_dptree.h
         ${src_test})
 
-TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool dptree ${CPPUNIT_LIBRARY})
+TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool ${CPPUNIT_LIBRARY})
 
 IF (COVERAGE)
     SETUP_TARGET_FOR_COVERAGE(test-coverage
