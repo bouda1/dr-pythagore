@@ -26,7 +26,7 @@ void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &
 {
     _rules_mutex.lock();
     DPTRule r(op, a, b, explanation);
-    _rules.push_back(r);
+    _rules.insert(r);
     _rules_mutex.unlock();
 
     if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)

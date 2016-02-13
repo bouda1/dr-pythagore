@@ -4,6 +4,7 @@ SET(src_test
         )
 ADD_EXECUTABLE(test-dr-pythagore
         test_lexer.cpp test_lexer.h
+        test_task_checkequaldistinct.cpp test_task_checkequaldistinct.h
         ${src_test})
 
 TARGET_LINK_LIBRARIES(test-dr-pythagore elements parser pool ${CPPUNIT_LIBRARY})

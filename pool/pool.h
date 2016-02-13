@@ -24,7 +24,7 @@ public:
 
     DPPool();
     ~DPPool();
-    void loop(int time);
+    //void loop(int time);
     DPTask *dequeueTask();
     bool queueEmpty() const;
     bool stopAsked();

@@ -2,6 +2,7 @@
 #define __PLAN_H__
 #include <deque>
 #include <mutex>
+#include <set>
 #include <unordered_set>
 #include <unordered_map>
 #include <tuple>
@@ -29,7 +30,7 @@ class DPPlan {
     std::unordered_map<std::string, DPPoint *> _pointsList;
 
     mutable std::mutex _rules_mutex;
-    std::deque<DPTRule> _rules;
+    std::set<DPTRule> _rules;
 
 //    std::array<std::unordered_map<DPElement *,
 //                                  std::unordered_set<DPElement *> >,
