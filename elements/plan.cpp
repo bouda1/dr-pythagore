@@ -11,13 +11,13 @@ DPPlan::DPPlan()
     : _pool()
 {}
 
-deque<DPTRule> DPPlan::getRelations(DPBinRel op) const
+deque<DPTRule *> DPPlan::getRelations(DPBinRel op) const
 {
     unique_lock<mutex> lock(_rules_mutex);
-    deque<DPTRule> retval = deque<DPTRule>();
-    for (DPTRule r : _rules) {
+    deque<DPTRule *> retval = deque<DPTRule *>();
+    for (const DPTRule &r : _rules) {
         if (get<0>(r) == op)
-            retval.push_back(r);
+            retval.push_back(const_cast<DPTRule *>(&r));
     }
     return retval;
 }
@@ -25,7 +25,7 @@ deque<DPTRule> DPPlan::getRelations(DPBinRel op) const
 void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &explanation)
 {
     _rules_mutex.lock();
-    DPTRule r(op, a, b, explanation);
+    DPTRule r(op, a, b, string(explanation));
     _rules.insert(r);
     _rules_mutex.unlock();
 
@@ -111,5 +111,19 @@ void DPPlan::addLine(DPLine *a)
 void DPPlan::addSegment(DPSegment *a)
 {
     _segmentsSet.insert(a);
+}
+
+void DPPlan::addContradiction(DPTRule *a, DPTRule *b)
+{
+    unique_lock<mutex> lock(_contradictions_mutex);
+    _contradictions.push_back(pair<DPTRule *, DPTRule *>(a, b));
+}
+
+string DPPlan::getLastContradiction() const
+{
+    unique_lock<mutex> lock(_contradictions_mutex);
+    pair<DPTRule *, DPTRule *> c = _contradictions.back();
+    string retval = get<3>(*c.first) + " <> " + get<3>(*c.second);
+    return retval;
 }
 

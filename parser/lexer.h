@@ -21,6 +21,7 @@ public:
     void debug(int a, char b);
     void parse(const char *s);
     bool getResult() const;
+    std::string getLastContradiction() const;
 };
 
 #endif /* __LEXER_H__ */

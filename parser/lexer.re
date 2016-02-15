@@ -92,3 +92,7 @@ bool DPLexer::getResult() const
     return _token.getResult();
 }
 
+string DPLexer::getLastContradiction() const
+{
+    return _plan->getLastContradiction();
+}
