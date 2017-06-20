@@ -175,6 +175,12 @@ program ::= ASSUME line(A) PARALLEL line(B) END. {
     token->getPlan()->setRelation(BIN_REL_PARALLEL, A, B, ss.str());
 }
 
+program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
+    stringstream ss;
+    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
+    token->getPlan()->setRelation(BIN_REL_ALIGNED, A, B, C, ss.str());
+}
+
 /* Definitions */
 program ::= LET IDENT(A) COLON POINT END. {
     cout << "Let " << A << " be a point." << endl;

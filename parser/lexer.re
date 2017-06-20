@@ -50,6 +50,8 @@ cont:
         "Segment"           { return CALC_TOKEN_SEGMENT; }
         "Assume"            { return CALC_TOKEN_ASSUME; }
         "In"                { return CALC_TOKEN_IN; }
+        "Aligned"           { return CALC_TOKEN_ALIGNED; }
+        ","                 { return CALC_TOKEN_VIRG; }
         [A-Za-z]            { return CALC_TOKEN_IDENT; }
         "+"                 { return CALC_TOKEN_PLUS; }
         "-"                 { return CALC_TOKEN_MINUS; }

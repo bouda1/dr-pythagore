@@ -9,8 +9,10 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts)
 
 FIND_PACKAGE(Readline REQUIRED)
 FIND_PACKAGE(CPPUNIT REQUIRED)
+FIND_PACKAGE(Lua REQUIRED)
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser pool ${Readline_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser pool
+    ${Readline_INCLUDE_DIR} ${LUA_INCLUDE_DIR})
 
 IF(COVERAGE)
     SET(COVERAGE_CXXFLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
@@ -46,7 +48,8 @@ ADD_EXECUTABLE(drpythagore
 
 SET_PROPERTY(TARGET drpythagore PROPERTY CXX_STANDARD_REQUIRED ON)
 
-TARGET_LINK_LIBRARIES(drpythagore elements parser pool rules ${Readline_LIBRARY})
+TARGET_LINK_LIBRARIES(drpythagore elements parser pool rules
+    ${Readline_LIBRARY} ${LUA_LIBRARIES})
 
 ENABLE_TESTING()
 

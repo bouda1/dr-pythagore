@@ -4,6 +4,7 @@
 #include "line.h"
 #include "segment.h"
 #include "checkequaldistinct.h"
+#include "tasklua.h"
 #include "rules/rule.h"
 
 using namespace std;

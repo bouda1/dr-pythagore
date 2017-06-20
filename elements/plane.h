@@ -19,6 +19,7 @@ enum DPOpRel {
     OP_REL_EQUALS,
     OP_REL_ORTHOGONAL,
     OP_REL_PARALLEL,
+    OP_REL_ALIGNED,
     OP_REL_COUNT
 };
 
