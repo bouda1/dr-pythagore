@@ -24,7 +24,6 @@ DPLine::DPLine(DPPlan *parent, DPPoint *a, DPPoint *b)
 
 DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
     : DPSet(parent)
-
 {
     DPPoint *aa, *bb;
 

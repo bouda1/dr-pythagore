@@ -27,6 +27,6 @@ void TestTaskCheckEqualDistinct::testPoints()
     sleep(1);
     string str = _lexer->getLastContradiction();
     cout << "STR: " << str << endl;
-    CPPUNIT_ASSERT(str == "A and B are assumed equal <> A and B are assumed distinct");
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Cannot assume A=B and A!=B", str, string("<< A and B are assumed equal >> not compatible with << A and B are assumed to be distinct >>"));
 }
 

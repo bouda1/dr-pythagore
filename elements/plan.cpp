@@ -4,6 +4,7 @@
 #include "line.h"
 #include "segment.h"
 #include "checkequaldistinct.h"
+#include "rules/rule.h"
 
 using namespace std;
 
@@ -11,13 +12,13 @@ DPPlan::DPPlan()
     : _pool()
 {}
 
-deque<DPTRule *> DPPlan::getRelations(DPBinRel op) const
+deque<DPRule *> DPPlan::getRelations(DPBinRel op) const
 {
     unique_lock<mutex> lock(_rules_mutex);
-    deque<DPTRule *> retval = deque<DPTRule *>();
-    for (const DPTRule &r : _rules) {
-        if (get<0>(r) == op)
-            retval.push_back(const_cast<DPTRule *>(&r));
+    deque<DPRule *> retval = deque<DPRule *>();
+    for (DPRule *r : _rules) {
+        if (r->getOp() == op)
+            retval.push_back(r);
     }
     return retval;
 }
@@ -25,7 +26,18 @@ deque<DPTRule *> DPPlan::getRelations(DPBinRel op) const
 void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &explanation)
 {
     _rules_mutex.lock();
-    DPTRule r(op, a, b, string(explanation));
+    DPRule *rule = new DPRule(op, a, b, explanation);
+    _rules.insert(rule);
+    _rules_mutex.unlock();
+
+    if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
+        _pool.enqueueTask(new CheckEqualDistinct(this));
+}
+
+void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
+{
+    _rules_mutex.lock();
+    DPRule *r = new DPRule(op, a, b, explanation);
     _rules.insert(r);
     _rules_mutex.unlock();
 
@@ -33,16 +45,16 @@ void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &
         _pool.enqueueTask(new CheckEqualDistinct(this));
 }
 
-DPTRule *DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
+DPRule *DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
 {
     {
         unique_lock<mutex> lock(_rules_mutex);
-        for (const DPTRule &rule : _rules) {
-            if (get<0>(rule) == op) {
-                if (get<1>(rule) == a && get<2>(rule) == b)
-                    return const_cast<DPTRule *>(&rule);
-                else if (get<1>(rule) == b && get<2>(rule) == a)
-                    return const_cast<DPTRule *>(&rule);
+        for (DPRule *rule : _rules) {
+            if (rule->getOp() == op) {
+                if (rule->get(0) == a && rule->get(1) == b)
+                    return rule;
+                else if (rule->get(0) == b && rule->get(1) == a)
+                    return rule;
             }
         }
     }
@@ -113,17 +125,17 @@ void DPPlan::addSegment(DPSegment *a)
     _segmentsSet.insert(a);
 }
 
-void DPPlan::addContradiction(DPTRule *a, DPTRule *b)
+void DPPlan::addContradiction(DPRule *a, DPRule *b)
 {
     unique_lock<mutex> lock(_contradictions_mutex);
-    _contradictions.push_back(pair<DPTRule *, DPTRule *>(a, b));
+    _contradictions.push_back(pair<DPRule *, DPRule *>(a, b));
 }
 
 string DPPlan::getLastContradiction() const
 {
     unique_lock<mutex> lock(_contradictions_mutex);
-    pair<DPTRule *, DPTRule *> c = _contradictions.back();
-    string retval = get<3>(*c.first) + " <> " + get<3>(*c.second);
+    pair<DPRule *, DPRule *> c = _contradictions.back();
+    string retval = "<< " + c.first->getDescription() + " >> not compatible with << " + c.second->getDescription() + " >>";
     return retval;
 }
 

@@ -35,6 +35,7 @@ ADD_SUBDIRECTORY(elements)
 ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(pool)
 ADD_SUBDIRECTORY(tasks)
+ADD_SUBDIRECTORY(rules)
 
 SET(DP_SRC
     drpythagore.cpp
@@ -45,7 +46,7 @@ ADD_EXECUTABLE(drpythagore
 
 SET_PROPERTY(TARGET drpythagore PROPERTY CXX_STANDARD_REQUIRED ON)
 
-TARGET_LINK_LIBRARIES(drpythagore elements parser pool ${Readline_LIBRARY})
+TARGET_LINK_LIBRARIES(drpythagore elements parser pool rules ${Readline_LIBRARY})
 
 ENABLE_TESTING()
 

@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "plan.h"
+#include "rules/rule.h"
 #include "checkequaldistinct.h"
 
 using namespace std;
@@ -15,17 +16,16 @@ CheckEqualDistinct::CheckEqualDistinct(DPPlan *plan)
 void CheckEqualDistinct::routine()
 {
     cout << "CheckEqualDistinct routine" << endl;
-    deque<DPTRule *> mapEq = _plan->getRelations(BIN_REL_EQUALS);
-    deque<DPTRule *>::iterator it;
+    deque<DPRule *> mapEq = _plan->getRelations(BIN_REL_EQUALS);
+    deque<DPRule *>::iterator it;
 
-    for (DPTRule *r : mapEq) {
+    for (DPRule *r : mapEq) {
         cout << "CheckEqualDistinct CHECK" << endl;
 
-        DPTRule *rule = _plan->hasRelation(BIN_REL_DISTINCT, get<1>(*r),
-                                           get<2>(*r));
+        DPRule *rule = _plan->hasRelation(BIN_REL_DISTINCT, r->get(0),
+                                           r->get(1));
         if (rule) {
-            cout << "PROBLEM: " << get<3>(*r) << endl;
-            cout << "\tand " << get<3>(*rule) << endl;
+            cout << "<< " << r->getDescription() << " >> not compatible with << " << rule->getDescription() << " >>" << endl;
             _plan->addContradiction(r, rule);
         }
     }

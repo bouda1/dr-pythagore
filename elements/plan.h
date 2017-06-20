@@ -12,6 +12,7 @@ class DPElement;
 class DPPoint;
 class DPLine;
 class DPSegment;
+class DPRule;
 
 enum DPBinRel {
     BIN_REL_DISTINCT,
@@ -21,7 +22,7 @@ enum DPBinRel {
     BIN_REL_COUNT
 };
 
-typedef std::tuple<DPBinRel, DPElement *, DPElement *, std::string> DPTRule;
+//typedef std::tuple<DPBinRel, DPElement *, DPElement *, std::string> DPTRule;
 
 class DPPlan {
 
@@ -30,10 +31,10 @@ class DPPlan {
     std::unordered_map<std::string, DPPoint *> _pointsList;
 
     mutable std::mutex _rules_mutex;
-    std::set<DPTRule> _rules;
+    std::set<DPRule *> _rules;
 
     mutable std::mutex _contradictions_mutex;
-    std::deque<std::pair<DPTRule *, DPTRule *> > _contradictions;
+    std::deque<std::pair<DPRule *, DPRule *> > _contradictions;
 
     DPPool _pool;
 
@@ -47,9 +48,10 @@ public:
     void addSegment(DPSegment *a);
     bool pointExists(const char *a) const;
     void setRelation(DPBinRel op, DPElement *a, DPElement *b, const std::string &explanation);
-    DPTRule *hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
-    std::deque<DPTRule *> getRelations(DPBinRel op) const;
-    void addContradiction(DPTRule *a, DPTRule *b);
+    void setRelation(DPBinRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
+    DPRule *hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
+    std::deque<DPRule *> getRelations(DPBinRel op) const;
+    void addContradiction(DPRule *a, DPRule *b);
     std::string getLastContradiction() const;
 };
 
