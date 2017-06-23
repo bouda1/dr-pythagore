@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(../tasks)
 
 set(OBJ_SRC
-    plan.cpp plan.h
+    plane.cpp plane.h
     element.cpp element.h
     point.cpp point.h
     set.cpp set.h

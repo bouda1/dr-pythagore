@@ -3,7 +3,7 @@
 
 using namespace std;
 
-DPPoint::DPPoint(DPPlan *parent, const char *n)
+DPPoint::DPPoint(DPPlane *parent, const char *n)
     : DPElement(parent, n)
 {
     cout << "\x1b[33;1m" << "New point " << n << "\x1b[0m" << endl;
@@ -14,7 +14,7 @@ bool DPPoint::operator == (const DPPoint &b)
 {
     if (this == &b)
         return true;
-    return getParent()->hasRelation(BIN_REL_EQUALS, this,
+    return getParent()->hasRelation(OP_REL_EQUALS, this,
                                    const_cast<DPPoint *>(&b));
 }
 
@@ -22,6 +22,6 @@ bool DPPoint::operator != (const DPPoint &b)
 {
     if (this == &b)
         return false;
-    return getParent()->hasRelation(BIN_REL_DISTINCT, this,
+    return getParent()->hasRelation(OP_REL_DISTINCT, this,
                                     const_cast<DPPoint *>(&b));
 }

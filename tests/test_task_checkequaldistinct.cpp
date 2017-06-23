@@ -7,7 +7,7 @@ using namespace std;
 
 void TestTaskCheckEqualDistinct::setUp()
 {
-    _plan = new DPPlan;
+    _plan = new DPPlane;
     _lexer = new DPLexer(_plan);
 }
 

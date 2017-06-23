@@ -1,11 +1,11 @@
 #ifndef __LEXER_H__
 #define __LEXER_H__
-#include "plan.h"
+#include "plane.h"
 #include "grammar-prot.h"
 
 class DPLexer {
     const char *_content;
-    DPPlan *_plan;
+    DPPlane *_plan;
     DPParserToken _token;
     void *_parser;
     const char *_start;
@@ -15,7 +15,7 @@ class DPLexer {
     int scan();
 
 public:
-    DPLexer(DPPlan *plan);
+    DPLexer(DPPlane *plan);
     ~DPLexer();
     char *getTokenValue();
     void debug(int a, char b);

@@ -3,7 +3,7 @@
 
 void TestDPLexer::setUp()
 {
-    _plan = new DPPlan;
+    _plan = new DPPlane;
     _lexer = new DPLexer(_plan);
 }
 

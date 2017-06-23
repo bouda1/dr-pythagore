@@ -1,11 +1,11 @@
 #include <sstream>
-#include "plan.h"
+#include "plane.h"
 #include "line.h"
 #include "point.h"
 
 using namespace std;
 
-DPLine::DPLine(DPPlan *parent, DPPoint *a, DPPoint *b)
+DPLine::DPLine(DPPlane *parent, DPPoint *a, DPPoint *b)
     : DPSet(parent)
 {
     stringstream ss;
@@ -15,14 +15,14 @@ DPLine::DPLine(DPPlan *parent, DPPoint *a, DPPoint *b)
     ss << " is a line";
 
     /* We must assume points are distinct */
-    _parent->setRelation(BIN_REL_DISTINCT, a, b, ss.str());
+    _parent->setRelation(OP_REL_DISTINCT, a, b, ss.str());
 
     addPoint(a);
     addPoint(b);
     _parent->addLine(this);
 }
 
-DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
+DPLine::DPLine(DPPlane *parent, const char *a, const char *b)
     : DPSet(parent)
 {
     DPPoint *aa, *bb;
@@ -44,7 +44,7 @@ DPLine::DPLine(DPPlan *parent, const char *a, const char *b)
     ss << " is a line";
 
     /* We must assume points are distinct. */
-    _parent->setRelation(BIN_REL_DISTINCT, aa, bb, ss.str());
+    _parent->setRelation(OP_REL_DISTINCT, aa, bb, ss.str());
 
     addPoint(aa);
     addPoint(bb);
@@ -69,6 +69,6 @@ bool DPLine::operator == (const DPLine &b) const
 
 bool DPLine::parallelTo(const DPLine &b) const
 {
-    return getParent()->hasRelation(BIN_REL_PARALLEL,
+    return getParent()->hasRelation(OP_REL_PARALLEL,
                                     const_cast<DPLine *>(this), const_cast<DPLine *>(&b));
 }

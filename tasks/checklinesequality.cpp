@@ -1,12 +1,12 @@
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
-#include "plan.h"
+#include "plane.h"
 #include "checklinesequality.h"
 
 using namespace std;
 
-CheckLinesEquality::CheckLinesEquality(DPPlan *plan)
+CheckLinesEquality::CheckLinesEquality(DPPlane *plan)
     : DPTask(), _plan(plan)
 {
 }

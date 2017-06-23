@@ -2,7 +2,7 @@
 
 using namespace std;
 
-DPSet::DPSet(DPPlan *parent)
+DPSet::DPSet(DPPlane *parent)
     : DPElement(parent)
     , _singlePoints()
 {

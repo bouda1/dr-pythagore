@@ -14,17 +14,15 @@ class DPLine;
 class DPSegment;
 class DPRule;
 
-enum DPBinRel {
-    BIN_REL_DISTINCT,
-    BIN_REL_EQUALS,
-    BIN_REL_ORTHOGONAL,
-    BIN_REL_PARALLEL,
-    BIN_REL_COUNT
+enum DPOpRel {
+    OP_REL_DISTINCT,
+    OP_REL_EQUALS,
+    OP_REL_ORTHOGONAL,
+    OP_REL_PARALLEL,
+    OP_REL_COUNT
 };
 
-//typedef std::tuple<DPBinRel, DPElement *, DPElement *, std::string> DPTRule;
-
-class DPPlan {
+class DPPlane {
 
     std::unordered_set<DPLine *> _linesSet;
     std::unordered_set<DPSegment *> _segmentsSet;
@@ -39,7 +37,7 @@ class DPPlan {
     DPPool _pool;
 
 public:
-    DPPlan();
+    DPPlane();
     DPPoint *getPoint(const char *a) const;
     DPLine *getLine(DPPoint *a, DPPoint *b);
     DPSegment *getSegment(DPPoint *a, DPPoint *b);
@@ -47,10 +45,10 @@ public:
     void addLine(DPLine *a);
     void addSegment(DPSegment *a);
     bool pointExists(const char *a) const;
-    void setRelation(DPBinRel op, DPElement *a, DPElement *b, const std::string &explanation);
-    void setRelation(DPBinRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
-    DPRule *hasRelation(DPBinRel op, DPElement *a, DPElement *b) const;
-    std::deque<DPRule *> getRelations(DPBinRel op) const;
+    void setRelation(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation);
+    void setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
+    DPRule *hasRelation(DPOpRel op, DPElement *a, DPElement *b) const;
+    std::deque<DPRule *> getRelations(DPOpRel op) const;
     void addContradiction(DPRule *a, DPRule *b);
     std::string getLastContradiction() const;
 };

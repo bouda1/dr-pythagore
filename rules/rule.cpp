@@ -2,11 +2,19 @@
 
 using namespace std;
 
-DPRule::DPRule(DPBinRel op, DPElement *a, DPElement *b, const std::string &explanation)
+DPRule::DPRule(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation)
     : _op(op), _descr(explanation)
 {
     _elems.push_back(a);
     _elems.push_back(b);
+}
+
+DPRule::DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
+    : _op(op), _descr(explanation)
+{
+    _elems.push_back(a);
+    _elems.push_back(b);
+    _elems.push_back(c);
 }
 
 DPElement *DPRule::get(int idx) const
@@ -26,7 +34,7 @@ DPElement *DPRule::get(int idx) const
     return nullptr;
 }
 
-DPBinRel DPRule::getOp() const
+DPOpRel DPRule::getOp() const
 {
     return _op;
 }

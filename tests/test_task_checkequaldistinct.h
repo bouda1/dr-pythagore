@@ -3,7 +3,7 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "plan.h"
+#include "plane.h"
 #include "lexer.h"
 
 class TestTaskCheckEqualDistinct : public CppUnit::TestFixture {
@@ -19,7 +19,7 @@ protected:
     void testPoints();
 
 private:
-    DPPlan *_plan;
+    DPPlane *_plan;
     DPLexer *_lexer;
 };
 

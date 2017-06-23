@@ -3,12 +3,12 @@
 
 using namespace std;
 
-DPElement::DPElement(DPPlan *parent)
+DPElement::DPElement(DPPlane *parent)
     : _parent(parent)
 {
 }
 
-DPElement::DPElement(DPPlan *parent, const char *name)
+DPElement::DPElement(DPPlane *parent, const char *name)
     : _parent(parent), _name(name)
 {
 }
@@ -23,7 +23,7 @@ const string &DPElement::getName(void) const
     return _name;
 }
 
-DPPlan *DPElement::getParent() const
+DPPlane *DPElement::getParent() const
 {
     return _parent;
 }

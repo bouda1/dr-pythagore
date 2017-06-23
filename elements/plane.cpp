@@ -1,5 +1,5 @@
 #include <iostream>
-#include "plan.h"
+#include "plane.h"
 #include "point.h"
 #include "line.h"
 #include "segment.h"
@@ -8,11 +8,11 @@
 
 using namespace std;
 
-DPPlan::DPPlan()
+DPPlane::DPPlane()
     : _pool()
 {}
 
-deque<DPRule *> DPPlan::getRelations(DPBinRel op) const
+deque<DPRule *> DPPlane::getRelations(DPOpRel op) const
 {
     unique_lock<mutex> lock(_rules_mutex);
     deque<DPRule *> retval = deque<DPRule *>();
@@ -23,29 +23,33 @@ deque<DPRule *> DPPlan::getRelations(DPBinRel op) const
     return retval;
 }
 
-void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, const string &explanation)
+void DPPlane::setRelation(DPOpRel op, DPElement *a, DPElement *b, const string &explanation)
 {
     _rules_mutex.lock();
     DPRule *rule = new DPRule(op, a, b, explanation);
     _rules.insert(rule);
     _rules_mutex.unlock();
 
-    if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
+    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
         _pool.enqueueTask(new CheckEqualDistinct(this));
+    else if (op == OP_REL_ALIGNED)
+        _pool.enqueueTask(new DPTaskLua(this, "check_aligned.lua"));
 }
 
-void DPPlan::setRelation(DPBinRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
+void DPPlane::setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
 {
     _rules_mutex.lock();
-    DPRule *r = new DPRule(op, a, b, explanation);
+    DPRule *r = new DPRule(op, a, b, c, explanation);
     _rules.insert(r);
     _rules_mutex.unlock();
 
-    if (op == BIN_REL_DISTINCT || op == BIN_REL_EQUALS)
+    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
         _pool.enqueueTask(new CheckEqualDistinct(this));
+    else if (op == OP_REL_ALIGNED)
+        _pool.enqueueTask(new DPTaskLua(this, "./check_aligned.lua"));
 }
 
-DPRule *DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
+DPRule *DPPlane::hasRelation(DPOpRel op, DPElement *a, DPElement *b) const
 {
     {
         unique_lock<mutex> lock(_rules_mutex);
@@ -61,21 +65,21 @@ DPRule *DPPlan::hasRelation(DPBinRel op, DPElement *a, DPElement *b) const
     return nullptr;
 }
 
-bool DPPlan::pointExists(const char *a) const
+bool DPPlane::pointExists(const char *a) const
 {
     unordered_map<string, DPPoint *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end());
 }
 
-DPPoint *DPPlan::getPoint(const char *a) const
+DPPoint *DPPlane::getPoint(const char *a) const
 {
     unordered_map<string, DPPoint *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end()) ? it->second : nullptr;
 }
 
-DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
+DPLine *DPPlane::getLine(DPPoint *a, DPPoint *b)
 {
     DPLine *retval = nullptr;
     if (*a != *b) {
@@ -91,7 +95,7 @@ DPLine *DPPlan::getLine(DPPoint *a, DPPoint *b)
     return retval;
 }
 
-DPSegment *DPPlan::getSegment(DPPoint *a, DPPoint *b)
+DPSegment *DPPlane::getSegment(DPPoint *a, DPPoint *b)
 {
     DPSegment *retval = nullptr;
     if (*a != *b) {
@@ -110,28 +114,28 @@ DPSegment *DPPlan::getSegment(DPPoint *a, DPPoint *b)
     return retval;
 }
 
-void DPPlan::addPoint(DPPoint *a)
+void DPPlane::addPoint(DPPoint *a)
 {
     _pointsList[a->getName()] = a;
 }
 
-void DPPlan::addLine(DPLine *a)
+void DPPlane::addLine(DPLine *a)
 {
     _linesSet.insert(a);
 }
 
-void DPPlan::addSegment(DPSegment *a)
+void DPPlane::addSegment(DPSegment *a)
 {
     _segmentsSet.insert(a);
 }
 
-void DPPlan::addContradiction(DPRule *a, DPRule *b)
+void DPPlane::addContradiction(DPRule *a, DPRule *b)
 {
     unique_lock<mutex> lock(_contradictions_mutex);
     _contradictions.push_back(pair<DPRule *, DPRule *>(a, b));
 }
 
-string DPPlan::getLastContradiction() const
+string DPPlane::getLastContradiction() const
 {
     unique_lock<mutex> lock(_contradictions_mutex);
     pair<DPRule *, DPRule *> c = _contradictions.back();

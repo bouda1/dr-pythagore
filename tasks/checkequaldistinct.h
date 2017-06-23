@@ -1,14 +1,14 @@
 #ifndef __CHECKEQUALDISTINCT_H__
 #define __CHECKEQUALDISTINCT_H__
 
-class DPPlan;
+class DPPlane;
 
 class CheckEqualDistinct : public DPTask {
-    DPPlan *_plan;
+    DPPlane *_plan;
 
 public:
     virtual void routine();
-    CheckEqualDistinct(DPPlan *plan);
+    CheckEqualDistinct(DPPlane *plan);
 };
 
 #endif /* __CHECKEQUALDISTINCT_H__ */

@@ -1,18 +1,18 @@
 #ifndef __PARSERTOKEN_H__
 #define __PARSERTOKEN_H__
 #include "element.h"
-#include "plan.h"
+#include "plane.h"
 
 class DPParserToken {
-    const DPPlan *_plan;
+    const DPPlane *_plan;
     bool _result;
     bool _error;
 
 public:
-    DPParserToken(const DPPlan *plan);
+    DPParserToken(const DPPlane *plan);
     void setResult(bool result);
     bool getResult() const;
-    DPPlan *getPlan() const;
+    DPPlane *getPlan() const;
     bool onError() const;
     void setError();
 };

@@ -28,7 +28,7 @@ char *rl_gets()
 
 int main()
 {
-    DPPlan plan;
+    DPPlane plan;
     DPLexer lexer(&plan);
 
     do {

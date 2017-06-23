@@ -1,12 +1,12 @@
 #include <cassert>
 #include <sstream>
-#include "plan.h"
+#include "plane.h"
 #include "segment.h"
 #include "point.h"
 
 using namespace std;
 
-DPSegment::DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b)
+DPSegment::DPSegment(DPPlane *parent, DPPoint *a, DPPoint *b)
     : DPSet(parent), _beginPoint(a), _endPoint(b)
 {
     stringstream ss;
@@ -16,7 +16,7 @@ DPSegment::DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b)
     _parent->addSegment(this);
 }
 
-DPSegment::DPSegment(DPPlan *parent, const char *a, const char *b)
+DPSegment::DPSegment(DPPlane *parent, const char *a, const char *b)
     : DPSet(parent)
 
 {
@@ -39,7 +39,7 @@ DPSegment::DPSegment(DPPlan *parent, const char *a, const char *b)
     ss << " is a segment";
 
     /* We must assume points are distinct. */
-    _parent->setRelation(BIN_REL_DISTINCT, aa, bb, ss.str());
+    _parent->setRelation(OP_REL_DISTINCT, aa, bb, ss.str());
 
     _beginPoint = aa;
     _endPoint = bb;

@@ -6,14 +6,15 @@
 
 class DPRule
 {
-    DPBinRel _op;
+    DPOpRel _op;
     std::list<DPElement *> _elems;
     std::string _descr;
 
 public:
-    DPRule(DPBinRel op, DPElement *a, DPElement *b, const std::string &explanation);
+    DPRule(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation);
+    DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
     DPElement *get(int idx) const;
-    DPBinRel getOp() const;
+    DPOpRel getOp() const;
     const std::string &getDescription() const;
 };
 

@@ -3,7 +3,7 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "plan.h"
+#include "plane.h"
 #include "lexer.h"
 
 class TestDPLexer : public CppUnit::TestFixture {
@@ -21,7 +21,7 @@ protected:
     void testEquality2();
 
 private:
-    DPPlan *_plan;
+    DPPlane *_plan;
     DPLexer *_lexer;
 };
 

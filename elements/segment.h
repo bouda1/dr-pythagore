@@ -7,8 +7,8 @@ class DPSegment : public DPSet {
     DPPoint *_endPoint;
 
 public:
-    DPSegment(DPPlan *parent, DPPoint *a, DPPoint *b);
-    DPSegment(DPPlan *parent, const char *a, const char *b);
+    DPSegment(DPPlane *parent, DPPoint *a, DPPoint *b);
+    DPSegment(DPPlane *parent, const char *a, const char *b);
     bool operator == (const DPSegment &b);
     bool operator != (const DPSegment &b);
     void addPoint(DPPoint *a);
