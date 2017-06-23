@@ -8,15 +8,17 @@ extern "C" {
 # include "lualib.h"
 }
 
-class DPPlan;
+class DPPlane;
 
 class DPTaskLua: public DPTask {
-    DPPlan *_plan;
+    DPPlane *_plan;
     lua_State *_L;
+
+    static int l_getElementsByOp(lua_State *L);
 
 public:
     virtual void routine();
-    DPTaskLua(DPPlan *plan, const std::string &filename);
+    DPTaskLua(DPPlane *plan, const std::string &filename);
     ~DPTaskLua();
 };
 

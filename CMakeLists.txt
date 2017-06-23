@@ -12,7 +12,7 @@ FIND_PACKAGE(CPPUNIT REQUIRED)
 FIND_PACKAGE(Lua REQUIRED)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} elements parser pool
-    ${Readline_INCLUDE_DIR} ${LUA_INCLUDE_DIR})
+    ${Readline_INCLUDE_DIR} ${LUA_INCLUDE_DIR} tasks)
 
 IF(COVERAGE)
     SET(COVERAGE_CXXFLAGS "-g -O0 -fprofile-arcs -ftest-coverage")

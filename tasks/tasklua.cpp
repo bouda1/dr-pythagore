@@ -2,15 +2,17 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <unistd.h>
-#include "plan.h"
+#include "plane.h"
 #include "tasklua.h"
+#include "plane_binding.h"
 
 using namespace std;
 
-DPTaskLua::DPTaskLua(DPPlan *plan, const string &filename)
+DPTaskLua::DPTaskLua(DPPlane *plan, const string &filename)
     : DPTask(), _plan(plan), _L(luaL_newstate())
 {
     luaL_openlibs(_L);
+    RegisterPlane(_L, _plan);
 
     if (luaL_loadfile(_L, filename.c_str()) != 0)
         cerr << "Unable to load script " << filename << endl;
@@ -19,12 +21,23 @@ DPTaskLua::DPTaskLua(DPPlan *plan, const string &filename)
     lua_getglobal(_L, "routine");
     if (!lua_isfunction(_L,lua_gettop(_L)) )
         cerr << "Unable to find the routine function in " << filename << endl;
+    //lua_pushcfunction(_L, DPTaskLua::l_getElementsByOp);
+    //lua_setglobal(_L, "getElementsByOp");
+
 }
 
 DPTaskLua::~DPTaskLua()
 {
     if (_L)
         lua_close(_L);
+}
+
+int DPTaskLua::l_getElementsByOp(lua_State *L)
+{
+    string op = string(lua_tostring(L, 1));  /* get argument */
+    if (op == "Aligned")
+        lua_pushstring(L, "You want ALIGNED elements !");
+    return 1;  /* number of results */
 }
 
 void DPTaskLua::routine()
