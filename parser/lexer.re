@@ -69,8 +69,8 @@ cont:
 
 void DPLexer::parse(const char *s)
 {
-    FILE *f = fopen("/tmp/parser.dbr", "a");
-    dPParseTrace(f, "DP => ");
+    //FILE *f = fopen("/tmp/parser.dbr", "a");
+    //dPParseTrace(f, "DP => ");
     char *word;
     int op_token;
     _content = s;
