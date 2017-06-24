@@ -15,6 +15,7 @@ public:
     DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
     DPElement *get(int idx) const;
     DPOpRel getOp() const;
+    const std::list<DPElement *>& getElements() const;
     const std::string &getDescription() const;
 };
 

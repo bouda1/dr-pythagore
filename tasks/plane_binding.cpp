@@ -15,35 +15,59 @@ DPPlane *l_CheckPlane(lua_State *L, int n)
     return *(DPPlane **)luaL_checkudata(L, n, "luaL_Plane");
 }
  
+static void stackDump(lua_State *L)
+{
+    int i;
+    int top = lua_gettop(L);
+    for (i = 1; i <= top; i++) {  /* repeat for each level */
+        int t = lua_type(L, i);
+        switch (t) {
+
+            case LUA_TSTRING:  /* strings */
+                cout << "`" << lua_tostring(L, i) << "'";
+                break;
+
+            case LUA_TBOOLEAN:  /* booleans */
+                cout << (lua_toboolean(L, i) ? "true" : "false");
+                break;
+
+            case LUA_TNUMBER:  /* numbers */
+                cout << lua_tonumber(L, i);
+                break;
+
+            default:  /* other values */
+                cout << lua_typename(L, t);
+                break;
+
+        }
+        cout << "  ";  /* put a separator */
+    }
+    cout << endl;  /* end the listing */
+}
+
 int l_getRelations(lua_State *L)
 {
     DPPlane *plane = l_CheckPlane(L, 1);
     const char *op = luaL_checkstring(L, 2);
     deque<DPRule *> rules;
 
-    if (string(op) == "Aligned") {
-        cout << "COOL, I known Aligned" << endl;
-        rules = plane->getRelations(BIN_REL_ALIGNED);
-        lua_createtable(L, rules.size(), 0);
-        int count = 1;
-        for (DPRule *r : rules) {
-            lua_pushstring(L, r->getDescription().c_str());
-            lua_rawseti(L, -2, count++);
+    if (string(op) == "Aligned")
+        rules = plane->getRelations(OP_REL_ALIGNED);
+    else if (string(op) == "NotAligned")
+        rules = plane->getRelations(OP_REL_NOTALIGNED);
+
+    lua_createtable(L, rules.size(), 0);
+    int count = 1;
+    for (DPRule *r : rules) {
+        list<DPElement *> lst = r->getElements();
+        lua_createtable(L, lst.size(), 0);
+        int cc = 1;
+        for (DPElement *e : lst) {
+            lua_pushstring(L, e->getName().c_str());
+            lua_rawseti(L, -2, cc++);
         }
+        lua_rawseti(L, -2, count++);
     }
-    //std::string s = foo->Add(a, b);
-    //lua_pushstring(L, s.c_str());
- 
-    // FIXME DBR : reste à pousser retval dans un tableau lua
-    //
-    // The Lua stack at this point looks like this:
-    //     
-    //     4| result string          |-1
-    //     3| metatable "luaL_foo"   |-2
-    //     2| userdata               |-3
-    //     1| string parameter       |-4
-    //
-    // Return 1 to return the result string to Lua callsite.
  
     return 1;
 }
@@ -79,13 +103,15 @@ void RegisterPlane(lua_State *L, DPPlane *plane)
  
     // The Lua stack at this point looks like this:
     //     
-    //     1| metatable "luaL_Foo"   |-1
+    //     1| userdata               |-2
+    //     2| metatable "luaL_Foo"   |-1
     lua_pushvalue(L, -1);
  
     // The Lua stack at this point looks like this:
     //     
-    //     2| metatable "luaL_Foo"   |-1
-    //     1| metatable "luaL_Foo"   |-2
+    //     1| userdata               |-3
+    //     2| metatable "luaL_Foo"   |-2
+    //     3| metatable "luaL_Foo"   |-1
  
     // Set the "__index" field of the metatable to point to itself
     // This pops the stack
@@ -93,22 +119,18 @@ void RegisterPlane(lua_State *L, DPPlane *plane)
  
     // The Lua stack at this point looks like this:
     //     
-    //     1| metatable "luaL_Foo"   |-1
+    //     1| userdata               |-2
+    //     2| metatable "luaL_Foo"   |-1
  
     // The luaL_Plane metatable now has the following fields
     //     - __gc
     //     - __index
     //     - getRelations
  
-    // Now we use setglobal to officially expose the luaL_Plane metatable
-    // to Lua. And we use the name "Foo".
-    //
-    // This allows Lua scripts to _override_ the metatable of Foo.
-    // For high security code this may not be called for but 
-    // we'll do this to get greater flexibility.
-    //lua_setglobal(L, "Plane");
-
+    // Now, we use setmetatable to set it to our userdata
     lua_setmetatable(L, -2);
+
+    // And now, we use setglobal to store userdata as the variable Plane.
     lua_setglobal(L, "Plane");
 }
  

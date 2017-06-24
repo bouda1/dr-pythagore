@@ -14,8 +14,6 @@ class DPTaskLua: public DPTask {
     DPPlane *_plan;
     lua_State *_L;
 
-    static int l_getElementsByOp(lua_State *L);
-
 public:
     virtual void routine();
     DPTaskLua(DPPlane *plan, const std::string &filename);

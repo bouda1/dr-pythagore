@@ -39,6 +39,11 @@ DPOpRel DPRule::getOp() const
     return _op;
 }
 
+const std::list<DPElement *> &DPRule::getElements() const
+{
+    return _elems;
+}
+
 const string &DPRule::getDescription() const
 {
     return _descr;

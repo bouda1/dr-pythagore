@@ -21,23 +21,12 @@ DPTaskLua::DPTaskLua(DPPlane *plan, const string &filename)
     lua_getglobal(_L, "routine");
     if (!lua_isfunction(_L,lua_gettop(_L)) )
         cerr << "Unable to find the routine function in " << filename << endl;
-    //lua_pushcfunction(_L, DPTaskLua::l_getElementsByOp);
-    //lua_setglobal(_L, "getElementsByOp");
-
 }
 
 DPTaskLua::~DPTaskLua()
 {
     if (_L)
         lua_close(_L);
-}
-
-int DPTaskLua::l_getElementsByOp(lua_State *L)
-{
-    string op = string(lua_tostring(L, 1));  /* get argument */
-    if (op == "Aligned")
-        lua_pushstring(L, "You want ALIGNED elements !");
-    return 1;  /* number of results */
 }
 
 void DPTaskLua::routine()
