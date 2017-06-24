@@ -9,15 +9,18 @@
 %type line {DPLine *}
 %type segment {DPSegment *}
 %type set {DPSet *}
+%type list {list<string> *}
 
 %extra_argument { DPParserToken *token }
 
-%left PLUS MINUS.
+%left COLON.
+%left VIRG.
 
 %include {
 #include <assert.h>
 #include <sstream>
 #include <iostream>
+#include <list>
 #include "grammar-prot.h"
 #include "point.h"
 #include "line.h"
@@ -39,9 +42,56 @@ using namespace std;
 
 %start_symbol program
 
-program ::= point(A) END.   {
-    cout << "A new point " << A->getName() << endl;
+/* Automatic translations */
+
+point(A) ::= IDENT(B). {
+    A = token->getPlan()->getPoint(B);
+    if (!A) {
+        cout << "Error: The point " << B << " is not recognized." << endl;
+        token->setError();
+    }
 }
+
+list(L) ::= IDENT(A). {
+    cout << "Ho ! This is a list" << endl;
+    L = new list<string>();
+    L->push_back(A);
+}
+
+list(L) ::= list(A) VIRG IDENT(B). {
+    cout << "The list is growing up!" << endl;
+    L = A;
+    L->push_back(B);
+}
+
+/* Definitions */
+program ::= LET list(A) COLON POINT END. {
+    cout << "Points definition" << endl;
+    for (string s : *A) {
+        DPPoint *a = new DPPoint(token->getPlan(), s.c_str());
+        cout << "Let " << s << " be a point." << endl;
+    }
+}
+
+//program ::= LET IDENT(A) COLON POINT END. {
+//    cout << "Let " << A << " be a point." << endl;
+//    DPPoint *a = new DPPoint(token->getPlan(), A);
+//}
+
+program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
+    cout << "Let [" << A << B << "] be a segment." << endl;
+    DPSegment *a = new DPSegment(token->getPlan(), A, B);
+}
+
+program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
+    stringstream ss;
+    ss << '(' << A << B << ") is a line.";
+    DPLine *a = new DPLine(token->getPlan(), A, B);
+}
+
+//program ::= point(A) END.   {
+//    cout << "A new point " << A->getName() << endl;
+//}
 program ::= line(A) END.    {
     cout << "A new line " << A->getName() << endl;
 }
@@ -143,13 +193,6 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
     }
 }
 
-point(A) ::= IDENT(B). {
-    A = token->getPlan()->getPoint(B);
-    if (!A) {
-        cout << "Error: The point " << B << " is not recognized." << endl;
-        token->setError();
-    }
-}
 
 /* Constraints */
 program ::= ASSUME point(A) IN set(B) END. {
@@ -160,41 +203,31 @@ program ::= ASSUME point(A) IN set(B) END. {
 program ::= ASSUME point(A) DISTINCT point(B) END. {
     stringstream ss;
     ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
-    token->getPlan()->setRelation(BIN_REL_DISTINCT, A, B, ss.str());
+    token->getPlan()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
 }
 
 program ::= ASSUME point(A) EQUALS point(B) END. {
     stringstream ss;
     ss << A->getName() << " and " << B->getName() << " are assumed equal";
-    token->getPlan()->setRelation(BIN_REL_EQUALS, A, B, ss.str());
+    token->getPlan()->setRelation(OP_REL_EQUALS, A, B, ss.str());
 }
 
 program ::= ASSUME line(A) PARALLEL line(B) END. {
     stringstream ss;
     ss << A->getName() << " is assumed parallel to " << B->getName();
-    token->getPlan()->setRelation(BIN_REL_PARALLEL, A, B, ss.str());
+    token->getPlan()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
 }
 
 program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
     stringstream ss;
     ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
-    token->getPlan()->setRelation(BIN_REL_ALIGNED, A, B, C, ss.str());
+    token->getPlan()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
 }
 
-/* Definitions */
-program ::= LET IDENT(A) COLON POINT END. {
-    cout << "Let " << A << " be a point." << endl;
-    DPPoint *a = new DPPoint(token->getPlan(), A);
-}
-
-program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
-    cout << "Let [" << A << B << "] be a segment." << endl;
-    DPSegment *a = new DPSegment(token->getPlan(), A, B);
-}
-
-program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
+program ::= ASSUME point(A) VIRG point(B) VIRG point(C) NOT ALIGNED END. {
     stringstream ss;
-    ss << '(' << A << B << ") is a line.";
-    DPLine *a = new DPLine(token->getPlan(), A, B);
+    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are not aligned";
+    token->getPlan()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
 }
+
 

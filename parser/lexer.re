@@ -50,11 +50,10 @@ cont:
         "Segment"           { return CALC_TOKEN_SEGMENT; }
         "Assume"            { return CALC_TOKEN_ASSUME; }
         "In"                { return CALC_TOKEN_IN; }
+        "Not"               { return CALC_TOKEN_NOT; }
         "Aligned"           { return CALC_TOKEN_ALIGNED; }
         ","                 { return CALC_TOKEN_VIRG; }
         [A-Za-z]            { return CALC_TOKEN_IDENT; }
-        "+"                 { return CALC_TOKEN_PLUS; }
-        "-"                 { return CALC_TOKEN_MINUS; }
         "("                 { return CALC_TOKEN_LPAR; }
         "["                 { return CALC_TOKEN_LBRA; }
         ")"                 { return CALC_TOKEN_RPAR; }
@@ -70,6 +69,8 @@ cont:
 
 void DPLexer::parse(const char *s)
 {
+    FILE *f = fopen("/tmp/parser.dbr", "a");
+    dPParseTrace(f, "DP => ");
     char *word;
     int op_token;
     _content = s;
