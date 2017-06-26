@@ -1,8 +1,13 @@
+#include <sys/types.h>
+#include <cerrno>
+#include <dirent.h>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include "plane_binding.h"
 #include "plane.h"
 #include "rules/rule.h"
+
 
 using namespace std;
 
@@ -81,7 +86,34 @@ int l_Plane_destructor(lua_State *L)
     return 0;
 }
  
-void RegisterPlane(lua_State *L, DPPlane *plane)
+int parseLuaScripts(lua_State *L, const string &dir)
+{
+    struct dirent *dirp;
+    DIR *dp = opendir(dir.c_str());
+    if (dp == NULL) {
+        cerr << "ERROR: " << errno << " while opening " << dir << endl;
+        return errno;
+    }
+
+    while ((dirp = readdir(dp))) {
+        char *str = dirp->d_name;
+        if (strlen(str) > 4 && !strcmp(str + strlen(str) - 4, ".lua")) {
+            cout << "Reading " << str << "..." << endl;
+            if (luaL_loadfile(L, str) != 0) {
+                cerr << "Unable to load file " << str << endl;
+                return -1;
+            }
+            if (lua_pcall(L, 0, 0, 0) != 0) {
+                cerr << "Unable to compile file " << str << endl;
+                return -2;
+            }
+        }
+    }
+    closedir(dp);
+    return 0;
+}
+
+void registerPlane(lua_State *L, DPPlane *plane)
 {
     DPPlane **udata = static_cast<DPPlane **>(lua_newuserdata(L, sizeof(DPPlane *)));
     *udata = plane;
@@ -132,5 +164,8 @@ void RegisterPlane(lua_State *L, DPPlane *plane)
 
     // And now, we use setglobal to store userdata as the variable Plane.
     lua_setglobal(L, "Plane");
+
+    parseLuaScripts(L, ".");
+
 }
- 
+

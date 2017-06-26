@@ -13,7 +13,7 @@ CheckEqualDistinct::CheckEqualDistinct(DPPlane *plan)
 
 }
 
-void CheckEqualDistinct::routine()
+void CheckEqualDistinct::routine(lua_State *L)
 {
     cout << "CheckEqualDistinct routine" << endl;
     deque<DPRule *> mapEq = _plan->getRelations(OP_REL_EQUALS);

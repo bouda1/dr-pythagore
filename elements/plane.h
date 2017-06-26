@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <tuple>
-#include "pool.h"
+#include "stack.h"
 
 class DPElement;
 class DPPoint;
@@ -30,13 +30,13 @@ class DPPlane {
     std::unordered_set<DPSegment *> _segmentsSet;
     std::unordered_map<std::string, DPPoint *> _pointsList;
 
-    mutable std::mutex _rules_mutex;
+    mutable std::mutex _rulesMutex;
     std::set<DPRule *> _rules;
 
     mutable std::mutex _contradictions_mutex;
     std::deque<std::pair<DPRule *, DPRule *> > _contradictions;
 
-    DPPool _pool;
+    DPStack _stack;
 
 public:
     DPPlane();

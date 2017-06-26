@@ -7,7 +7,7 @@ class CheckEqualDistinct : public DPTask {
     DPPlane *_plan;
 
 public:
-    virtual void routine();
+    virtual void routine(lua_State *L);
     CheckEqualDistinct(DPPlane *plan);
 };
 

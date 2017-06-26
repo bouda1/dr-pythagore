@@ -2,7 +2,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include "lexer.h"
-#include "pool.h"
+#include "stack.h"
 
 using namespace std;
 
@@ -28,8 +28,8 @@ char *rl_gets()
 
 int main()
 {
-    DPPlane plan;
-    DPLexer lexer(&plan);
+    DPPlane plane;
+    DPLexer lexer(&plane);
 
     do {
         char *ret = rl_gets();

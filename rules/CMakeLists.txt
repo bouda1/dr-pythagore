@@ -6,4 +6,9 @@ set(RULES_SRC
 
 ADD_LIBRARY(rules STATIC ${RULES_SRC})
 
-#TARGET_LINK_LIBRARIES(elements tasks)
+SET(LUA_SCRIPTS
+    aligned.lua
+    )
+
+FILE(COPY "${LUA_SCRIPTS}" DESTINATION "${CMAKE_BINARY_DIR}")
+

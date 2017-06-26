@@ -7,7 +7,7 @@ class CheckLinesEquality : public DPTask {
     DPPlane *_plan;
 
 public:
-    virtual void routine();
+    virtual void routine(lua_State *L);
     CheckLinesEquality(DPPlane *plan);
 };
 

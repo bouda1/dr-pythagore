@@ -9,10 +9,10 @@
 using namespace std;
 
 DPTaskLua::DPTaskLua(DPPlane *plan, const string &filename)
-    : DPTask(), _plan(plan), _L(luaL_newstate())
+    : DPTask(), _plane(plan), _L(luaL_newstate())
 {
     luaL_openlibs(_L);
-    RegisterPlane(_L, _plan);
+    RegisterPlane(_L, _plane);
 
     if (luaL_loadfile(_L, filename.c_str()) != 0)
         cerr << "Unable to load script " << filename << endl;
@@ -29,7 +29,7 @@ DPTaskLua::~DPTaskLua()
         lua_close(_L);
 }
 
-void DPTaskLua::routine()
+void DPTaskLua::routine(lua_State *L)
 {
     cout << "TaskLua routine" << endl;
     lua_getglobal(_L, "routine");

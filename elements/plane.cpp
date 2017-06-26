@@ -4,18 +4,17 @@
 #include "line.h"
 #include "segment.h"
 #include "checkequaldistinct.h"
-#include "tasklua.h"
 #include "rules/rule.h"
-
+#include "taskrule.h"
 using namespace std;
 
 DPPlane::DPPlane()
-    : _pool()
+    : _stack(this)
 {}
 
 deque<DPRule *> DPPlane::getRelations(DPOpRel op) const
 {
-    unique_lock<mutex> lock(_rules_mutex);
+    unique_lock<mutex> lock(_rulesMutex);
     deque<DPRule *> retval = deque<DPRule *>();
     for (DPRule *r : _rules) {
         if (r->getOp() == op)
@@ -26,34 +25,36 @@ deque<DPRule *> DPPlane::getRelations(DPOpRel op) const
 
 void DPPlane::setRelation(DPOpRel op, DPElement *a, DPElement *b, const string &explanation)
 {
-    _rules_mutex.lock();
+    _rulesMutex.lock();
     DPRule *rule = new DPRule(op, a, b, explanation);
     _rules.insert(rule);
-    _rules_mutex.unlock();
+    _rulesMutex.unlock();
 
-    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
-        _pool.enqueueTask(new CheckEqualDistinct(this));
-    else if (op == OP_REL_ALIGNED)
-        _pool.enqueueTask(new DPTaskLua(this, "check_aligned.lua"));
+    _stack.enqueueTask(new TaskRule(this, rule));
+//    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
+//        _stack.enqueueTask(new CheckEqualDistinct(this));
+//    else if (op == OP_REL_ALIGNED)
+//        _stack.enqueueTask(new DPTaskLua(this, "check_aligned.lua"));
 }
 
-void DPPlane::setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
+void DPPlane::setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const string &explanation)
 {
-    _rules_mutex.lock();
-    DPRule *r = new DPRule(op, a, b, c, explanation);
-    _rules.insert(r);
-    _rules_mutex.unlock();
+    _rulesMutex.lock();
+    DPRule *rule = new DPRule(op, a, b, c, explanation);
+    _rules.insert(rule);
+    _rulesMutex.unlock();
 
-    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
-        _pool.enqueueTask(new CheckEqualDistinct(this));
-    else if (op == OP_REL_ALIGNED)
-        _pool.enqueueTask(new DPTaskLua(this, "./check_aligned.lua"));
+    _stack.enqueueTask(new TaskRule(this, rule));
+//    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
+//        _stack.enqueueTask(new CheckEqualDistinct(this));
+//    else if (op == OP_REL_ALIGNED)
+//        _stack.enqueueTask(new DPTaskLua(this, "./check_aligned.lua"));
 }
 
 DPRule *DPPlane::hasRelation(DPOpRel op, DPElement *a, DPElement *b) const
 {
     {
-        unique_lock<mutex> lock(_rules_mutex);
+        unique_lock<mutex> lock(_rulesMutex);
         for (DPRule *rule : _rules) {
             if (rule->getOp() == op) {
                 if (rule->get(0) == a && rule->get(1) == b)

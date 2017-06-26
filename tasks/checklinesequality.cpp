@@ -11,7 +11,7 @@ CheckLinesEquality::CheckLinesEquality(DPPlane *plan)
 {
 }
 
-void CheckLinesEquality::routine()
+void CheckLinesEquality::routine(lua_State *L)
 {
     cout << "CheckLinesEquality routine" << endl;
 //    cout << "Check if two parallel lines share a point - in that case, all points from one are added to the other and vice versa." << endl;

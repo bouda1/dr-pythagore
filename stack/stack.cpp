@@ -2,19 +2,19 @@
 #include <thread>
 #include <mutex>
 #include <unistd.h>
-#include "pool.h"
+#include "stack.h"
 #include "action.h"
 
 using namespace std;
 
-DPPool::DPPool()
+DPStack::DPStack(DPPlane *plane)
     : _stop(false)
 {
     for (int i = 0; i < NB_THREAD; i++)
-        _thread[i] = thread(DPAction(*this));
+        _thread[i] = thread(DPAction(*this, plane));
 }
 
-DPPool::~DPPool()
+DPStack::~DPStack()
 {
     {
         unique_lock<mutex> lock(_stop_mutex);
@@ -26,7 +26,7 @@ DPPool::~DPPool()
         _thread[i].join();
 }
 
-DPTask *DPPool::dequeueTask()
+DPTask *DPStack::dequeueTask()
 {
     DPTask *retval;
     cout << "Dequeue task" << endl;
@@ -35,7 +35,7 @@ DPTask *DPPool::dequeueTask()
     return retval;
 }
 
-void DPPool::enqueueTask(DPTask *task)
+void DPStack::enqueueTask(DPTask *task)
 {
     cout << "Enqueue task" << endl;
     {
@@ -47,20 +47,12 @@ void DPPool::enqueueTask(DPTask *task)
     _condition.notify_one();
 }
 
-bool DPPool::queueEmpty() const
+bool DPStack::queueEmpty() const
 {
     return _tasks.empty();
 }
 
-/*void DPPool::loop(int time)
-{
-    for (int i = 0; i < time; i++)
-        enqueueTask(new DPTask());
-
-    sleep(time);
-}*/
-
-bool DPPool::stopAsked()
+bool DPStack::stopAsked()
 {
     unique_lock<mutex> lock(_stop_mutex);
     return _stop;
