@@ -34,7 +34,7 @@ class DPPlane {
     std::set<DPRule *> _rules;
 
     mutable std::mutex _contradictions_mutex;
-    std::deque<std::pair<DPRule *, DPRule *> > _contradictions;
+    std::deque<std::string> _contradictions;
 
     DPStack _stack;
 
@@ -51,7 +51,7 @@ public:
     void setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
     DPRule *hasRelation(DPOpRel op, DPElement *a, DPElement *b) const;
     std::deque<DPRule *> getRelations(DPOpRel op) const;
-    void addContradiction(DPRule *a, DPRule *b);
+    void addContradiction(const std::string &err);
     std::string getLastContradiction() const;
 };
 

@@ -1,3 +1,4 @@
+#include <sstream>
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
@@ -24,8 +25,10 @@ void CheckEqualDistinct::routine(lua_State *L)
 
         DPRule *rule = _plan->hasRelation(OP_REL_DISTINCT, r->get(0), r->get(1));
         if (rule) {
-            cout << "<< " << r->getDescription() << " >> not compatible with << " << rule->getDescription() << " >>" << endl;
-            _plan->addContradiction(r, rule);
+            stringstream ss;
+            ss << "<< " << r->getDescription() << " >> not compatible with << " << rule->getDescription() << " >>";
+            string err = ss.str();
+            _plan->addContradiction(err);
         }
     }
 

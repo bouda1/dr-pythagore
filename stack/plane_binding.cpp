@@ -20,7 +20,7 @@ DPPlane *l_CheckPlane(lua_State *L, int n)
     return *(DPPlane **)luaL_checkudata(L, n, "luaL_Plane");
 }
  
-static void stackDump(lua_State *L)
+void stackDump(lua_State *L)
 {
     int i;
     int top = lua_gettop(L);
@@ -60,6 +60,10 @@ int l_getRelations(lua_State *L)
         rules = plane->getRelations(OP_REL_ALIGNED);
     else if (string(op) == "NotAligned")
         rules = plane->getRelations(OP_REL_NOTALIGNED);
+    else if (string(op) == "Equals")
+        rules = plane->getRelations(OP_REL_EQUALS);
+    else if (string(op) == "Distinct")
+        rules = plane->getRelations(OP_REL_DISTINCT);
 
     lua_createtable(L, rules.size(), 0);
     int count = 1;

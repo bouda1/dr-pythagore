@@ -9,6 +9,6 @@ extern "C" {
 }
 
 void registerPlane(lua_State *L, DPPlane *plane);
-
+void stackDump(lua_State *L);
 
 #endif // __PLANE_BINDING_H__

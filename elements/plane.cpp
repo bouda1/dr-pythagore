@@ -131,17 +131,16 @@ void DPPlane::addSegment(DPSegment *a)
     _segmentsSet.insert(a);
 }
 
-void DPPlane::addContradiction(DPRule *a, DPRule *b)
+void DPPlane::addContradiction(const string &err)
 {
     unique_lock<mutex> lock(_contradictions_mutex);
-    _contradictions.push_back(pair<DPRule *, DPRule *>(a, b));
+    _contradictions.push_back(err);
 }
 
 string DPPlane::getLastContradiction() const
 {
     unique_lock<mutex> lock(_contradictions_mutex);
-    pair<DPRule *, DPRule *> c = _contradictions.back();
-    string retval = "<< " + c.first->getDescription() + " >> not compatible with << " + c.second->getDescription() + " >>";
+    string retval = _contradictions.back();
     return retval;
 }
 
