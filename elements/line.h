@@ -2,12 +2,16 @@
 #define __LINE_H__
 #include "set.h"
 
-class DPLine : public DPSet {
+namespace DP {
+
+class Line : public Set {
 public:
-    DPLine(DPPlane *parent, DPPoint *a, DPPoint *b);
-    DPLine(DPPlane *parent, const char *a, const char *b);
-    bool operator == (const DPLine &b) const;
-    bool parallelTo(const DPLine &b) const;
+    Line(Plane *parent, Point *a, Point *b);
+    Line(Plane *parent, const char *a, const char *b);
+    bool operator == (const Line &b) const;
+    bool parallelTo(const Line &b) const;
 };
+
+}
 
 #endif /* __LINE_H__ */

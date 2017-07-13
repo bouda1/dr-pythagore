@@ -1,15 +1,18 @@
 #include "rule.h"
 
-using namespace std;
+// FIXME: DEPRECATED NOW
 
-DPRule::DPRule(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation)
+using namespace std;
+using namespace DP;
+
+DP::Rule::Rule(DPOpRel op, Element *a, Element *b, const std::string &explanation)
     : _op(op), _descr(explanation)
 {
     _elems.push_back(a);
     _elems.push_back(b);
 }
 
-DPRule::DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation)
+DP::Rule::Rule(DPOpRel op, Element *a, Element *b, Element *c, const std::string &explanation)
     : _op(op), _descr(explanation)
 {
     _elems.push_back(a);
@@ -17,9 +20,9 @@ DPRule::DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::
     _elems.push_back(c);
 }
 
-DPElement *DPRule::get(int idx) const
+Element *DP::Rule::get(int idx) const
 {
-    std::list<DPElement *>::const_iterator it = _elems.begin();
+    std::list<Element *>::const_iterator it = _elems.begin();
 
     switch (idx) {
     case 0:
@@ -34,17 +37,17 @@ DPElement *DPRule::get(int idx) const
     return nullptr;
 }
 
-DPOpRel DPRule::getOp() const
+DPOpRel DP::Rule::getOp() const
 {
     return _op;
 }
 
-const std::list<DPElement *> &DPRule::getElements() const
+const std::list<Element *> &DP::Rule::getElements() const
 {
     return _elems;
 }
 
-const string &DPRule::getDescription() const
+const string &DP::Rule::getDescription() const
 {
     return _descr;
 }

@@ -3,7 +3,7 @@
 #include "parsertoken.h"
 
 #define dPParseTOKENTYPE char *
-#define dPParseARG_PDECL , DPParserToken *token 
+#define dPParseARG_PDECL , DP::ParserToken *token
 
 void dPParse(void *yyp, int yymajor, dPParseTOKENTYPE yyminor dPParseARG_PDECL);
 void dPParseFree(void *p, void(*freeProc)(void *));

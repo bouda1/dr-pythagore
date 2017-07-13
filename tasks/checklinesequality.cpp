@@ -6,7 +6,7 @@
 
 using namespace std;
 
-CheckLinesEquality::CheckLinesEquality(DPPlane *plan)
+CheckLinesEquality::CheckLinesEquality(Plane *plan)
     : DPTask(), _plan(plan)
 {
 }

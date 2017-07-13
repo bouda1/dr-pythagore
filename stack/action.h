@@ -7,19 +7,20 @@ extern "C" {
 # include "lualib.h"
 }
 
-class DPStack;
-class DPPlane;
+namespace DP {
+class Stack;
+class Plane;
 
-class DPAction {
-    DPStack &_stack;
-    DPPlane *_plane;
+class Action {
+    Stack &_stack;
+    Plane *_plane;
     lua_State *_L;
 
 public:
-    DPAction(DPStack &stack, DPPlane *plane);
-    ~DPAction();
+    Action(Stack &stack, Plane *plane);
+    ~Action();
 
     void operator()();
 };
-
+}
 #endif /* __ACTION_H__ */

@@ -2,11 +2,13 @@
 #include "plane.h"
 #include "line.h"
 #include "point.h"
+#include "simpleExpr.h"
 
 using namespace std;
+using namespace DP;
 
-DPLine::DPLine(DPPlane *parent, DPPoint *a, DPPoint *b)
-    : DPSet(parent)
+Line::Line(Plane *parent, Point *a, Point *b)
+    : Set(parent)
 {
     stringstream ss;
     ss << '(' << a->getName() << b->getName() << ')';
@@ -15,27 +17,28 @@ DPLine::DPLine(DPPlane *parent, DPPoint *a, DPPoint *b)
     ss << " is a line";
 
     /* We must assume points are distinct */
-    _parent->setRelation(OP_REL_DISTINCT, a, b, ss.str());
+    SimpleExpr *expr = new SimpleExpr("Distinct", a, b, ss.str());
+    _parent->addExpression(expr);
 
     addPoint(a);
     addPoint(b);
     _parent->addLine(this);
 }
 
-DPLine::DPLine(DPPlane *parent, const char *a, const char *b)
-    : DPSet(parent)
+Line::Line(Plane *parent, const char *a, const char *b)
+    : Set(parent)
 {
-    DPPoint *aa, *bb;
+    Point *aa, *bb;
 
     if (_parent->pointExists(a))
         aa = _parent->getPoint(a);
     else
-        aa = new DPPoint(parent, a);
+        aa = new Point(parent, a);
 
     if (_parent->pointExists(b))
         bb = _parent->getPoint(b);
     else
-        bb = new DPPoint(parent, b);
+        bb = new Point(parent, b);
 
     stringstream ss;
     ss << '(' << a << b << ')';
@@ -44,19 +47,21 @@ DPLine::DPLine(DPPlane *parent, const char *a, const char *b)
     ss << " is a line";
 
     /* We must assume points are distinct. */
-    _parent->setRelation(OP_REL_DISTINCT, aa, bb, ss.str());
+    SimpleExpr *simp = new SimpleExpr("Distinct", aa, bb, ss.str());
+    _parent->addExpression(simp);
+//    _parent->setRelation(OP_REL_DISTINCT, aa, bb, ss.str());
 
     addPoint(aa);
     addPoint(bb);
     _parent->addLine(this);
 }
 
-bool DPLine::operator == (const DPLine &b) const
+bool Line::operator == (const Line &b) const
 {
     int count = 0;
-    DPPoint *first_point = nullptr;
+    Point *first_point = nullptr;
 
-    for (DPPoint *p : _singlePoints) {
+    for (Point *p : _singlePoints) {
         if (count == 0 && b.contains(p)) {
             count++;
             first_point = p;
@@ -67,8 +72,7 @@ bool DPLine::operator == (const DPLine &b) const
     return false;
 }
 
-bool DPLine::parallelTo(const DPLine &b) const
+bool Line::parallelTo(const Line &b) const
 {
-    return getParent()->hasRelation(OP_REL_PARALLEL,
-                                    const_cast<DPLine *>(this), const_cast<DPLine *>(&b));
+    return getParent()->hasExpr("Parallel", const_cast<Line *>(this), const_cast<Line *>(&b));
 }

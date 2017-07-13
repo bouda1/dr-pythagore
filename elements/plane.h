@@ -1,3 +1,19 @@
+/* Dr-Pythagore 
+ * Copyright (C) 2016-2017 D. Boucher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #ifndef __PLAN_H__
 #define __PLAN_H__
 #include <deque>
@@ -8,51 +24,47 @@
 #include <tuple>
 #include "stack.h"
 
-class DPElement;
-class DPPoint;
-class DPLine;
-class DPSegment;
-class DPRule;
+namespace DP {
+class Element;
+class Point;
+class Line;
+class Segment;
+class BoolExpr;
 
-enum DPOpRel {
-    OP_REL_DISTINCT,
-    OP_REL_EQUALS,
-    OP_REL_ORTHOGONAL,
-    OP_REL_PARALLEL,
-    OP_REL_ALIGNED,
-    OP_REL_NOTALIGNED,
-    OP_REL_COUNT
-};
+class Plane {
 
-class DPPlane {
+    std::unordered_set<Line *> _linesSet;
+    std::unordered_set<Segment *> _segmentsSet;
+    std::unordered_map<std::string, Point *> _pointsList;
 
-    std::unordered_set<DPLine *> _linesSet;
-    std::unordered_set<DPSegment *> _segmentsSet;
-    std::unordered_map<std::string, DPPoint *> _pointsList;
+//    mutable std::mutex _rulesMutex;
+//    std::set<Rule *> _rules;
 
-    mutable std::mutex _rulesMutex;
-    std::set<DPRule *> _rules;
+    mutable std::mutex _exprsMutex;
+    std::set<BoolExpr *> _exprs;
 
     mutable std::mutex _contradictions_mutex;
     std::deque<std::string> _contradictions;
 
-    DPStack _stack;
+    Stack _stack;
 
 public:
-    DPPlane();
-    DPPoint *getPoint(const char *a) const;
-    DPLine *getLine(DPPoint *a, DPPoint *b);
-    DPSegment *getSegment(DPPoint *a, DPPoint *b);
-    void addPoint(DPPoint *a);
-    void addLine(DPLine *a);
-    void addSegment(DPSegment *a);
+    Plane();
+    Point *getPoint(const char *a) const;
+    Line *getLine(Point *a, Point *b);
+    Segment *getSegment(Point *a, Point *b);
+    void addPoint(Point *a);
+    void addLine(Line *a);
+    void addSegment(Segment *a);
     bool pointExists(const char *a) const;
-    void setRelation(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation);
-    void setRelation(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
-    DPRule *hasRelation(DPOpRel op, DPElement *a, DPElement *b) const;
-    std::deque<DPRule *> getRelations(DPOpRel op) const;
+    void addExpression(BoolExpr *expr);
+    BoolExpr *hasExpr(const std::string &op, Element *a, Element *b) const;
+    std::deque<BoolExpr *> getExprs(const std::string &op) const;
+    std::deque<BoolExpr *> getExprs(const std::string &op1, const std::string &op2) const;
     void addContradiction(const std::string &err);
     std::string getLastContradiction() const;
 };
+
+}
 
 #endif /* __PLAN_H__ */

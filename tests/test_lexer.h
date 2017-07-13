@@ -21,8 +21,8 @@ protected:
     void testEquality2();
 
 private:
-    DPPlane *_plan;
-    DPLexer *_lexer;
+    DP::Plane *_plan;
+    DP::Lexer *_lexer;
 };
 
 #endif /* __TEST_LEXER_H__ */

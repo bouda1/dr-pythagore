@@ -1,28 +1,29 @@
 #include "set.h"
 
 using namespace std;
+using namespace DP;
 
-DPSet::DPSet(DPPlane *parent)
-    : DPElement(parent)
+Set::Set(Plane *parent)
+    : Element(parent)
     , _singlePoints()
 {
 }
 
-bool DPSet::contains(DPPoint *point) const
+bool Set::contains(Point *point) const
 {
     unique_lock<mutex> lock(_singlePointsMutex);
-    unordered_set<DPPoint *>::const_iterator it = _singlePoints.find(point);
+    unordered_set<Point *>::const_iterator it = _singlePoints.find(point);
 
     return it != _singlePoints.end();
 }
 
-void DPSet::addPoint(DPPoint *a)
+void Set::addPoint(Point *a)
 {
     unique_lock<mutex> lock(_singlePointsMutex);
     _singlePoints.insert(a);
 }
 
-unordered_set<DPPoint *> DPSet::getSinglePoints() const
+unordered_set<Point *> Set::getSinglePoints() const
 {
     unique_lock<mutex> lock(_singlePointsMutex);
     return _singlePoints;

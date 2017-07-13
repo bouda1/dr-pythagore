@@ -6,15 +6,16 @@
 #include "action.h"
 
 using namespace std;
+using namespace DP;
 
-DPStack::DPStack(DPPlane *plane)
+DP::Stack::Stack(Plane *plane)
     : _stop(false)
 {
     for (int i = 0; i < NB_THREAD; i++)
-        _thread[i] = thread(DPAction(*this, plane));
+        _thread[i] = thread(Action(*this, plane));
 }
 
-DPStack::~DPStack()
+DP::Stack::~Stack()
 {
     {
         unique_lock<mutex> lock(_stop_mutex);
@@ -26,7 +27,7 @@ DPStack::~DPStack()
         _thread[i].join();
 }
 
-DPTask *DPStack::dequeueTask()
+DPTask *DP::Stack::dequeueTask()
 {
     DPTask *retval;
     cout << "Dequeue task" << endl;
@@ -35,7 +36,7 @@ DPTask *DPStack::dequeueTask()
     return retval;
 }
 
-void DPStack::enqueueTask(DPTask *task)
+void DP::Stack::enqueueTask(DPTask *task)
 {
     cout << "Enqueue task" << endl;
     {
@@ -47,12 +48,12 @@ void DPStack::enqueueTask(DPTask *task)
     _condition.notify_one();
 }
 
-bool DPStack::queueEmpty() const
+bool DP::Stack::queueEmpty() const
 {
     return _tasks.empty();
 }
 
-bool DPStack::stopAsked()
+bool DP::Stack::stopAsked()
 {
     unique_lock<mutex> lock(_stop_mutex);
     return _stop;

@@ -3,12 +3,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "plane.h"
-#include "rules/rule.h"
+#include "boolExpr.h"
+#include "simpleExpr.h"
 #include "checkequaldistinct.h"
 
 using namespace std;
+using namespace DP;
 
-CheckEqualDistinct::CheckEqualDistinct(DPPlane *plan)
+CheckEqualDistinct::CheckEqualDistinct(Plane *plan)
     : DPTask(), _plan(plan)
 {
 
@@ -17,20 +19,22 @@ CheckEqualDistinct::CheckEqualDistinct(DPPlane *plan)
 void CheckEqualDistinct::routine(lua_State *L)
 {
     cout << "CheckEqualDistinct routine" << endl;
-    deque<DPRule *> mapEq = _plan->getRelations(OP_REL_EQUALS);
-    deque<DPRule *>::iterator it;
+    deque<DP::BoolExpr *> mapEq = _plan->getExprs("Equals");
+    deque<DP::BoolExpr *>::iterator it;
 
-    for (DPRule *r : mapEq) {
-        cout << "CheckEqualDistinct CHECK" << endl;
+    for (BoolExpr *r : mapEq) {
+        SimpleExpr *simp = dynamic_cast<SimpleExpr *>(r);
+        if (simp) {
+            cout << "CheckEqualDistinct CHECK" << endl;
 
-        DPRule *rule = _plan->hasRelation(OP_REL_DISTINCT, r->get(0), r->get(1));
-        if (rule) {
-            stringstream ss;
-            ss << "<< " << r->getDescription() << " >> not compatible with << " << rule->getDescription() << " >>";
-            string err = ss.str();
-            _plan->addContradiction(err);
+            BoolExpr *expr = _plan->hasExpr("Distinct", simp->at(0), simp->at(1));
+            if (expr) {
+                stringstream ss;
+                ss << "<< " << r->getDescr() << " >> not compatible with << " << expr->getDescr() << " >>";
+                string err = ss.str();
+                _plan->addContradiction(err);
+            }
         }
     }
-
 }
 

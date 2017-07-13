@@ -1,0 +1,312 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks   = true,    % Colours links instead of ugly boxes
+  urlcolor     = blue,    % Colour for external hyperlinks
+  linkcolor    = blue,    % Colour of internal links
+  citecolor    = red      % Colour of citations
+}
+
+\newcommand{\rem}[1]{\smallskip\noindent\textbf{Remarque #1 - }}
+\newcommand{\rems}[1]{\smallskip\noindent\textbf{Remarques #1 - }}
+\newcommand{\Cad}{C'est-à-dire }
+\newcommand{\cad}{c'est-à-dire }
+
+\title{Découverte}
+\author{D. Boucher}
+\date\today
+\begin{document}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+This article details specifications of \textit{Dr Pythagore}, a software to learn about geometry proofs. The goal is an ideal, a first idea would be to work around IA and mathematics, making experiences.
+
+\section{The parser}
+
+We want to define objects, sets, points and \textit{play} with them. To allow that, we introduce here a parser.
+
+\section{DPPlan}
+
+We know it is a points set but here we see it differently. It gives relationship between elements. It is the plan that contains properties between them.
+
+For example, if we assert that two points are equal, this assertion is set in the plan.
+
+Relations like \textit{equality}, \textit{orthogonality}, \textit{not equality}, etc\dots are stored in that class.
+
+An important point is dependencies between relations. For example, let's assume $A$, $B$ and $C$ are not aligned. This assertion implies others like $(AB)$ and $(AC)$ are intersecting. The idea of storing all the consequencies looks awful, they could be too many with only several points.
+
+So, the idea would be more to be able to use them when necessary.
+
+Let's consider an example : Let $A$, $B$ and $C$ three points not aligned.
+We could then ask if lines $(AB)$ and $(AC)$ are parallel.
+
+The algorithm follows these ideas:
+\begin{itemize}
+\item To build the line $(AB)$, we must have $A\neq B$. But this is true because $A, B$ and $C$ are not aligned.
+\item Then we must build the line $(AC)$ and we arrive to the same result.
+\item Now, we could have a rule telling that those lines are intersecting since $A,B$ and $C$ are not aligned.
+\end{itemize}
+
+The first step is that :
+\begin{itemize}
+\item $A$, $B$ and $C$ are defined in the plane.
+\item We known $A, B, C$ not aligned. This relation is also stored in the plane.
+\item We have rules connecting relations:
+\begin{itemize}
+\item A first one is $A,B,C$ not aligned implies $A\neq B$, $B\neq C$ and $A\neq C$.
+\item A second one is $A,B,C$ not aligned implies that any different lines built from two of those points are intersecting.
+\end{itemize}
+\end{itemize}
+
+And the algorithm would be
+\begin{itemize}
+\item Do we have the result umong the plane relations.
+\item If yes, we can return the result.
+\item Otherwise, thanks to the rules, we can build new relations.
+\end{itemize}
+
+The difficulty is the capability to mix the rules to achieve a result.
+
+Let's return to the question: \textit{Are $(AB)$ and $(AC)$ parallel ?}
+
+If we talk about those lines, we must be able to build them. The plane does not contain anything about the fact that $A$ and $B$ are distinct. So rules must be used.
+
+Are there some rules returning the expected goal: $A\neq B$ ?
+
+We could have several ones. So can take the corresponding rules.
+
+What are each rules hypothesis ?
+
+And then, we have the good rule telling that $A,B,C$ not aligned.
+
+If rules gives the result, I think a good idea would be to add relations in the plane, which could make easier next questions.
+
+
+\section{Rules}
+
+Rules can be seen like functions.
+
+We have seen a first one that is : $A,B,C$ not aligned $=>$ $A\neq B$, $B\neq C$ and $A\neq C$.
+
+Relations are not binary, they work with an operator and a list of parameters so we can get them by their positions.
+
+Then relations can be stored in a stack. The root of the stack contains current relations. When we call a rule a new step is added to the stack with results inside.
+
+\textit{Stack} is not the best terminology. If we keep the multithreaded engine, it can contains several step at the same level.
+
+The parser must understand a rule. We could use the following syntax:
+
+\begin{verbatim}
+Rule: A,B,C Not Aligned => A!=B, A!=C, B!=C
+\end{verbatim}
+
+We could store this as:
+\begin{verbatim}
+Rule: #1,#2,#3 Not Aligned => #1!=#2, #1!=#3, #2!=#3
+\end{verbatim}
+
+The first part of the rule is a big condition based on expressions we can see beside \texttt{Assume}. Its result is a boolean. If it is true, we have the result relations separated by commas.
+
+Suppose we want to prove $A\neq B$.
+
+If we have access to results, we can find \texttt{\#1!=\#2} and also \texttt{\#1!=\#3} and \texttt{\#2!=\#3}. By replacing \texttt{\#N} by the good letter, we obtain three possibilities.
+
+We get then something to search among hypothesis like:
+\begin{verbatim}
+A,B,#3 Not Aligned
+\end{verbatim}
+
+That should be possible to find among relations stored in the plane.
+
+Rules are stored in lists at the moment. It's not optimal but should do the work.
+A rule is built of two parts:
+\begin{itemize}
+\item hypothesis
+\begin{itemize}
+\item The hypothesis has a \textbf{pointer to the rule itself}. This allows to go and back between hypothesis, rule and results.
+\item The second point here is to store the condition. It can be simple, at first it is a relation with a list of arguments. Then, we can have two expressions more complicated, that are functions \texttt{and} and \texttt{or} that take as arguments others expressions.
+\end{itemize}
+\item result
+\begin{itemize}
+\item The result has a \textbf{pointer to the rule itself}. This allows to go and back between hypothesis, rule and results.
+\end{itemize}
+\end{itemize}
+
+\section{Parser}
+
+Because of rule, we have two steps.
+
+Imagine the two following lines:
+\begin{verbatim}
+Assume A,B,C Aligned
+Rule: A,B,C Aligned => A!=B, A!=C, B!=C
+\end{verbatim}
+
+The \textit{assumed part} and the rule's \textit{condition} are parsed the same way. So they give the same result, in a first step anyway.
+
+A condition is stored as follows:
+
+Elements are stored in an array, like this they are accessible by their index. Then, we have the expression with integers telling which is the argument.
+
+For $A,B,C$ Aligned, we have:
+\begin{itemize}
+\item $[A, B, C]$
+\item Aligned($0, 1, 2$)
+\end{itemize}
+
+For $A\neq B$ and $B \neq C$, we have:
+\begin{itemize}
+\item $[A,B,C]$
+\item And(Distinct($0,1$),Distinct($1,2$))
+\end{itemize}
+
+Used functions return a boolean for now.
+
+With such a solution, it is not easy to store the fact, $A\neq B$ and $B\neq C$ and check them with conditions. We must find a more efficient solution.
+
+The present implementation, contains relations with an operator and a parameters list. It looks quite good except the operator name that should become a string and not an enum.
+
+Now, the problem is when the user enter something like this
+
+\begin{verbatim}
+Assume A!=B And B!=C
+\end{verbatim}
+
+And a worse possibility is
+
+\begin{verbatim}
+Assume A!=B Or B!=C
+\end{verbatim}
+
+Relations between elements cannot be stored by relation name. We must store the boolean expression and evaluate it.
+
+We also need something to evaluate those expressions.
+
+When an expression is assumed, we should reduce it.
+
+When we want to check if an expression is true, typically needed to verify a rule, it is difficult to directly verify the condition.
+
+We have then two kinds of boolean relations:
+\begin{enumerate}
+\item Elementary relations, constructed only from geometric datas, for example $A\neq B$, $A, B, C$ aligned, etc\dots
+\item Composed relations, using previous ones but also boolean expressions based on others boolean expressions, in fact when we use \textit{And}, \textit{Not}, \textit{Or}, \dots
+\end{enumerate}
+
+Rules or relations are boolean expressions, simple or complex. Some of these relations are facts and others are rules. So, the plane can contains to sets of expressions:
+\begin{enumerate}
+\item facts
+\item rules: Let's remember that $A => B$ is equivalent to $!A \hbox{ or } B$
+\end{enumerate}
+
+Be careful! A fact is based on existing elements whereas a rule is built on anonymous objects. We must be able to replace anonymous variables by real ones when needed.
+
+Let's continue with our example. $A,B,C$ are not aligned.
+
+There is a rule saying that if $A,B,C$ are not aligned, then $A\neq B$ and idem for $B,C$ and $A,C$.
+
+We want to know if $(AB)$ and $(AC)$ are parallel. Before answering the question, we must know if $(AB)$ exists. The condition is $A\neq B$.
+
+Among the rules, do we have a conclusion containing \textit{Distinct(X,Y)}?
+
+Yes, we have \texttt{X,Y,Z Not Aligned => X!=Y And Y!=Z And X!=Z}.
+
+And There is an hypothesis telling that \texttt{A,B,C Not Aligned}.
+
+The last question is \textit{can we mix}:
+\begin{itemize}
+\item $A,B,C Not Aligned$
+\item \texttt{X,Y,Z Not Aligned => X!=Y And Y!=Z And X!=Z}
+\item $A\neq B$
+\end{itemize}
+to prove that $A\neq B$.
+
+The first example looks too simple now. Let's find a second one more representative.
+
+Here is a new exercise:
+
+$(AB)$ is a line. $(AC)$ and $(BD)$ are lines orthogonal to $(AB)$.
+Let $\cal{D}$ be a line orthogonal to $(AC)$ or orthogonal to $(BD)$.
+Is $\cal D$ parallel to $(AB)$?
+
+We have several rules:
+\begin{enumerate}
+\item $(XY)$ line $=>$ $X\neq Y$
+\item $\cal D$ orthogonal to $\cal D'$ and $\cal D$ parallel to $\Delta$ implies $\cal D'$ orthogonal to $\Delta$.
+\item $\cal D$ orthogonal to $\cal D'$ and $\cal D'$ orthogonal to $\cal D"$ implies $\cal D$ parallel to $\cal D"$.
+\end{enumerate}
+
+Facts are:
+\begin{enumerate}
+\item \texttt{Ortho((AC), (AB))}.
+\item \texttt{Ortho((BD), (AB))}.
+\item \texttt{Or(Ortho($\cal D$, (AC)), Ortho($\cal D$, (BD)))}
+\end{enumerate}
+
+
+\section{Classes}
+\subsection{DPBoolSimpFunc}
+
+This class has
+\begin{itemize}
+\item A name
+\item A list of parameters that are \textit{DPElements}
+\end{itemize}
+
+\subsection{DPBoolBoolFunc}
+
+This class has
+\begin{itemize}
+\item A name
+\item A list of parameters that are \textit{booleans}. The goal is to mix \textit{DPBoolSimpFuncs}.
+\end{itemize}
+
+\subsection{DPPointsSet}
+
+This class is a points set. It is composed of one, two, \dots or an infinite number of points.
+
+It has a name.
+
+In the case of a finite set, it contains their list.
+
+In the case of an infinite set, it must contains rules defining how those points are disposed.
+
+To define a set, we can need points to define the set. Those points are not necessarily in the set. We have examples like \textit{circles}, \textit{mediatrices}, \textit{ellipses} which are defined from points not part of them.
+
+To continue the previous remark, we can need numbers to define a set. It is the case for a circle (the radius), it is also the case for a segment (where we could want to define its length).
+
+A last case, is that a set can be an union, an intersection of others sets.
+
+Examples that come to mind are :
+
+\begin{enumerate}
+\item A line $\Delta$ is an infinite set of points. It can contains two points specified $A$ and $B$ and one rule could say "all points aligned with $A$ and $B$".
+\item A circle $C$ is an infinite set of points. Its content is represented by all the points whose distances with a given point $A$ are the same: $r$.
+\end{enumerate}
+
+
+\begin{itemize}
+\item \textit{name} - The name of the set.
+\item \textit{list<DPPoint> content} - The list of points definining the set. Maybe this last one has others points. It is the case for a line ; it is usually defined by two points but has an infinite number of points.
+\end{itemize}
+
+\subsubsection{DPLine}
+
+It is a subclass of \texttt{DPPointsSet}. It represents a \textit{line}.
+
+With a such class, it is easier to recognize all its properties.
+
+\subsubsection{DPCircle}
+
+It is a subclass of \texttt{DPPointsSet}. It represents a \textit{line}.
+
+\end{document}

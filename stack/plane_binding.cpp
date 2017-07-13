@@ -1,30 +1,45 @@
+/* Dr-Pythagore 
+ * Copyright (C) 2016-2017 D. Boucher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include <sys/types.h>
 #include <cerrno>
 #include <dirent.h>
+#include <sstream>
 #include <iostream>
 #include <string>
 #include <cstring>
 #include "plane_binding.h"
 #include "plane.h"
-#include "rules/rule.h"
+#include "point.h"
+#include "simpleExpr.h"
 
 
 using namespace std;
+using namespace DP;
 
-//  https://gist.github.com/kizzx2/5221139
-
-DPPlane *l_CheckPlane(lua_State *L, int n)
+DP::Plane *l_CheckPlane(lua_State *L, int n)
 {
-    // This checks that the argument is a userdata 
-    // with the metatable "luaL_Plane"
-    return *(DPPlane **)luaL_checkudata(L, n, "luaL_Plane");
+    return *(DP::Plane **)luaL_checkudata(L, n, "luaL_Plane");
 }
  
 void stackDump(lua_State *L)
 {
     int i;
     int top = lua_gettop(L);
-    for (i = 1; i <= top; i++) {  /* repeat for each level */
+    for (i = 1; i <= top; ++i) {  /* repeat for each level */
         int t = lua_type(L, i);
         switch (t) {
 
@@ -50,42 +65,77 @@ void stackDump(lua_State *L)
     cout << endl;  /* end the listing */
 }
 
-int l_getRelations(lua_State *L)
+int l_getExprs(lua_State *L)
 {
-    DPPlane *plane = l_CheckPlane(L, 1);
+    DP::Plane *plane = l_CheckPlane(L, 1);
     const char *op = luaL_checkstring(L, 2);
-    deque<DPRule *> rules;
+    deque<DP::BoolExpr *> exprs;
 
     if (string(op) == "Aligned")
-        rules = plane->getRelations(OP_REL_ALIGNED);
+        exprs = plane->getExprs("Aligned");
     else if (string(op) == "NotAligned")
-        rules = plane->getRelations(OP_REL_NOTALIGNED);
+        exprs = plane->getExprs("Not", "Aligned");
     else if (string(op) == "Equals")
-        rules = plane->getRelations(OP_REL_EQUALS);
+        exprs = plane->getExprs("Equals");
     else if (string(op) == "Distinct")
-        rules = plane->getRelations(OP_REL_DISTINCT);
+        exprs = plane->getExprs("Distinct");
 
-    lua_createtable(L, rules.size(), 0);
+    lua_createtable(L, exprs.size(), 0);
     int count = 1;
-    for (DPRule *r : rules) {
-        list<DPElement *> lst = r->getElements();
-        lua_createtable(L, lst.size(), 0);
-        int cc = 1;
-        for (DPElement *e : lst) {
-            lua_pushstring(L, e->getName().c_str());
-            lua_rawseti(L, -2, cc++);
+    for (DP::BoolExpr *r : exprs) {
+        SimpleExpr *simp = dynamic_cast<SimpleExpr *>(r);
+        if (simp) {
+            lua_createtable(L, simp->size(), 0);
+            int cc = 1;
+            for (DP::Element *e : *simp) {
+                lua_pushstring(L, e->getName().c_str());
+                lua_rawseti(L, -2, cc++);
+            }
+            lua_rawseti(L, -2, count++);
         }
-        lua_rawseti(L, -2, count++);
     }
  
     return 1;
 }
  
+int l_setPointRelation(lua_State *L)
+{
+    stackDump(L);
+    DP::Plane *plane = l_CheckPlane(L, 1);
+    const char *op = luaL_checkstring(L, 2);
+    const char *a = luaL_checkstring(L, 3);
+    const char *b = luaL_checkstring(L, 4);
+    //const char *c = luaL_checkstring(L, 5);
+
+    DP::Point *aa = plane->getPoint(a);
+    DP::Point *bb = plane->getPoint(b);
+    //DPPoint *cc;
+    //if (c)
+    //    cc = plane->getPoint(c);
+    //else
+    //    cc = nullptr;
+
+    if (!aa || !bb) {
+        cerr << a << " and " << b << " are not defined" << endl;
+        return 0;
+    }
+    if (string(op) == "Distinct") {
+        stringstream ss;
+        ss << a << " and " << b << " are distinct.";
+        cout << ss.str() << endl;
+        SimpleExpr *simp = new SimpleExpr("Distinct", aa, bb, ss.str());
+        plane->addExpression(simp);
+    }
+    else {
+        cerr << "Cannot understand operator " << op << endl;
+    }
+    return 0;
+}
+
 int l_Plane_destructor(lua_State *L)
 {
     cout << "Plane destructor" << endl;
-    DPPlane *plane = l_CheckPlane(L, 1);
-    delete plane;
+    DP::Plane *plane = l_CheckPlane(L, 1);
  
     return 0;
 }
@@ -117,14 +167,15 @@ int parseLuaScripts(lua_State *L, const string &dir)
     return 0;
 }
 
-void registerPlane(lua_State *L, DPPlane *plane)
+void registerPlane(lua_State *L, DP::Plane *plane)
 {
-    DPPlane **udata = static_cast<DPPlane **>(lua_newuserdata(L, sizeof(DPPlane *)));
+    DP::Plane **udata = static_cast<DP::Plane **>(lua_newuserdata(L, sizeof(DP::Plane *)));
     *udata = plane;
 
     luaL_Reg sPlaneRegs[] =
     {
-        { "getRelations", l_getRelations },
+        { "getRelations", l_getExprs },
+        { "setPointRelation", l_setPointRelation },
         { "__gc", l_Plane_destructor },
         { NULL, NULL }
     };

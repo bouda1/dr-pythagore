@@ -2,12 +2,16 @@
 #define __POINT_H__
 #include "element.h"
 
-class DPPoint : public DPElement
+namespace DP {
+
+class Point : public Element
 {
     public:
-        DPPoint(DPPlane *parent, const char *name);
-        bool operator == (const DPPoint &b);
-        bool operator != (const DPPoint &b);
+        Point(Plane *parent, const char *name);
+        bool operator == (const Point &b);
+        bool operator != (const Point &b);
 };
+
+}
 
 #endif /* __POINT_H__ */

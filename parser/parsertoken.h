@@ -3,18 +3,20 @@
 #include "element.h"
 #include "plane.h"
 
-class DPParserToken {
-    const DPPlane *_plan;
+namespace DP {
+class ParserToken {
+    const Plane *_plan;
     bool _result;
     bool _error;
 
 public:
-    DPParserToken(const DPPlane *plan);
+    ParserToken(const Plane *plan);
     void setResult(bool result);
     bool getResult() const;
-    DPPlane *getPlan() const;
+    Plane *getPlan() const;
     bool onError() const;
     void setError();
 };
+}
 
 #endif /* __PARSERTOKEN_H__ */

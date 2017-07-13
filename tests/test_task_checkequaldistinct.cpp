@@ -7,8 +7,8 @@ using namespace std;
 
 void TestTaskCheckEqualDistinct::setUp()
 {
-    _plan = new DPPlane;
-    _lexer = new DPLexer(_plan);
+    _plan = new DP::Plane;
+    _lexer = new DP::Lexer(_plan);
 }
 
 void TestTaskCheckEqualDistinct::tearDown()
@@ -27,6 +27,6 @@ void TestTaskCheckEqualDistinct::testPoints()
     sleep(1);
     string str = _lexer->getLastContradiction();
     cout << "STR: " << str << endl;
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Cannot assume A=B and A!=B", str, string("<< A and B are assumed equal >> not compatible with << A and B are assumed to be distinct >>"));
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Cannot assume A=B and A!=B", str, string("<< A is equal to B >> not compatible with << A is distinct of B >>"));
 }
 

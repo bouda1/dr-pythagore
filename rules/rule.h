@@ -4,19 +4,25 @@
 #include <string>
 #include "element.h"
 
-class DPRule
+// FIXME: DEPRECATED NOW
+
+namespace DP {
+
+class Rule
 {
     DPOpRel _op;
-    std::list<DPElement *> _elems;
+    std::list<Element *> _elems;
     std::string _descr;
 
 public:
-    DPRule(DPOpRel op, DPElement *a, DPElement *b, const std::string &explanation);
-    DPRule(DPOpRel op, DPElement *a, DPElement *b, DPElement *c, const std::string &explanation);
-    DPElement *get(int idx) const;
+    Rule(DPOpRel op, Element *a, Element *b, const std::string &explanation);
+    Rule(DPOpRel op, Element *a, Element *b, Element *c, const std::string &explanation);
+    Element *get(int idx) const;
     DPOpRel getOp() const;
-    const std::list<DPElement *>& getElements() const;
+    const std::list<Element *>& getElements() const;
     const std::string &getDescription() const;
 };
+
+}
 
 #endif // DPRULE_H

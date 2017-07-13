@@ -11,4 +11,4 @@ set(OBJ_SRC
 
 ADD_LIBRARY(elements STATIC ${OBJ_SRC})
 
-TARGET_LINK_LIBRARIES(elements tasks rules)
+TARGET_LINK_LIBRARIES(elements tasks)

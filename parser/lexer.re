@@ -5,30 +5,31 @@
 #include "grammar.h"
 
 using namespace std;
+using namespace DP;
 
-DPLexer::DPLexer(DPPlane *plan)
+Lexer::Lexer(Plane *plan)
     : _content(0), _plan(plan), _token(_plan), _start(0), _limit(0)
 {
     _parser = dPParseAlloc(malloc);
 }
 
-DPLexer::~DPLexer()
+Lexer::~Lexer()
 {
     dPParseFree(_parser, free);
 }
 
-char *DPLexer::getTokenValue()
+char *Lexer::getTokenValue()
 {
     return strndup(_start, _cursor - _start);
 }
 
-void DPLexer::debug(int a, char b)
+void Lexer::debug(int a, char b)
 {
     cout << "DEBUG " << a << " ; " << b << endl;
     cout << "_start = " << _start << endl;
 }
 
-int DPLexer::scan()
+int Lexer::scan()
 {
     _start = _cursor;
 #define YYCTYPE char
@@ -67,7 +68,7 @@ cont:
     */
 }
 
-void DPLexer::parse(const char *s)
+void Lexer::parse(const char *s)
 {
     //FILE *f = fopen("/tmp/parser.dbr", "a");
     //dPParseTrace(f, "DP => ");
@@ -90,12 +91,12 @@ void DPLexer::parse(const char *s)
         _token.setResult(false);
 }
 
-bool DPLexer::getResult() const
+bool Lexer::getResult() const
 {
     return _token.getResult();
 }
 
-string DPLexer::getLastContradiction() const
+string Lexer::getLastContradiction() const
 {
     return _plan->getLastContradiction();
 }

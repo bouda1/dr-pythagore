@@ -2,26 +2,25 @@
 #include "point.h"
 
 using namespace std;
+using namespace DP;
 
-DPPoint::DPPoint(DPPlane *parent, const char *n)
-    : DPElement(parent, n)
+Point::Point(Plane *parent, const char *n)
+    : Element(parent, n)
 {
     cout << "\x1b[33;1m" << "New point " << n << "\x1b[0m" << endl;
     parent->addPoint(this);
 }
 
-bool DPPoint::operator == (const DPPoint &b)
+bool Point::operator == (const Point &b)
 {
     if (this == &b)
         return true;
-    return getParent()->hasRelation(OP_REL_EQUALS, this,
-                                   const_cast<DPPoint *>(&b));
+    return getParent()->hasExpr("Equals", this, const_cast<Point *>(&b));
 }
 
-bool DPPoint::operator != (const DPPoint &b)
+bool Point::operator != (const Point &b)
 {
     if (this == &b)
         return false;
-    return getParent()->hasRelation(OP_REL_DISTINCT, this,
-                                    const_cast<DPPoint *>(&b));
+    return getParent()->hasExpr("Distinct", this, const_cast<Point *>(&b));
 }

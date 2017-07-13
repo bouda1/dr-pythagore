@@ -2,28 +2,29 @@
 #include "element.h"
 
 using namespace std;
+using namespace DP;
 
-DPElement::DPElement(DPPlane *parent)
+Element::Element(Plane *parent)
     : _parent(parent)
 {
 }
 
-DPElement::DPElement(DPPlane *parent, const char *name)
+Element::Element(Plane *parent, const char *name)
     : _parent(parent), _name(name)
 {
 }
 
-void DPElement::setName(const string &newName)
+void Element::setName(const string &newName)
 {
     _name = newName;
 }
 
-const string &DPElement::getName(void) const
+const string &Element::getName(void) const
 {
     return _name;
 }
 
-DPPlane *DPElement::getParent() const
+Plane *Element::getParent() const
 {
     return _parent;
 }

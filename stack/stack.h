@@ -8,11 +8,11 @@
 #include "action.h"
 #include "task.h"
 
-class DPRule;
+namespace DP {
 
 const static int NB_THREAD = 2;
 
-class DPStack {
+class Stack {
     std::array<std::thread, NB_THREAD> _thread;
     std::deque<DPTask *> _tasks;
     bool _stop;
@@ -22,15 +22,15 @@ class DPStack {
     std::mutex _mutex;
 
 public:
-    friend void DPAction::operator()();
+    friend void Action::operator()();
 
-    DPStack(DPPlane *plane);
-    ~DPStack();
+    Stack(Plane *plane);
+    ~Stack();
     DPTask *dequeueTask();
     bool queueEmpty() const;
     bool stopAsked();
     void enqueueTask(DPTask *task);
 };
-
+}
 #endif /* __POOL_H__ */
 

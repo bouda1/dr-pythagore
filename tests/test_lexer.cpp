@@ -3,8 +3,8 @@
 
 void TestDPLexer::setUp()
 {
-    _plan = new DPPlane;
-    _lexer = new DPLexer(_plan);
+    _plan = new DP::Plane;
+    _lexer = new DP::Lexer(_plan);
 }
 
 void TestDPLexer::tearDown()

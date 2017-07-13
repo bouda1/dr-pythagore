@@ -5,6 +5,7 @@
 #include "stack.h"
 
 using namespace std;
+using namespace DP;
 
 /* The string containing the entered line */
 static char *line_read = nullptr;
@@ -28,8 +29,8 @@ char *rl_gets()
 
 int main()
 {
-    DPPlane plane;
-    DPLexer lexer(&plane);
+    Plane plane;
+    Lexer lexer(&plane);
 
     do {
         char *ret = rl_gets();

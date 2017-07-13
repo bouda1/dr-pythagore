@@ -3,18 +3,22 @@
 #include <string>
 #include "plane.h"
 
-class DPElement {
+namespace DP {
+
+class Element {
 protected:
     std::string _name;
-    DPPlane *_parent;
+    Plane *_parent;
 
 public:
-    DPElement(DPPlane *parent);
-    DPElement(DPPlane *parent, const char *name);
+    Element(Plane *parent);
+    Element(Plane *parent, const char *name);
     void setName(const std::string &newName);
     const std::string &getName(void) const;
-    DPPlane *getParent() const;
+    Plane *getParent() const;
 };
+
+}
 
 #endif /* __ELEMENT_H__ */
 

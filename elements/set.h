@@ -5,19 +5,23 @@
 #include "plane.h"
 #include "element.h"
 
-class DPPoint;
+namespace DP {
 
-class DPSet : public DPElement {
+class Point;
+
+class Set : public Element {
 protected:
-    std::unordered_set<DPPoint *> _singlePoints;
+    std::unordered_set<Point *> _singlePoints;
     mutable std::mutex _singlePointsMutex;
 
 public:
-    bool contains(DPPoint *point) const;
-    DPSet(DPPlane *parent);
-    void addPoint(DPPoint *a);
-    std::unordered_set<DPPoint *> getSinglePoints() const;
-    void setRelation(DPOpRel rel, DPElement *a, DPElement *b);
+    bool contains(Point *point) const;
+    Set(Plane *parent);
+    void addPoint(Point *a);
+    std::unordered_set<Point *> getSinglePoints() const;
+    //void setRelation(DPOpRel rel, Element *a, Element *b);
 };
+
+}
 
 #endif /* __SET_H__ */

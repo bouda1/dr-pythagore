@@ -2,18 +2,21 @@
 #define __SEGMENT_H__
 #include "set.h"
 
-class DPSegment : public DPSet {
-    DPPoint *_beginPoint;
-    DPPoint *_endPoint;
+namespace DP {
+
+class Segment : public Set {
+    Point *_beginPoint;
+    Point *_endPoint;
 
 public:
-    DPSegment(DPPlane *parent, DPPoint *a, DPPoint *b);
-    DPSegment(DPPlane *parent, const char *a, const char *b);
-    bool operator == (const DPSegment &b);
-    bool operator != (const DPSegment &b);
-    void addPoint(DPPoint *a);
-    DPPoint *getBegin() const;
-    DPPoint *getEnd() const;
+    Segment(Plane *parent, Point *a, Point *b);
+    Segment(Plane *parent, const char *a, const char *b);
+    bool operator == (const Segment &b);
+    bool operator != (const Segment &b);
+    void addPoint(Point *a);
+    Point *getBegin() const;
+    Point *getEnd() const;
 };
 
+}
 #endif /* __SEGMENT_H__ */

@@ -10,6 +10,7 @@ SET(LUA_SCRIPTS
     aligned.lua
     distinct.lua
     equals.lua
+    notaligned.lua
     )
 
 FOREACH (F ${LUA_SCRIPTS})

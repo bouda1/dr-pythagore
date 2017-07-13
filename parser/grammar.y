@@ -4,20 +4,21 @@
 %token_type {char *}
 %token_destructor { free $$; }
 
-%type boolean { int }
-%type point {DPPoint *}
-%type line {DPLine *}
-%type segment {DPSegment *}
-%type set {DPSet *}
+%type expr {BoolExpr *}
+%type question { int }
+%type point {Point *}
+%type line {Line *}
+%type segment {Segment *}
+%type set {Set *}
 %type list {list<string> *}
 
-%extra_argument { DPParserToken *token }
+%extra_argument { ParserToken *token }
 
 %left COLON.
 %left VIRG.
 
 %include {
-#include <assert.h>
+#include <cassert>
 #include <sstream>
 #include <iostream>
 #include <list>
@@ -25,12 +26,15 @@
 #include "point.h"
 #include "line.h"
 #include "segment.h"
+#include "simpleExpr.h"
+#include "treeBoolExpr.h"
 
 using namespace std;
+using namespace DP;
 }
 
 %syntax_error {
-    std::cout << "syntax error - ";
+    cout << "syntax error - ";
     int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
     for (int i = 0; i < n; ++i) {
         int a = yy_find_shift_action(yypParser, (YYCODETYPE)i);
@@ -68,46 +72,38 @@ list(L) ::= list(A) VIRG IDENT(B). {
 program ::= LET list(A) COLON POINT END. {
     cout << "Points definition" << endl;
     for (string s : *A) {
-        DPPoint *a = new DPPoint(token->getPlan(), s.c_str());
+        Point *a = new Point(token->getPlan(), s.c_str());
         cout << "Let " << s << " be a point." << endl;
     }
 }
 
-//program ::= LET IDENT(A) COLON POINT END. {
-//    cout << "Let " << A << " be a point." << endl;
-//    DPPoint *a = new DPPoint(token->getPlan(), A);
-//}
-
 program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
     cout << "Let [" << A << B << "] be a segment." << endl;
-    DPSegment *a = new DPSegment(token->getPlan(), A, B);
+    Segment *a = new Segment(token->getPlan(), A, B);
 }
 
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
     stringstream ss;
     ss << '(' << A << B << ") is a line.";
-    DPLine *a = new DPLine(token->getPlan(), A, B);
+    Line *a = new Line(token->getPlan(), A, B);
 }
 
-//program ::= point(A) END.   {
-//    cout << "A new point " << A->getName() << endl;
-//}
 program ::= line(A) END.    {
     cout << "A new line " << A->getName() << endl;
 }
 
-program ::= boolean(A) END. {
+program ::= question(A) END. {
     token->setResult(A);
 }
 
 /* Points in set */
-boolean(A) ::= point(B) IN set(C) INTERRO. {
+question(A) ::= point(B) IN set(C) INTERRO. {
     cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
     A = C->contains(B);
 }
 
 /* Distinct */
-boolean(A) ::= point(B) DISTINCT point(C) INTERRO. {
+question(A) ::= point(B) DISTINCT point(C) INTERRO. {
     cout << "Check points equality" << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
@@ -117,19 +113,19 @@ boolean(A) ::= point(B) DISTINCT point(C) INTERRO. {
         A = (*B != *C);
 }
 
-boolean(A) ::= line(B) DISTINCT line(C) INTERRO. {
+question(A) ::= line(B) DISTINCT line(C) INTERRO. {
     cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
     cout << "NOT IMPLEMENTED" << endl;
     A = false;
 }
 
-boolean(A) ::= segment(B) DISTINCT segment(C) INTERRO. {
+question(A) ::= segment(B) DISTINCT segment(C) INTERRO. {
     cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
     A = (*B != *C);
 }
 
 /* Equivalences */
-boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
+question(A) ::= point(B) EQUALS point(C) INTERRO. {
     cout << "Check points equality" << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
@@ -139,28 +135,28 @@ boolean(A) ::= point(B) EQUALS point(C) INTERRO. {
         A = (*B == *C);
 }
 
-boolean(A) ::= line(B) PARALLEL line(C) INTERRO. {
+question(A) ::= line(B) PARALLEL line(C) INTERRO. {
     cout << "Check if lines " << B->getName() << " and " << C->getName() << " are parallel" << endl;
     A = B->parallelTo(*C);
 }
 
-boolean(A) ::= line(B) EQUALS line(C) INTERRO. {
+question(A) ::= line(B) EQUALS line(C) INTERRO. {
     cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
     A = (*B == *C);
 }
 
-boolean(A) ::= segment(B) EQUALS segment(C) INTERRO. {
+question(A) ::= segment(B) EQUALS segment(C) INTERRO. {
     cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
     A = (*B == *C);
 }
 
 /* Getters */
 set(A) ::= line(B). {
-    A = static_cast<DPSet *>(B);
+    A = static_cast<Set *>(B);
 }
 
 set(A) ::= segment(B). {
-    A = static_cast<DPSet *>(B);
+    A = static_cast<Set *>(B);
 }
 
 line(A) ::= LPAR point(B) point(C) RPAR. {
@@ -193,6 +189,36 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
     }
 }
 
+expr(E) ::= point(A) DISTINCT point(B). {
+    stringstream ss;
+    ss << A->getName() << " is distinct of " << B->getName();
+    E = new SimpleExpr("Distinct", A, B, ss.str());
+}
+
+expr(E) ::= point(A) EQUALS point(B). {
+    stringstream ss;
+    ss << A->getName() << " is equal to " << B->getName();
+    E = new SimpleExpr("Equals", A, B, ss.str());
+}
+
+expr(E) ::= line(A) PARALLEL line(B). {
+    stringstream ss;
+    ss << A->getName() << " is parallel to " << B->getName();
+    E = new SimpleExpr("Parallel", A, B, ss.str());
+}
+
+expr(E) ::= point(A) VIRG point(B) VIRG point(C) ALIGNED. {
+    stringstream ss;
+    ss << A->getName() << ", " << B->getName() << ", " << C->getName() << " are aligned";
+    E = new SimpleExpr("Aligned", A, B, C, ss.str());
+}
+
+expr(E) ::= point(A) VIRG point(B) VIRG point(C) NOT ALIGNED. {
+    stringstream ss;
+    ss << A->getName() << ", " << B->getName() << ", " << C->getName() << " are aligned";
+    SimpleExpr *simp = new SimpleExpr("Aligned", A, B, C, ss.str());
+    E = new TreeBoolExpr("Not", simp, ss.str());
+}
 
 /* Constraints */
 program ::= ASSUME point(A) IN set(B) END. {
@@ -200,34 +226,38 @@ program ::= ASSUME point(A) IN set(B) END. {
     B->addPoint(A);
 }
 
-program ::= ASSUME point(A) DISTINCT point(B) END. {
-    stringstream ss;
-    ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
-    token->getPlan()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
+program ::= ASSUME expr(E) END. {
+    cout << "Assume " << E->getString() << endl;
+    token->getPlan()->addExpression(E);
 }
 
-program ::= ASSUME point(A) EQUALS point(B) END. {
-    stringstream ss;
-    ss << A->getName() << " and " << B->getName() << " are assumed equal";
-    token->getPlan()->setRelation(OP_REL_EQUALS, A, B, ss.str());
-}
+//program ::= ASSUME point(A) DISTINCT point(B) END. {
+//    stringstream ss;
+//    ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
+//    token->getPlan()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
+//}
 
-program ::= ASSUME line(A) PARALLEL line(B) END. {
-    stringstream ss;
-    ss << A->getName() << " is assumed parallel to " << B->getName();
-    token->getPlan()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
-}
+//program ::= ASSUME point(A) EQUALS point(B) END. {
+//    stringstream ss;
+//    ss << A->getName() << " and " << B->getName() << " are assumed equal";
+//    token->getPlan()->setRelation(OP_REL_EQUALS, A, B, ss.str());
+//}
 
-program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
-    stringstream ss;
-    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
-    token->getPlan()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
-}
+//program ::= ASSUME line(A) PARALLEL line(B) END. {
+//    stringstream ss;
+//    ss << A->getName() << " is assumed parallel to " << B->getName();
+//    token->getPlan()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
+//}
 
-program ::= ASSUME point(A) VIRG point(B) VIRG point(C) NOT ALIGNED END. {
-    stringstream ss;
-    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are not aligned";
-    token->getPlan()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
-}
+//program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
+//    stringstream ss;
+//    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
+//    token->getPlan()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
+//}
 
+//program ::= ASSUME point(A) VIRG point(B) VIRG point(C) NOT ALIGNED END. {
+//    stringstream ss;
+//    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are not aligned";
+//    token->getPlan()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
+//}
 

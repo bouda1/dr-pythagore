@@ -5,20 +5,21 @@
 #include "plane_binding.h"
 
 using namespace std;
+using namespace DP;
 
-DPAction::DPAction(DPStack &stack, DPPlane *plane)
+Action::Action(Stack &stack, Plane *plane)
     : _stack(stack), _plane(plane), _L(NULL)
 {
     cout << "Action constructor" << endl;
 }
 
-DPAction::~DPAction()
+Action::~Action()
 {
     if (_L)
         lua_close(_L);
 }
 
-void DPAction::operator()()
+void Action::operator()()
 {
     cout << "Lua state initialization" << endl;
     _L = luaL_newstate();

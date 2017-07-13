@@ -3,10 +3,11 @@
 #include "plane.h"
 #include "grammar-prot.h"
 
-class DPLexer {
+namespace DP {
+class Lexer {
     const char *_content;
-    DPPlane *_plan;
-    DPParserToken _token;
+    Plane *_plan;
+    ParserToken _token;
     void *_parser;
     const char *_start;
     const char *_marker;
@@ -15,8 +16,8 @@ class DPLexer {
     int scan();
 
 public:
-    DPLexer(DPPlane *plan);
-    ~DPLexer();
+    Lexer(Plane *plan);
+    ~Lexer();
     char *getTokenValue();
     void debug(int a, char b);
     void parse(const char *s);
@@ -24,4 +25,5 @@ public:
     std::string getLastContradiction() const;
 };
 
+}
 #endif /* __LEXER_H__ */

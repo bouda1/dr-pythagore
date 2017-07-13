@@ -8,7 +8,7 @@ extern "C" {
 # include "lualib.h"
 }
 
-void registerPlane(lua_State *L, DPPlane *plane);
+void registerPlane(lua_State *L, DP::Plane *plane);
 void stackDump(lua_State *L);
 
 #endif // __PLANE_BINDING_H__

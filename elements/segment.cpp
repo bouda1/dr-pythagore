@@ -3,11 +3,13 @@
 #include "plane.h"
 #include "segment.h"
 #include "point.h"
+#include "simpleExpr.h"
 
 using namespace std;
+using namespace DP;
 
-DPSegment::DPSegment(DPPlane *parent, DPPoint *a, DPPoint *b)
-    : DPSet(parent), _beginPoint(a), _endPoint(b)
+Segment::Segment(Plane *parent, Point *a, Point *b)
+    : Set(parent), _beginPoint(a), _endPoint(b)
 {
     stringstream ss;
     ss << '[' << a->getName() << b->getName() << ']';
@@ -16,21 +18,21 @@ DPSegment::DPSegment(DPPlane *parent, DPPoint *a, DPPoint *b)
     _parent->addSegment(this);
 }
 
-DPSegment::DPSegment(DPPlane *parent, const char *a, const char *b)
-    : DPSet(parent)
+Segment::Segment(Plane *parent, const char *a, const char *b)
+    : Set(parent)
 
 {
-    DPPoint *aa, *bb;
+    Point *aa, *bb;
 
     if (_parent->pointExists(a))
         aa = _parent->getPoint(a);
     else
-        aa = new DPPoint(parent, a);
+        aa = new Point(parent, a);
 
     if (_parent->pointExists(b))
         bb = _parent->getPoint(b);
     else
-        bb = new DPPoint(parent, b);
+        bb = new Point(parent, b);
 
     stringstream ss;
     ss << '[' << a << b << ']';
@@ -39,44 +41,45 @@ DPSegment::DPSegment(DPPlane *parent, const char *a, const char *b)
     ss << " is a segment";
 
     /* We must assume points are distinct. */
-    _parent->setRelation(OP_REL_DISTINCT, aa, bb, ss.str());
+    SimpleExpr *simp = new SimpleExpr("Distinct", aa, bb, ss.str());
+    _parent->addExpression(simp);
 
     _beginPoint = aa;
     _endPoint = bb;
     _parent->addSegment(this);
 }
 
-bool DPSegment::operator == (const DPSegment &b)
+bool Segment::operator == (const Segment &b)
 {
     int count = 0;
-    DPPoint *beginPoint = b.getBegin();
-    DPPoint *endPoint = b.getEnd();
+    Point *beginPoint = b.getBegin();
+    Point *endPoint = b.getEnd();
 
     return ((*beginPoint == *_beginPoint && *endPoint == *_endPoint)
             || (*beginPoint == *_endPoint && *endPoint == *_beginPoint));
 }
 
-bool DPSegment::operator != (const DPSegment &b)
+bool Segment::operator != (const Segment &b)
 {
     int count = 0;
-    DPPoint *beginPoint = b.getBegin();
-    DPPoint *endPoint = b.getEnd();
+    Point *beginPoint = b.getBegin();
+    Point *endPoint = b.getEnd();
 
     return ((*beginPoint != *_beginPoint && *beginPoint != *_endPoint)
             || (*endPoint != *_beginPoint && *endPoint != *_endPoint));
 }
 
-DPPoint *DPSegment::getEnd() const
+Point *Segment::getEnd() const
 {
     return _endPoint;
 }
 
-DPPoint *DPSegment::getBegin() const
+Point *Segment::getBegin() const
 {
     return _beginPoint;
 }
 
-void DPSegment::addPoint(DPPoint *a)
+void Segment::addPoint(Point *a)
 {
     if (!_beginPoint)
         _beginPoint = a;
@@ -84,5 +87,5 @@ void DPSegment::addPoint(DPPoint *a)
         _endPoint = a;
     else
         assert("This should not arrive" == nullptr);
-    DPSet::addPoint(a);
+    Set::addPoint(a);
 }

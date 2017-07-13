@@ -3,9 +3,12 @@
 #include "rules/rule.h"
 #include "plane_binding.h"
 
-using namespace std;
+// FIXME: DEPRECATED FOR NOW
 
-TaskRule::TaskRule(DPPlane *plane, DPRule *rule)
+using namespace std;
+using namespace DP;
+
+TaskRule::TaskRule(DP::Plane *plane, DP::Rule *rule)
     : _plane(plane), _rule(rule)
 {
     cout << "TaskRule constructor..." << endl;
@@ -45,7 +48,7 @@ void TaskRule::routine(lua_State *L)
         cerr << "Unable to find the " << op.c_str() << " function" << endl;
     else {
         int count = 0;
-        for (DPElement *p : _rule->getElements()) {
+        for (Element *p : _rule->getElements()) {
             lua_pushstring(L, p->getName().c_str());
             count++;
         }

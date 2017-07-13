@@ -2,16 +2,22 @@
 #define TASKRULE_H
 #include "task.h"
 
-class DPPlane;
-class DPRule;
+// FIXME: DEPRECATED FOR NOW
+
+namespace DP {
+
+class Plane;
+class Rule;
 
 class TaskRule : public DPTask {
-    DPPlane *_plane;
-    DPRule *_rule;
+    Plane *_plane;
+    Rule *_rule;
 
 public:
-    TaskRule(DPPlane *plane, DPRule *rule);
+    TaskRule(Plane *plane, Rule *rule);
     virtual void routine(lua_State *L);
 };
+
+}
 
 #endif // TASKRULE_H

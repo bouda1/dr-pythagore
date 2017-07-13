@@ -19,8 +19,8 @@ protected:
     void testPoints();
 
 private:
-    DPPlane *_plan;
-    DPLexer *_lexer;
+    DP::Plane *_plan;
+    DP::Lexer *_lexer;
 };
 
 #endif /* __TEST_TASK_CHECKEQUALDISTINCT_H__ */
