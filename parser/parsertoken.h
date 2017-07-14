@@ -5,7 +5,7 @@
 
 namespace DP {
 class ParserToken {
-    const Plane *_plan;
+    const Plane *_plane;
     bool _result;
     bool _error;
 
@@ -13,7 +13,7 @@ public:
     ParserToken(const Plane *plan);
     void setResult(bool result);
     bool getResult() const;
-    Plane *getPlan() const;
+    Plane *getPlane() const;
     bool onError() const;
     void setError();
 };

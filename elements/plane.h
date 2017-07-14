@@ -21,7 +21,6 @@
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-#include <tuple>
 #include "stack.h"
 
 namespace DP {
@@ -37,8 +36,8 @@ class Plane {
     std::unordered_set<Segment *> _segmentsSet;
     std::unordered_map<std::string, Point *> _pointsList;
 
-//    mutable std::mutex _rulesMutex;
-//    std::set<Rule *> _rules;
+    mutable std::mutex _rulesMutex;
+    std::set<std::pair<BoolExpr *, BoolExpr *> > _rules;
 
     mutable std::mutex _exprsMutex;
     std::set<BoolExpr *> _exprs;
@@ -63,6 +62,7 @@ public:
     std::deque<BoolExpr *> getExprs(const std::string &op1, const std::string &op2) const;
     void addContradiction(const std::string &err);
     std::string getLastContradiction() const;
+    void addRule(BoolExpr *e, BoolExpr *f);
 };
 
 }

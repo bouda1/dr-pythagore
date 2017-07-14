@@ -8,7 +8,7 @@ using namespace std;
 using namespace DP;
 
 Lexer::Lexer(Plane *plan)
-    : _content(0), _plan(plan), _token(_plan), _start(0), _limit(0)
+    : _content(0), _plane(plan), _token(_plane), _start(0), _limit(0)
 {
     _parser = dPParseAlloc(malloc);
 }
@@ -64,6 +64,8 @@ cont:
         "?"                 { return CALC_TOKEN_INTERRO; }
         "//"                { return CALC_TOKEN_PARALLEL; }
         "!="                { return CALC_TOKEN_DISTINCT; }
+        "=>"                { return CALC_TOKEN_IMPLIES; }
+        "Rule"              { return CALC_TOKEN_RULE; }
         " "                 { _start++; goto cont; }
     */
 }
@@ -98,5 +100,5 @@ bool Lexer::getResult() const
 
 string Lexer::getLastContradiction() const
 {
-    return _plan->getLastContradiction();
+    return _plane->getLastContradiction();
 }

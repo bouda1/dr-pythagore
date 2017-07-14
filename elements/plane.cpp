@@ -193,3 +193,14 @@ string DP::Plane::getLastContradiction() const
     return retval;
 }
 
+/**
+ * @brief DP::Plane::addRule Add a new rule to the plane. A rule is a pair
+ * @containing two expressions E and F param e param f
+ */
+void DP::Plane::addRule(BoolExpr *e, BoolExpr *f)
+{
+    _rulesMutex.lock();
+    _rules.insert(std::pair<BoolExpr *, BoolExpr *>(e, f));
+    _rulesMutex.unlock();
+}
+

@@ -49,7 +49,7 @@ using namespace DP;
 /* Automatic translations */
 
 point(A) ::= IDENT(B). {
-    A = token->getPlan()->getPoint(B);
+    A = token->getPlane()->getPoint(B);
     if (!A) {
         cout << "Error: The point " << B << " is not recognized." << endl;
         token->setError();
@@ -72,20 +72,20 @@ list(L) ::= list(A) VIRG IDENT(B). {
 program ::= LET list(A) COLON POINT END. {
     cout << "Points definition" << endl;
     for (string s : *A) {
-        Point *a = new Point(token->getPlan(), s.c_str());
+        Point *a = new Point(token->getPlane(), s.c_str());
         cout << "Let " << s << " be a point." << endl;
     }
 }
 
 program ::= LET LBRA IDENT(A) IDENT(B) RBRA COLON SEGMENT END. {
     cout << "Let [" << A << B << "] be a segment." << endl;
-    Segment *a = new Segment(token->getPlan(), A, B);
+    Segment *a = new Segment(token->getPlane(), A, B);
 }
 
 program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
     stringstream ss;
     ss << '(' << A << B << ") is a line.";
-    Line *a = new Line(token->getPlan(), A, B);
+    Line *a = new Line(token->getPlane(), A, B);
 }
 
 program ::= line(A) END.    {
@@ -165,7 +165,7 @@ line(A) ::= LPAR point(B) point(C) RPAR. {
         token->setError();
     }
     else {
-        A = token->getPlan()->getLine(B, C);
+        A = token->getPlane()->getLine(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a line" << endl;
             token->setError();
@@ -181,7 +181,7 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
         token->setError();
     }
     else {
-        A = token->getPlan()->getSegment(B, C);
+        A = token->getPlane()->getSegment(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a segment" << endl;
             token->setError();
@@ -220,6 +220,12 @@ expr(E) ::= point(A) VIRG point(B) VIRG point(C) NOT ALIGNED. {
     E = new TreeBoolExpr("Not", simp, ss.str());
 }
 
+/* Rules */
+program ::= RULE COLON expr(E) IMPLIES expr(F) END. {
+    cout << "New rule definition " << E->getString() << " => " << F->getString() << endl;
+    token->getPlane()->addRule(E, F);
+}
+
 /* Constraints */
 program ::= ASSUME point(A) IN set(B) END. {
     cout << "Assume " << A->getName() << " is in " << B->getName() << endl;
@@ -228,36 +234,36 @@ program ::= ASSUME point(A) IN set(B) END. {
 
 program ::= ASSUME expr(E) END. {
     cout << "Assume " << E->getString() << endl;
-    token->getPlan()->addExpression(E);
+    token->getPlane()->addExpression(E);
 }
 
 //program ::= ASSUME point(A) DISTINCT point(B) END. {
 //    stringstream ss;
 //    ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
-//    token->getPlan()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
+//    token->getPlane()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
 //}
 
 //program ::= ASSUME point(A) EQUALS point(B) END. {
 //    stringstream ss;
 //    ss << A->getName() << " and " << B->getName() << " are assumed equal";
-//    token->getPlan()->setRelation(OP_REL_EQUALS, A, B, ss.str());
+//    token->getPlane()->setRelation(OP_REL_EQUALS, A, B, ss.str());
 //}
 
 //program ::= ASSUME line(A) PARALLEL line(B) END. {
 //    stringstream ss;
 //    ss << A->getName() << " is assumed parallel to " << B->getName();
-//    token->getPlan()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
+//    token->getPlane()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
 //}
 
 //program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
 //    stringstream ss;
 //    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
-//    token->getPlan()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
+//    token->getPlane()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
 //}
 
 //program ::= ASSUME point(A) VIRG point(B) VIRG point(C) NOT ALIGNED END. {
 //    stringstream ss;
 //    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are not aligned";
-//    token->getPlan()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
+//    token->getPlane()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
 //}
 

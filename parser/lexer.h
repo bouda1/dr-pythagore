@@ -6,7 +6,7 @@
 namespace DP {
 class Lexer {
     const char *_content;
-    Plane *_plan;
+    Plane *_plane;
     ParserToken _token;
     void *_parser;
     const char *_start;

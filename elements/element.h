@@ -7,8 +7,8 @@ namespace DP {
 
 class Element {
 protected:
-    std::string _name;
     Plane *_parent;
+    std::string _name;
 
 public:
     Element(Plane *parent);

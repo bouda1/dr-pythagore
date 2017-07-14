@@ -135,7 +135,7 @@ int l_setPointRelation(lua_State *L)
 int l_Plane_destructor(lua_State *L)
 {
     cout << "Plane destructor" << endl;
-    DP::Plane *plane = l_CheckPlane(L, 1);
+    /*DP::Plane *plane = */l_CheckPlane(L, 1);
  
     return 0;
 }

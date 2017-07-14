@@ -3,13 +3,13 @@
 using namespace DP;
 
 ParserToken::ParserToken(const Plane *plan)
-    : _plan(plan), _error(false)
+    : _plane(plan), _error(false)
 {
 }
 
-Plane *ParserToken::getPlan() const
+Plane *ParserToken::getPlane() const
 {
-    return const_cast<Plane *>(_plan);
+    return const_cast<Plane *>(_plane);
 }
 
 void ParserToken::setResult(bool result)
