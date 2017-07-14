@@ -16,7 +16,7 @@ class Lexer {
     int scan();
 
 public:
-    Lexer(Plane *plan);
+    Lexer(Plane *plane);
     ~Lexer();
     char *getTokenValue();
     void debug(int a, char b);

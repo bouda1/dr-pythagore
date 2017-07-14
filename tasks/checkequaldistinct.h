@@ -1,9 +1,9 @@
 #ifndef __CHECKEQUALDISTINCT_H__
 #define __CHECKEQUALDISTINCT_H__
 
-class Plane;
-
 namespace DP {
+
+class Plane;
 
 class CheckEqualDistinct : public DPTask {
     Plane *_plan;

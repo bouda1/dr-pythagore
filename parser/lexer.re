@@ -1,3 +1,19 @@
+/* Dr-Pythagore
+ * Copyright (C) 2016-2017 D. Boucher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include <iostream>
 #include <cstring>
 #include <malloc.h>
@@ -7,17 +23,29 @@
 using namespace std;
 using namespace DP;
 
-Lexer::Lexer(Plane *plan)
-    : _content(0), _plane(plan), _token(_plane), _start(0), _limit(0)
+/**
+ * @brief Lexer::Lexer Constructor
+ * @param plan The plane associated to the lexer.
+ */
+Lexer::Lexer(Plane *plane)
+    : _content(0), _plane(plane), _token(_plane), _start(0), _limit(0)
 {
     _parser = dPParseAlloc(malloc);
 }
 
+/**
+ * @brief Lexer::~Lexer Destructor
+ */
 Lexer::~Lexer()
 {
     dPParseFree(_parser, free);
 }
 
+/**
+ * @brief Lexer::getTokenValue returns a token value, the current value to be
+ * parsed.
+ * @return A string as char *
+ */
 char *Lexer::getTokenValue()
 {
     return strndup(_start, _cursor - _start);
@@ -29,6 +57,10 @@ void Lexer::debug(int a, char b)
     cout << "_start = " << _start << endl;
 }
 
+/**
+ * @brief Lexer::scan The main function, it finds tokens.
+ * @return 0 on success
+ */
 int Lexer::scan()
 {
     _start = _cursor;
@@ -70,6 +102,10 @@ cont:
     */
 }
 
+/**
+ * @brief Lexer::parse The main loop that calls the scan() function.
+ * @param s The full string to parse
+ */
 void Lexer::parse(const char *s)
 {
     //FILE *f = fopen("/tmp/parser.dbr", "a");
@@ -93,11 +129,20 @@ void Lexer::parse(const char *s)
         _token.setResult(false);
 }
 
+/**
+ * @brief Lexer::getResult Gives an answer to a question. It can be true or
+ * false.
+ * @return a boolean
+ */
 bool Lexer::getResult() const
 {
     return _token.getResult();
 }
 
+/**
+ * @brief Lexer::getLastContradiction Returns the last error
+ * @return A string
+ */
 string Lexer::getLastContradiction() const
 {
     return _plane->getLastContradiction();

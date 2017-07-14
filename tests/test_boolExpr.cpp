@@ -12,10 +12,13 @@ void TestDPBoolExpr::tearDown()
 
 void TestDPBoolExpr::testSimpleBool()
 {
-    DP::SimpleExpr simple("toto", "Boolean expression toto");
-    CPPUNIT_ASSERT(simple());
-    DP::TreeBoolExpr nt("Not", &simple);
+    DP::SimpleExpr simple1("toto", "Boolean expression toto");
+    CPPUNIT_ASSERT(simple1());
+    DP::TreeBoolExpr nt("Not", &simple1);
     CPPUNIT_ASSERT(!nt());
+    DP::SimpleExpr simple2("titi", "Another boolean expression titi");
+    DP::TreeBoolExpr and1("And", &nt, &simple2);
+    CPPUNIT_ASSERT(!simple2());
 }
 
 //void TestDPLexer::testEquality2()

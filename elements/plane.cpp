@@ -1,3 +1,19 @@
+/* Dr-Pythagore
+ * Copyright (C) 2016-2017 D. Boucher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include <iostream>
 #include "plane.h"
 #include "point.h"
@@ -10,11 +26,11 @@
 using namespace std;
 using namespace DP;
 
-DP::Plane::Plane()
+Plane::Plane()
     : _stack(this)
 {}
 
-std::deque<BoolExpr *> DP::Plane::getExprs(const string &op) const
+std::deque<BoolExpr *> Plane::getExprs(const string &op) const
 {
     unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
@@ -25,7 +41,7 @@ std::deque<BoolExpr *> DP::Plane::getExprs(const string &op) const
     return retval;
 }
 
-std::deque<BoolExpr *> DP::Plane::getExprs(const string &op1, const string &op2) const
+std::deque<BoolExpr *> Plane::getExprs(const string &op1, const string &op2) const
 {
     unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
@@ -45,7 +61,7 @@ std::deque<BoolExpr *> DP::Plane::getExprs(const string &op1, const string &op2)
     return retval;
 }
 
-void DP::Plane::addExpression(BoolExpr *expr)
+void Plane::addExpression(BoolExpr *expr)
 {
     _exprsMutex.lock();
     _exprs.insert(expr);
@@ -56,81 +72,45 @@ void DP::Plane::addExpression(BoolExpr *expr)
 
 }
 
-//void DP::Plane::setRelation(DPOpRel op, Element *a, Element *b, const string &explanation)
-//{
-//    _rulesMutex.lock();
-//    Rule *rule = new Rule(op, a, b, explanation);
-//    _rules.insert(rule);
-//    _rulesMutex.unlock();
-
-//    _stack.enqueueTask(new TaskRule(this, rule));
-//    if (op == OP_REL_DISTINCT || op == OP_REL_EQUALS)
-//        _stack.enqueueTask(new CheckEqualDistinct(this));
-//    else if (op == OP_REL_ALIGNED)
-//        _stack.enqueueTask(new DPTaskLua(this, "check_aligned.lua"));
-//}
-
-//void DP::Plane::setRelation(DPOpRel op, Element *a, Element *b, Element *c, const string &explanation)
-//{
-//    _rulesMutex.lock();
-//    Rule *rule = new Rule(op, a, b, c, explanation);
-//    _rules.insert(rule);
-//    _rulesMutex.unlock();
-
-//    _stack.enqueueTask(new TaskRule(this, rule));
-//}
-
-BoolExpr *DP::Plane::hasExpr(const string &op, Element *a, Element *b) const
+BoolExpr *Plane::hasExpr(const string &op, Element *a, Element *b) const
 {
-    {
-        unique_lock<mutex> lock(_exprsMutex);
-        for (BoolExpr *expr: _exprs) {
-            //FIXME: Not finished
-            if (expr->getOp() == op) {
-                SimpleExpr *simp = dynamic_cast<SimpleExpr *>(expr);
-                if (simp) {
-                    if (simp->at(0) == a && simp->at(1) == b)
-                        return expr;
-                    else if (simp->at(0) == b && simp->at(1) == a)
-                        return expr;
+    BoolExpr *retval = nullptr;
+    _exprsMutex.lock();
+    for (BoolExpr *expr: _exprs) {
+        //FIXME: Not finished
+        if (expr->getOp() == op) {
+            SimpleExpr *simp = dynamic_cast<SimpleExpr *>(expr);
+            if (simp) {
+                if (simp->at(0) == a && simp->at(1) == b) {
+                    retval = expr;
+                    break;
+                }
+                else if (simp->at(0) == b && simp->at(1) == a) {
+                    retval = expr;
+                    break;
                 }
             }
         }
     }
-    return nullptr;
+    _exprsMutex.unlock();
+    return retval;
 }
 
-//Rule *DP::Plane::hasRelation(DPOpRel op, Element *a, Element *b) const
-//{
-//    {
-//        unique_lock<mutex> lock(_rulesMutex);
-//        for (Rule *rule : _rules) {
-//            if (rule->getOp() == op) {
-//                if (rule->get(0) == a && rule->get(1) == b)
-//                    return rule;
-//                else if (rule->get(0) == b && rule->get(1) == a)
-//                    return rule;
-//            }
-//        }
-//    }
-//    return nullptr;
-//}
-
-bool DP::Plane::pointExists(const char *a) const
+bool Plane::pointExists(const char *a) const
 {
     unordered_map<string, Point *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end());
 }
 
-Point *DP::Plane::getPoint(const char *a) const
+Point *Plane::getPoint(const char *a) const
 {
     unordered_map<string, Point *>::const_iterator it;
     it = _pointsList.find(a);
     return (it != _pointsList.end()) ? it->second : nullptr;
 }
 
-Line *DP::Plane::getLine(Point *a, Point *b)
+Line *Plane::getLine(Point *a, Point *b)
 {
     Line *retval = nullptr;
     if (*a != *b) {
@@ -146,7 +126,7 @@ Line *DP::Plane::getLine(Point *a, Point *b)
     return retval;
 }
 
-Segment *DP::Plane::getSegment(Point *a, Point *b)
+Segment *Plane::getSegment(Point *a, Point *b)
 {
     Segment *retval = nullptr;
     if (*a != *b) {
@@ -165,39 +145,44 @@ Segment *DP::Plane::getSegment(Point *a, Point *b)
     return retval;
 }
 
-void DP::Plane::addPoint(Point *a)
+void Plane::addPoint(Point *a)
 {
     _pointsList[a->getName()] = a;
 }
 
-void DP::Plane::addLine(Line *a)
+void Plane::addLine(Line *a)
 {
     _linesSet.insert(a);
 }
 
-void DP::Plane::addSegment(Segment *a)
+void Plane::addSegment(Segment *a)
 {
     _segmentsSet.insert(a);
 }
 
-void DP::Plane::addContradiction(const string &err)
+void Plane::addContradiction(const string &err)
 {
     unique_lock<mutex> lock(_contradictions_mutex);
     _contradictions.push_back(err);
 }
 
-string DP::Plane::getLastContradiction() const
+/**
+ * @brief Plane::getLastContradiction returns the last error stored during
+ * computations.
+ * @return A reference to this last contradiction string.
+ */
+const string &Plane::getLastContradiction() const
 {
     unique_lock<mutex> lock(_contradictions_mutex);
-    string retval = _contradictions.back();
+    const string &retval = _contradictions.back();
     return retval;
 }
 
 /**
- * @brief DP::Plane::addRule Add a new rule to the plane. A rule is a pair
+ * @brief Plane::addRule Add a new rule to the plane. A rule is a pair
  * @containing two expressions E and F param e param f
  */
-void DP::Plane::addRule(BoolExpr *e, BoolExpr *f)
+void Plane::addRule(BoolExpr *e, BoolExpr *f)
 {
     _rulesMutex.lock();
     _rules.insert(std::pair<BoolExpr *, BoolExpr *>(e, f));

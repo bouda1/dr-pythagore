@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __PLAN_H__
-#define __PLAN_H__
+#ifndef __PLANE_H__
+#define __PLANE_H__
 #include <deque>
 #include <mutex>
 #include <set>
@@ -61,10 +61,10 @@ public:
     std::deque<BoolExpr *> getExprs(const std::string &op) const;
     std::deque<BoolExpr *> getExprs(const std::string &op1, const std::string &op2) const;
     void addContradiction(const std::string &err);
-    std::string getLastContradiction() const;
+    const std::string &getLastContradiction() const;
     void addRule(BoolExpr *e, BoolExpr *f);
 };
 
 }
 
-#endif /* __PLAN_H__ */
+#endif /* __PLANE_H__ */
