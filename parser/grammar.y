@@ -43,7 +43,7 @@
 #include "line.h"
 #include "segment.h"
 #include "simpleExpr.h"
-#include "treeBoolExpr.h"
+#include "notBoolExpr.h"
 
 using namespace std;
 using namespace DP;
@@ -51,6 +51,7 @@ using namespace DP;
 
 %syntax_error {
     cout << "syntax error - ";
+#ifndef NDEBUG
     int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
     for (int i = 0; i < n; ++i) {
         int a = yy_find_shift_action(yypParser, (YYCODETYPE)i);
@@ -58,6 +59,7 @@ using namespace DP;
             std::cout << "expected " << yyTokenName[i] << std::endl;
         }
     }
+#endif
 }
 
 %start_symbol program
@@ -233,7 +235,7 @@ expr(E) ::= point(A) VIRG point(B) VIRG point(C) NOT ALIGNED. {
     stringstream ss;
     ss << A->getName() << ", " << B->getName() << ", " << C->getName() << " are aligned";
     SimpleExpr *simp = new SimpleExpr("Aligned", A, B, C, ss.str());
-    E = new TreeBoolExpr("Not", simp, ss.str());
+    E = new NotBoolExpr(simp, ss.str());
 }
 
 /* Rules */

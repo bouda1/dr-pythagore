@@ -1,4 +1,5 @@
 #include "boolExpr.h"
+#include "boolTable.h"
 
 using namespace std;
 using namespace DP;

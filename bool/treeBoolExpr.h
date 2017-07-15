@@ -12,15 +12,10 @@ public:
     TreeBoolExpr(const std::string &op, BoolExpr *a, const std::string &descr = "");
     TreeBoolExpr(const std::string &op, BoolExpr *a, BoolExpr *b, const std::string &descr = "");
     TreeBoolExpr(const std::string &op, BoolExpr *a, BoolExpr *b, BoolExpr *c, const std::string &descr);
-    static TreeBoolExpr Not(BoolExpr *a, const std::string &descr = "");
-    virtual std::string getString();
-    virtual bool operator() () const;
+    virtual std::string getString() = 0;
+    virtual bool operator() () const = 0;
+    virtual void solve(BoolTable &table);
 };
-
-inline TreeBoolExpr TreeBoolExpr::Not(BoolExpr *a, const std::string &descr)
-{
-    return TreeBoolExpr("Not", a, descr != "" ? descr : a->getDescr());
-}
 
 }
 

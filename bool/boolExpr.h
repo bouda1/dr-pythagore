@@ -1,10 +1,14 @@
 #ifndef __BOOL_EXPR_H__
 #define __BOOL_EXPR_H__
 #include <string>
-
-class Element;
+#include <deque>
 
 namespace DP {
+
+class Element;
+class BoolTable;
+class SimpleExpr;
+
 class BoolExpr
 {
 protected:
@@ -17,7 +21,9 @@ public:
     virtual std::string getString() = 0;
     const std::string &getDescr() const;
     const std::string &getOp() const;
+    virtual void solve(BoolTable &table) = 0;
 };
+
 }
 
 #endif /* __BOOL_EXPR_H__ */

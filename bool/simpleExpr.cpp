@@ -1,7 +1,9 @@
 #include <sstream>
 #include <string>
+#include <list>
 #include "simpleExpr.h"
 #include "element.h"
+#include "boolTable.h"
 
 using namespace std;
 using namespace DP;
@@ -46,4 +48,19 @@ string DP::SimpleExpr::getString()
     }
     ss << ')';
     return ss.str();
+}
+
+void SimpleExpr::solve(BoolTable &table)
+{
+    table.addArg(this);
+    list<vector<bool> > &array = table.getArray();
+    list<vector<bool> >::iterator it;
+    int i;
+
+    for (i = 0, it = array.begin(); it != array.end(); ++it, ++i) {
+        vector<bool> newV(*it);
+        it->push_back(true);
+        newV.push_back(false);
+        array.push_back(newV);
+    }
 }

@@ -30,7 +30,7 @@ Plane::Plane()
     : _stack(this)
 {}
 
-std::deque<BoolExpr *> Plane::getExprs(const string &op) const
+deque<BoolExpr *> Plane::getExprs(const string &op) const
 {
     unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
@@ -41,7 +41,7 @@ std::deque<BoolExpr *> Plane::getExprs(const string &op) const
     return retval;
 }
 
-std::deque<BoolExpr *> Plane::getExprs(const string &op1, const string &op2) const
+deque<BoolExpr *> Plane::getExprs(const string &op1, const string &op2) const
 {
     unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
