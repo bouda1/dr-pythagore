@@ -64,10 +64,10 @@ TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, BoolExpr *b,
     at(2) = c;
 }
 
-
-void TreeBoolExpr::solve(BoolTable &table)
+void TreeBoolExpr::findArgs(BoolTable &table)
 {
     for (BoolExpr *e : *this) {
-        e->solve(table);
+        e->findArgs(table);
     }
 }
+

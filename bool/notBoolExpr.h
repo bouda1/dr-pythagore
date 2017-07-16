@@ -10,6 +10,7 @@ public:
     NotBoolExpr(BoolExpr *a, const std::string &descr = "");
     virtual bool operator() () const;
     virtual std::string getString();
+    virtual bool fillResult(BoolTable &table, unsigned long input);
 };
 
 }

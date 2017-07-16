@@ -21,7 +21,9 @@ public:
     virtual std::string getString() = 0;
     const std::string &getDescr() const;
     const std::string &getOp() const;
-    virtual void solve(BoolTable &table) = 0;
+    void solve(BoolTable &table);
+    virtual bool fillResult(BoolTable &table, unsigned long input) = 0;
+    virtual void findArgs(BoolTable &table) = 0;
 };
 
 }

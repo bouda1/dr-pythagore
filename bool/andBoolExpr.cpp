@@ -23,3 +23,12 @@ string AndBoolExpr::getString()
 {
     cout << '(' << at(0)->getString() << ") And (" << at(1)->getString() << ')';
 }
+
+bool AndBoolExpr::fillResult(BoolTable &table, unsigned long input)
+{
+    for (BoolExpr *e : *this) {
+        if (!e->fillResult(table, input))
+            return false;
+    }
+    return true;
+}

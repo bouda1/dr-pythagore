@@ -29,3 +29,13 @@ string OrBoolExpr::getString()
     ss << '(' << at(0)->getString() << ") Or (" << at(1)->getString() << ')';
     return ss.str();
 }
+
+bool OrBoolExpr::fillResult(BoolTable &table, unsigned long input)
+{
+    for (BoolExpr *e : *this) {
+        if (e->fillResult(table, input))
+            return true;
+    }
+    return false;
+}
+

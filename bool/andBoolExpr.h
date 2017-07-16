@@ -9,6 +9,7 @@ public:
     AndBoolExpr(BoolExpr *a, BoolExpr *b, const std::string &descr = "");
     virtual bool operator() () const;
     virtual std::string getString();
+    virtual bool fillResult(BoolTable &table, unsigned long input);
 };
 }
 #endif // __ANDBOOLEXPR_H__

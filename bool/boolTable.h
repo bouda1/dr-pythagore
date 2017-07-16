@@ -12,13 +12,17 @@ class SimpleExpr;
 class BoolTable
 {
     std::deque<SimpleExpr *> _args;
-    std::list<std::vector<bool> > _array;
+    std::vector<bool> _result;
 
 public:
     BoolTable();
     void addArg(SimpleExpr *expr);
+    void clearArgs();
+    size_t countArgs() const;
     std::list<std::vector<bool> > &getArray();
     std::string getString();
+    size_t findArgsIndex(BoolExpr *expr);
+    void setResult(std::vector<bool> &result);
 };
 }
 #endif /* __BOOL_TABLE_H__ */
