@@ -23,20 +23,28 @@ using namespace DP;
 Point::Point(Plane *parent, const char *n)
     : Element(parent, n)
 {
-    cout << "\x1b[33;1m" << "New point " << n << "\x1b[0m" << endl;
+    cout << "\x1b[33;1m"
+         << "New point " << n << "\x1b[0m" << endl;
     parent->addPoint(this);
 }
 
-bool Point::operator == (const Point &b)
+bool Point::equal(const Element &b) const
 {
-    if (this == &b)
+    const Point &bb = static_cast<const Point &>(b);
+
+    if (this == &bb)
         return true;
-    return getParent()->hasExpr("Equals", this, const_cast<Point *>(&b));
+    return getParent()->hasExpr("Equals",
+                                const_cast<Element *>(static_cast<const Element *>(this)),
+                                const_cast<Element *>(&b));
 }
 
-bool Point::operator != (const Point &b)
+bool Point::distinct(const Element &b) const
 {
+    const Point &bb = static_cast<const Point &>(b);
+
     if (this == &b)
         return false;
-    return getParent()->hasExpr("Distinct", this, const_cast<Point *>(&b));
+    return getParent()->hasExpr("Distinct", const_cast<Element *>(static_cast<const Element *>(this)),
+                                const_cast<Element *>(&b));
 }

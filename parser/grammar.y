@@ -30,8 +30,10 @@
 
 %extra_argument { ParserToken *token }
 
+%left OR.
+%left AND.
 %left COLON.
-%left VIRG.
+%left VIRG IN.
 
 %include {
 #include <cassert>
@@ -44,6 +46,8 @@
 #include "segment.h"
 #include "simpleExpr.h"
 #include "notBoolExpr.h"
+#include "orBoolExpr.h"
+#include "andBoolExpr.h"
 
 using namespace std;
 using namespace DP;
@@ -106,7 +110,7 @@ program ::= LET LPAR IDENT(A) IDENT(B) RPAR COLON LINE END. {
     Line *a = new Line(token->getPlane(), A, B);
 }
 
-program ::= line(A) END.    {
+program ::= line(A) END. {
     cout << "A new line " << A->getName() << endl;
 }
 
@@ -238,50 +242,33 @@ expr(E) ::= point(A) VIRG point(B) VIRG point(C) NOT ALIGNED. {
     E = new NotBoolExpr(simp, ss.str());
 }
 
+expr(E) ::= point(A) IN set(B). {
+    stringstream ss;
+    ss << A->getName() << " is in " << B->getName();
+    std::cout << "EXPRESSION " << ss.str() << std::endl;
+    E = new SimpleExpr("Element", A, B, ss.str());
+}
+
+expr(E) ::= expr(A) AND expr(B). {
+    stringstream ss;
+    ss << A->getDescr() << " and " << B->getDescr();
+    std::cout << "EXPRESSION " << ss.str() << std::endl;
+    E = new AndBoolExpr(A, B, ss.str());
+}
+expr(E) ::= expr(A) OR expr(B). {
+    stringstream ss;
+    ss << A->getDescr() << " or " << B->getDescr();
+    std::cout << "EXPRESSION " << ss.str() << std::endl;
+    E = new OrBoolExpr(A, B, ss.str());
+}
+
 /* Rules */
 program ::= RULE COLON expr(E) IMPLIES expr(F) END. {
     cout << "New rule definition " << E->getString() << " => " << F->getString() << endl;
     token->getPlane()->addRule(E, F);
 }
 
-/* Constraints */
-program ::= ASSUME point(A) IN set(B) END. {
-    cout << "Assume " << A->getName() << " is in " << B->getName() << endl;
-    B->addPoint(A);
-}
-
 program ::= ASSUME expr(E) END. {
     cout << "Assume " << E->getString() << endl;
     token->getPlane()->addExpression(E);
 }
-
-//program ::= ASSUME point(A) DISTINCT point(B) END. {
-//    stringstream ss;
-//    ss << A->getName() << " and " << B->getName() << " are assumed to be distinct";
-//    token->getPlane()->setRelation(OP_REL_DISTINCT, A, B, ss.str());
-//}
-
-//program ::= ASSUME point(A) EQUALS point(B) END. {
-//    stringstream ss;
-//    ss << A->getName() << " and " << B->getName() << " are assumed equal";
-//    token->getPlane()->setRelation(OP_REL_EQUALS, A, B, ss.str());
-//}
-
-//program ::= ASSUME line(A) PARALLEL line(B) END. {
-//    stringstream ss;
-//    ss << A->getName() << " is assumed parallel to " << B->getName();
-//    token->getPlane()->setRelation(OP_REL_PARALLEL, A, B, ss.str());
-//}
-
-//program ::= ASSUME point(A) VIRG point(B) VIRG point(C) ALIGNED END. {
-//    stringstream ss;
-//    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are aligned";
-//    token->getPlane()->setRelation(OP_REL_ALIGNED, A, B, C, ss.str());
-//}
-
-//program ::= ASSUME point(A) VIRG point(B) VIRG point(C) NOT ALIGNED END. {
-//    stringstream ss;
-//    ss << A->getName() << ", " << B->getName() << " and " << C->getName() << " are not aligned";
-//    token->getPlane()->setRelation(OP_REL_NOTALIGNED, A, B, C, ss.str());
-//}
-

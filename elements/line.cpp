@@ -92,20 +92,14 @@ Line::Line(Plane *parent, const char *a, const char *b)
  * @param b
  * @return A boolean telling if the compared lines are the same or not.
  */
-bool Line::operator == (const Line &b) const
+bool Line::equal(const Element &b) const
 {
-    int count = 0;
-    Point *first_point = nullptr;
+    return &b == this;
+}
 
-    for (Point *p : _singlePoints) {
-        if (count == 0 && b.contains(p)) {
-            count++;
-            first_point = p;
-        }
-        else if (count > 0 && *p != *first_point && b.contains(p))
-            return true;
-    }
-    return false;
+bool Line::distinct(const Element &b) const
+{
+    return !equal(b);
 }
 
 /**

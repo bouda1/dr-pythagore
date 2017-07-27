@@ -1,3 +1,4 @@
+#include <sstream>
 #include <iostream>
 #include "andBoolExpr.h"
 
@@ -12,6 +13,8 @@ AndBoolExpr::AndBoolExpr(BoolExpr *a, BoolExpr *b, const string &descr)
 
 bool AndBoolExpr::operator()() const
 {
+    cout << "Evaluation of And..." << endl;
+    cout << "Table: " << getString() << endl;
     for (BoolExpr *e : *this) {
         if (!(*e)())
             return false;
@@ -19,9 +22,11 @@ bool AndBoolExpr::operator()() const
     return true;
 }
 
-string AndBoolExpr::getString()
+string AndBoolExpr::getString() const
 {
-    cout << '(' << at(0)->getString() << ") And (" << at(1)->getString() << ')';
+    stringstream ss;
+    ss << '(' << at(0)->getString() << ") And (" << at(1)->getString() << ')';
+    return ss.str();
 }
 
 bool AndBoolExpr::fillResult(BoolTable &table, unsigned long input)

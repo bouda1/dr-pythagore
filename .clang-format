@@ -59,5 +59,6 @@ BraceWrapping: {
     BeforeElse : 'true'
     IndentBraces : 'false'
 }
+SortIncludes: 'false'
 ...
 

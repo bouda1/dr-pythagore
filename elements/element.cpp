@@ -35,7 +35,8 @@ Element::Element(Plane *parent)
  * @param name The name of this element
  */
 Element::Element(Plane *parent, const char *name)
-    : _parent(parent), _name(name)
+    : _parent(parent)
+    , _name(name)
 {
 }
 
@@ -64,4 +65,22 @@ const string &Element::getName(void) const
 Plane *Element::getParent() const
 {
     return _parent;
+}
+
+bool Element::operator==(const Element &e) const
+{
+    if (typeid(*this) != typeid(e))
+        return false;
+    else {
+        return equal(e);
+    }
+}
+
+bool Element::operator!=(const Element &e) const
+{
+    if (typeid(*this) != typeid(e))
+        return false;
+    else {
+        return distinct(e);
+    }
 }

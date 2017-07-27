@@ -11,7 +11,7 @@ protected:
 public:
     OrBoolExpr(BoolExpr *a, BoolExpr *b, const std::string &descr = "");
     virtual bool operator() () const;
-    virtual std::string getString();
+    virtual std::string getString() const;
     virtual bool fillResult(BoolTable &table, unsigned long int input);
 };
 }

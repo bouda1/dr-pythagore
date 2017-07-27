@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+//#include <lauxlib.h>
 #include "plane_binding.h"
 #include "plane.h"
 #include "point.h"
@@ -186,8 +187,12 @@ void registerPlane(lua_State *L, DP::Plane *plane)
     luaL_newmetatable(L, "luaL_Plane");
  
     // Register the C functions _into_ the metatable we just created.
+#ifdef LUA51
     luaL_register(L, NULL, sPlaneRegs);
- 
+#else
+    luaL_setfuncs(L, sPlaneRegs, 0);
+#endif
+
     // The Lua stack at this point looks like this:
     //     
     //     1| userdata               |-2

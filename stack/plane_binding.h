@@ -3,9 +3,9 @@
 #include "plane.h"
 
 extern "C" {
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
+# include <lua.h>
+# include <lauxlib.h>
+# include <lualib.h>
 }
 
 void registerPlane(lua_State *L, DP::Plane *plane);

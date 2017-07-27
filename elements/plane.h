@@ -30,7 +30,8 @@ class Line;
 class Segment;
 class BoolExpr;
 
-class Plane {
+class Plane
+{
 
     std::unordered_set<Line *> _linesSet;
     std::unordered_set<Segment *> _segmentsSet;
@@ -39,7 +40,7 @@ class Plane {
     mutable std::mutex _rulesMutex;
     std::set<std::pair<BoolExpr *, BoolExpr *> > _rules;
 
-    mutable std::mutex _exprsMutex;
+    mutable std::recursive_mutex _exprsMutex;
     std::set<BoolExpr *> _exprs;
 
     mutable std::mutex _contradictions_mutex;
@@ -64,7 +65,6 @@ public:
     const std::string &getLastContradiction() const;
     void addRule(BoolExpr *e, BoolExpr *f);
 };
-
 }
 
 #endif /* __PLANE_H__ */

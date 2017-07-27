@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iostream>
 #include "set.h"
+#include "point.h"
 
 using namespace std;
 using namespace DP;
@@ -25,12 +27,21 @@ Set::Set(Plane *parent)
 {
 }
 
-bool Set::contains(Point *point) const
+bool Set::contains(Point *point, bool fast) const
 {
+    cout << "Set::contains point " << point->getName() << endl;
     unique_lock<mutex> lock(_singlePointsMutex);
     unordered_set<Point *>::const_iterator it = _singlePoints.find(point);
 
-    return it != _singlePoints.end();
+    if (it != _singlePoints.end())
+        return true;
+
+    if (!fast) {
+        Element *a = static_cast<Element *>(point);
+        Element *b = static_cast<Element *>(const_cast<Set *>(this));
+        return _parent->hasExpr("Element", a, b);
+    }
+    return false;
 }
 
 void Set::addPoint(Point *a)

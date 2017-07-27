@@ -9,7 +9,7 @@ class NotBoolExpr : public TreeBoolExpr
 public:
     NotBoolExpr(BoolExpr *a, const std::string &descr = "");
     virtual bool operator() () const;
-    virtual std::string getString();
+    virtual std::string getString() const;
     virtual bool fillResult(BoolTable &table, unsigned long input);
 };
 

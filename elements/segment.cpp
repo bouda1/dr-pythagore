@@ -25,7 +25,9 @@ using namespace std;
 using namespace DP;
 
 Segment::Segment(Plane *parent, Point *a, Point *b)
-    : Set(parent), _beginPoint(a), _endPoint(b)
+    : Set(parent)
+    , _beginPoint(a)
+    , _endPoint(b)
 {
     stringstream ss;
     ss << '[' << a->getName() << b->getName() << ']';
@@ -65,21 +67,21 @@ Segment::Segment(Plane *parent, const char *a, const char *b)
     _parent->addSegment(this);
 }
 
-bool Segment::operator == (const Segment &b)
+bool Segment::equal(const Element &b) const
 {
-    int count = 0;
-    Point *beginPoint = b.getBegin();
-    Point *endPoint = b.getEnd();
+    const Segment &bb = static_cast<const Segment &>(b);
+    Point *beginPoint = bb.getBegin();
+    Point *endPoint = bb.getEnd();
 
     return ((*beginPoint == *_beginPoint && *endPoint == *_endPoint)
             || (*beginPoint == *_endPoint && *endPoint == *_beginPoint));
 }
 
-bool Segment::operator != (const Segment &b)
+bool Segment::distinct(const Element &b) const
 {
-    int count = 0;
-    Point *beginPoint = b.getBegin();
-    Point *endPoint = b.getEnd();
+    const Segment &bb = static_cast<const Segment &>(b);
+    Point *beginPoint = bb.getBegin();
+    Point *endPoint = bb.getEnd();
 
     return ((*beginPoint != *_beginPoint && *beginPoint != *_endPoint)
             || (*endPoint != *_beginPoint && *endPoint != *_endPoint));

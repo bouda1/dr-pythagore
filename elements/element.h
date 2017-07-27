@@ -21,7 +21,12 @@
 
 namespace DP {
 
-class Element {
+class Element
+{
+private:
+    virtual bool equal(const Element &e) const = 0;
+    virtual bool distinct(const Element &e) const = 0;
+
 protected:
     Plane *_parent;
     std::string _name;
@@ -32,9 +37,10 @@ public:
     void setName(const std::string &newName);
     const std::string &getName(void) const;
     Plane *getParent() const;
-};
 
+    bool operator==(const Element &e) const;
+    bool operator!=(const Element &e) const;
+};
 }
 
 #endif /* __ELEMENT_H__ */
-

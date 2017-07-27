@@ -18,7 +18,7 @@ protected:
 public:
     BoolExpr(const std::string &op, const std::string &descr);
     virtual bool operator() () const;
-    virtual std::string getString() = 0;
+    virtual std::string getString() const = 0;
     const std::string &getDescr() const;
     const std::string &getOp() const;
     void solve(BoolTable &table);

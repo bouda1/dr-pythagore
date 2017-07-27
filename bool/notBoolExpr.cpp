@@ -1,3 +1,4 @@
+#include <sstream>
 #include <iostream>
 #include "notBoolExpr.h"
 
@@ -14,9 +15,11 @@ bool NotBoolExpr::operator()() const
     return !(*at(0))();
 }
 
-string NotBoolExpr::getString()
+string NotBoolExpr::getString() const
 {
-    cout << "Not (" << at(0)->getString() << ')';
+    stringstream ss;
+    ss << "Not (" << at(0)->getString() << ')';
+    return ss.str();
 }
 
 bool NotBoolExpr::fillResult(BoolTable &table, unsigned long input)

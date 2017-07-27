@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cassert>
 #include <bitset>
 #include <sstream>
@@ -14,6 +15,11 @@ BoolTable::BoolTable()
 
 void BoolTable::addArg(SimpleExpr *expr)
 {
+    for (SimpleExpr *e : _args) {
+        if (*e == *expr) {
+            return;
+        }
+    }
     _args.push_back(expr);
 }
 
@@ -49,18 +55,26 @@ string BoolTable::getString()
     return ss.str();
 }
 
-size_t BoolTable::findArgsIndex(BoolExpr *expr)
+size_t BoolTable::findArgsIndex(SimpleExpr *expr)
 {
     size_t i;
     for (i = 0; i < _args.size(); i++) {
-        if (expr == _args[i])
+        if (*expr == *(_args[i]))
             return i;
     }
     assert(1 == 0);
-    return 0;  // Should not arrive
+    return 0; // Should not arrive
 }
 
 void BoolTable::setResult(std::vector<bool> &result)
 {
     _result = result;
+}
+
+bool BoolTable::isTrue() const
+{
+    for (bool b : _result)
+        if (!b)
+            return false;
+    return true;
 }

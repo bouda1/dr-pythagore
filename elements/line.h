@@ -20,14 +20,17 @@
 
 namespace DP {
 
-class Line : public Set {
+class Line : public Set
+{
+private:
+    bool equal(const Element &b) const;
+    bool distinct(const Element &b) const;
+
 public:
     Line(Plane *parent, Point *a, Point *b);
     Line(Plane *parent, const char *a, const char *b);
-    bool operator == (const Line &b) const;
     bool parallelTo(const Line &b) const;
 };
-
 }
 
 #endif /* __LINE_H__ */

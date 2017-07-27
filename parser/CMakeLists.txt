@@ -1,7 +1,7 @@
 ADD_CUSTOM_COMMAND(
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lexer.re
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
-        COMMAND re2c
+        COMMAND ${RE2C_EXECUTABLE}
         -o ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/lexer.re
         COMMENT "Generating parser/lexer.cpp"

@@ -31,7 +31,7 @@ protected:
     mutable std::mutex _singlePointsMutex;
 
 public:
-    bool contains(Point *point) const;
+    bool contains(Point *point, bool fast = false) const;
     Set(Plane *parent);
     void addPoint(Point *a);
     std::unordered_set<Point *> getSinglePoints() const;

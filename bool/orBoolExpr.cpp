@@ -23,7 +23,7 @@ bool OrBoolExpr::operator()() const
     return false;
 }
 
-string OrBoolExpr::getString()
+string OrBoolExpr::getString() const
 {
     stringstream ss;
     ss << '(' << at(0)->getString() << ") Or (" << at(1)->getString() << ')';

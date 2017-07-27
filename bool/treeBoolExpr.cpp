@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iostream>
 #include <vector>
 #include "treeBoolExpr.h"
 
@@ -27,7 +28,8 @@ using namespace DP;
  * @param descr The description
  */
 TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, const string &descr)
-    : BoolExpr(op, descr != "" ? descr : a->getDescr()), vector(1)
+    : BoolExpr(op, descr != "" ? descr : a->getDescr())
+    , vector(1)
 {
     at(0) = a;
 }
@@ -41,7 +43,8 @@ TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, const string &descr)
  */
 TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, BoolExpr *b,
                            const string &descr)
-    : BoolExpr(op, descr), vector(2)
+    : BoolExpr(op, descr)
+    , vector(2)
 {
     at(0) = a;
     at(1) = b;
@@ -57,7 +60,8 @@ TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, BoolExpr *b,
  */
 TreeBoolExpr::TreeBoolExpr(const string &op, BoolExpr *a, BoolExpr *b,
                            BoolExpr *c, const string &descr)
-    : BoolExpr(op, descr), vector(3)
+    : BoolExpr(op, descr)
+    , vector(3)
 {
     at(0) = a;
     at(1) = b;
@@ -70,4 +74,3 @@ void TreeBoolExpr::findArgs(BoolTable &table)
         e->findArgs(table);
     }
 }
-

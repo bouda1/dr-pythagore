@@ -22,29 +22,34 @@
 #include "checkequaldistinct.h"
 #include "treeBoolExpr.h"
 #include "simpleExpr.h"
+#include "notBoolExpr.h"
+#include "orBoolExpr.h"
+#include "boolTable.h"
 
 using namespace std;
 using namespace DP;
 
 Plane::Plane()
     : _stack(this)
-{}
+{
+}
 
 deque<BoolExpr *> Plane::getExprs(const string &op) const
 {
-    unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
+    _exprsMutex.lock();
     for (BoolExpr *r : _exprs) {
         if (r->getOp() == op)
             retval.push_back(r);
     }
+    _exprsMutex.unlock();
     return retval;
 }
 
 deque<BoolExpr *> Plane::getExprs(const string &op1, const string &op2) const
 {
-    unique_lock<mutex> lock(_exprsMutex);
     deque<BoolExpr *> retval = deque<BoolExpr *>();
+    _exprsMutex.lock();
     for (BoolExpr *r : _exprs) {
         if (r->getOp() == op1) {
             TreeBoolExpr *tree = dynamic_cast<TreeBoolExpr *>(r);
@@ -58,6 +63,7 @@ deque<BoolExpr *> Plane::getExprs(const string &op1, const string &op2) const
             }
         }
     }
+    _exprsMutex.unlock();
     return retval;
 }
 
@@ -65,30 +71,53 @@ void Plane::addExpression(BoolExpr *expr)
 {
     _exprsMutex.lock();
     _exprs.insert(expr);
+    SimpleExpr *simp = dynamic_cast<SimpleExpr *>(expr);
+    if (simp && simp->getOp() == "Element") {
+        Point *p = static_cast<Point *>(simp->at(0));
+        Set *s = static_cast<Set *>(simp->at(1));
+        s->addPoint(p);
+    }
     _exprsMutex.unlock();
 
-    if (expr->getOp() == "Distinct" || expr->getOp() == "Equals")
-        _stack.enqueueTask(new CheckEqualDistinct(this));
-
+    // FIXME DBR: Add tasks here to involve reasonment
+//    if (expr->getOp() == "Distinct" || expr->getOp() == "Equals")
+//        _stack.enqueueTask(new CheckEqualDistinct(this));
 }
 
 BoolExpr *Plane::hasExpr(const string &op, Element *a, Element *b) const
 {
+    cout << "hasExpr: " << op << " " << a->getName() << " <=> " << b->getName() << endl;
     BoolExpr *retval = nullptr;
     _exprsMutex.lock();
-    for (BoolExpr *expr: _exprs) {
-        //FIXME: Not finished
-        if (expr->getOp() == op) {
-            SimpleExpr *simp = dynamic_cast<SimpleExpr *>(expr);
-            if (simp) {
+    for (BoolExpr *expr : _exprs) {
+        cout << "  -> Comparing with " << expr->getString() << endl;
+        SimpleExpr *simp = dynamic_cast<SimpleExpr *>(expr);
+        if (simp) {
+            if (expr->getOp() == op) {
                 if (simp->at(0) == a && simp->at(1) == b) {
                     retval = expr;
+                    cout << "     ...OK" << endl;
                     break;
                 }
                 else if (simp->at(0) == b && simp->at(1) == a) {
                     retval = expr;
+                    cout << "     ...OK" << endl;
                     break;
                 }
+            }
+        }
+        else {
+            cout << "     Complex..." << endl;
+            NotBoolExpr n(expr);
+            SimpleExpr s(op, a, b);
+            OrBoolExpr res(&n, &s);
+            cout << "     " << res.getString() << endl;
+            BoolTable table;
+            res.findArgs(table);
+            res.solve(table);
+            if (table.isTrue()) {
+                retval = expr;
+                break;
             }
         }
     }
@@ -115,7 +144,7 @@ Line *Plane::getLine(Point *a, Point *b)
     Line *retval = nullptr;
     if (*a != *b) {
         for (Line *l : _linesSet) {
-            if (l->contains(a) && l->contains(b))
+            if (l->contains(a, true) && l->contains(b, true))
                 return l;
         }
 
@@ -188,4 +217,3 @@ void Plane::addRule(BoolExpr *e, BoolExpr *f)
     _rules.insert(std::pair<BoolExpr *, BoolExpr *>(e, f));
     _rulesMutex.unlock();
 }
-

@@ -22,12 +22,13 @@ namespace DP {
 
 class Point : public Element
 {
-    public:
-        Point(Plane *parent, const char *name);
-        bool operator == (const Point &b);
-        bool operator != (const Point &b);
-};
+private:
+    virtual bool equal(const Element &b) const;
+    virtual bool distinct(const Element &b) const;
 
+public:
+    Point(Plane *parent, const char *name);
+};
 }
 
 #endif /* __POINT_H__ */

@@ -1,37 +1,47 @@
-#include "simpleExpr.h"
-#include "notBoolExpr.h"
+#include <gtest/gtest.h>
 #include "andBoolExpr.h"
-#include "orBoolExpr.h"
-#include "test_boolExpr.h"
 #include "boolTable.h"
+#include "notBoolExpr.h"
+#include "orBoolExpr.h"
+#include "simpleExpr.h"
 
-void TestDPBoolExpr::setUp()
-{
-}
+class BoolExprTest : public ::testing::Test {
+protected:
+    virtual void SetUp() {}
 
-void TestDPBoolExpr::tearDown()
-{
-}
+    virtual void TearDown() {
+        // Code here will be called immediately after each test
+        // (right before the destructor)
+    }
+};
 
-void TestDPBoolExpr::testSimpleBool()
-{
+TEST_F(BoolExprTest, simpleBool) {
     DP::SimpleExpr simple1("toto", "Boolean expression toto");
-    CPPUNIT_ASSERT(simple1());
+    ASSERT_TRUE(simple1());
     DP::NotBoolExpr nt(&simple1);
-    CPPUNIT_ASSERT(!nt());
+    ASSERT_FALSE(nt());
     DP::SimpleExpr simple2("titi", "Another boolean expression titi");
     DP::AndBoolExpr and1(&nt, &simple2);
-    CPPUNIT_ASSERT(!and1());
+    ASSERT_FALSE(and1());
     DP::OrBoolExpr or1(&nt, &simple2);
-    CPPUNIT_ASSERT(or1());
+    ASSERT_TRUE(or1());
     DP::BoolTable table;
     or1.solve(table);
     std::string tb = table.getString();
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Check table from the solve method with or",
-                                 std::string("toto() ; titi() ; \n\n 0 0 : 1\n 1 0 : 0\n 0 1 : 1\n 1 1 : 1\n\n"), tb);
+    ASSERT_EQ(std::string("toto() ; titi() ; \n\n 0 0 : 1\n 1 0 : 0\n 0 1 : 1\n 1 1 : 1\n\n"), tb);
     and1.solve(table);
     tb = table.getString();
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Check table from the solve method with and",
-                                 std::string("toto() ; titi() ; \n\n 0 0 : 0\n 1 0 : 0\n 0 1 : 1\n 1 1 : 0\n\n"), tb);
-
+    ASSERT_EQ(std::string("toto() ; titi() ; \n\n 0 0 : 0\n 1 0 : 0\n 0 1 : 1\n 1 1 : 0\n\n"), tb);
 }
+
+TEST_F(BoolExprTest, sameSimpleExprMultiple) {
+{
+    DP::SimpleExpr simple1("toto", "Simple Expression to find multiple times");
+    DP::SimpleExpr simple2("toto", "Simple Expression repeated a second time");
+    DP::AndBoolExpr and1(&simple1, &simple2);
+    DP::BoolTable table;
+    and1.solve(table);
+    std::string tb = table.getString();
+    ASSERT_EQ(std::string("toto() ; \n\n 0 : 0\n 1 : 1\n\n"), tb);
+}
+};

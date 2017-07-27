@@ -14,7 +14,7 @@ public:
     TreeBoolExpr(const std::string &op, BoolExpr *a, const std::string &descr = "");
     TreeBoolExpr(const std::string &op, BoolExpr *a, BoolExpr *b, const std::string &descr = "");
     TreeBoolExpr(const std::string &op, BoolExpr *a, BoolExpr *b, BoolExpr *c, const std::string &descr);
-    virtual std::string getString() = 0;
+    virtual std::string getString() const = 0;
     virtual bool operator() () const = 0;
     virtual void findArgs(BoolTable &table);
 };

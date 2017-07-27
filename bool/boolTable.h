@@ -21,8 +21,9 @@ public:
     size_t countArgs() const;
     std::list<std::vector<bool> > &getArray();
     std::string getString();
-    size_t findArgsIndex(BoolExpr *expr);
+    size_t findArgsIndex(SimpleExpr *expr);
     void setResult(std::vector<bool> &result);
+    bool isTrue() const;
 };
 }
 #endif /* __BOOL_TABLE_H__ */
