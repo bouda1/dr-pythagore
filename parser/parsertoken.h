@@ -4,7 +4,8 @@
 #include "plane.h"
 
 namespace DP {
-class ParserToken {
+class ParserToken
+{
     const Plane *_plane;
     bool _result;
     bool _error;
@@ -15,7 +16,7 @@ public:
     bool getResult() const;
     Plane *getPlane() const;
     bool onError() const;
-    void setError();
+    void setError(bool err);
 };
 }
 

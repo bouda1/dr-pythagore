@@ -51,6 +51,7 @@
 
 using namespace std;
 using namespace DP;
+
 }
 
 %syntax_error {
@@ -64,6 +65,9 @@ using namespace DP;
         }
     }
 #endif
+    while (yypParser->yyidx >= 0)
+        yy_pop_parser_stack(yypParser);
+    yypParser->yyidx = -1;
 }
 
 %start_symbol program
@@ -74,7 +78,7 @@ point(A) ::= IDENT(B). {
     A = token->getPlane()->getPoint(B);
     if (!A) {
         cout << "Error: The point " << B << " is not recognized." << endl;
-        token->setError();
+        token->setError(true);
     }
 }
 
@@ -129,7 +133,7 @@ question(A) ::= point(B) DISTINCT point(C) INTERRO. {
     cout << "Check points equality" << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
-        token->setError();
+        token->setError(true);
     }
     else
         A = (*B != *C);
@@ -151,7 +155,7 @@ question(A) ::= point(B) EQUALS point(C) INTERRO. {
     cout << "Check points equality" << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
-        token->setError();
+        token->setError(true);
     }
     else
         A = (*B == *C);
@@ -184,13 +188,13 @@ set(A) ::= segment(B). {
 line(A) ::= LPAR point(B) point(C) RPAR. {
     if (!B || !C) {
         cout << "syntax error: one of those points does not exist" << endl;
-        token->setError();
+        token->setError(true);
     }
     else {
         A = token->getPlane()->getLine(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a line" << endl;
-            token->setError();
+            token->setError(true);
         }
     }
 }
@@ -200,13 +204,13 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
         cout << "syntax error (segment): one of those points does not exist" << endl;
         cout << "First point " << (B ? B->getName(): "No name") << endl;
         cout << "Second point " << (C ? C->getName(): "No name") << endl;
-        token->setError();
+        token->setError(true);
     }
     else {
         A = token->getPlane()->getSegment(B, C);
         if (!A) {
             cout << "Error: " << B->getName() << " and " << C->getName() << " are not distinct to make a segment" << endl;
-            token->setError();
+            token->setError(true);
         }
     }
 }

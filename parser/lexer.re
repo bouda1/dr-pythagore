@@ -28,7 +28,11 @@ using namespace DP;
  * @param plan The plane associated to the lexer.
  */
 Lexer::Lexer(Plane *plane)
-    : _content(0), _plane(plane), _token(_plane), _start(0), _limit(0)
+    : _content(0)
+    , _plane(plane)
+    , _token(_plane)
+    , _start(0)
+    , _limit(0)
 {
     _parser = dPParseAlloc(malloc);
 }
@@ -70,7 +74,7 @@ int Lexer::scan()
 #define YYMARKER _marker
 #define YYCTXMARKER _ctxmarker
 #define YYFILL(n)
-#define YYDEBUG(a,b) debug(a, b)
+#define YYDEBUG(a, b) debug(a, b)
 
 cont:
     /*!re2c
@@ -117,7 +121,7 @@ void Lexer::parse(const char *s)
     _content = s;
     _start = _cursor = _content;
     _limit = _content + strlen(_content);
-
+    _token.setError(false);
     do {
         op_token = scan();
         word = getTokenValue();

@@ -3,7 +3,8 @@
 using namespace DP;
 
 ParserToken::ParserToken(const Plane *plan)
-    : _plane(plan), _error(false)
+    : _plane(plan)
+    , _error(false)
 {
 }
 
@@ -27,7 +28,7 @@ bool ParserToken::onError() const
     return _error;
 }
 
-void ParserToken::setError()
+void ParserToken::setError(bool err)
 {
-    _error = true;
+    _error = err;
 }
