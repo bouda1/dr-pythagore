@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <gtest/gtest.h>
 #include "lexer.h"
 
@@ -70,7 +71,6 @@ TEST_F(LexerTest, testAssumeWithOr) {
     _lexer->parse("Let (FG):Line");
     _lexer->parse("Let (HJ):Line");
     _lexer->parse("Assume A In (FG) Or A In (HJ)");
-    std::cout << "#####################################################" << std::endl;
     _lexer->parse("A In (FG) ?");
     ASSERT_FALSE(_lexer->getResult());
 }
@@ -84,3 +84,14 @@ TEST_F(LexerTest, testAssumeWithAnd) {
     ASSERT_TRUE(_lexer->getResult());
 }
 
+TEST_F(LexerTest, testLinesEqualityWithBadDefinition) {
+    _lexer->parse("Let (AB):Line");
+    _lexer->parse("Let (CD):Line");
+    _lexer->parse("Let K:Point");
+    _lexer->parse("Assume K In (AB)");
+    _lexer->parse("(AB) = (KB) ?");
+    ASSERT_FALSE(_lexer->getResult());
+    _lexer->parse("Assume K != B");
+    _lexer->parse("(AB) = (KB) ?");
+    ASSERT_TRUE(_lexer->getResult());
+}

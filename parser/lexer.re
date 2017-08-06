@@ -89,7 +89,7 @@ cont:
         "In"                { return CALC_TOKEN_IN; }
         "Not"               { return CALC_TOKEN_NOT; }
         "And"               { return CALC_TOKEN_AND; }
-        "Or"               { return CALC_TOKEN_OR; }
+        "Or"                { return CALC_TOKEN_OR; }
         "Aligned"           { return CALC_TOKEN_ALIGNED; }
         ","                 { return CALC_TOKEN_VIRG; }
         [A-Za-z]            { return CALC_TOKEN_IDENT; }
@@ -114,8 +114,8 @@ cont:
  */
 void Lexer::parse(const char *s)
 {
-    FILE *f = fopen("/tmp/parser.dbr", "a");
-    dPParseTrace(f, "DP => ");
+    //FILE *f = fopen("/tmp/parser.dbr", "a");
+    //dPParseTrace(f, const_cast<char *>("DP => "));
     char *word;
     int op_token;
     _content = s;

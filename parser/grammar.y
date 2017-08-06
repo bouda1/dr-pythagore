@@ -52,6 +52,9 @@
 using namespace std;
 using namespace DP;
 
+static const char *yellow = "\x1b[33;1m";
+static const char *reset = "\x1b[0m";
+
 }
 
 %syntax_error {
@@ -65,9 +68,7 @@ using namespace DP;
         }
     }
 #endif
-    while (yypParser->yyidx >= 0)
-        yy_pop_parser_stack(yypParser);
-    yypParser->yyidx = -1;
+    dPParseFinalize(yypParser);
 }
 
 %start_symbol program
@@ -124,56 +125,72 @@ program ::= question(A) END. {
 
 /* Points in set */
 question(A) ::= point(B) IN set(C) INTERRO. {
-    cout << "Check if the point " << B->getName() << " is in " << C->getName() << endl;
+    cout << yellow << "Check if the point " << B->getName() << " is in " << C->getName() << reset << endl;
     A = C->contains(B);
 }
 
 /* Distinct */
 question(A) ::= point(B) DISTINCT point(C) INTERRO. {
-    cout << "Check points equality" << endl;
+    cout << yellow << "Check points equality" << reset << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
         token->setError(true);
+        A = false;
     }
     else
         A = (*B != *C);
 }
 
 question(A) ::= line(B) DISTINCT line(C) INTERRO. {
-    cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
+    cout << yellow << "Check if " << B->getName() << " distinct " << C->getName() << reset << endl;
     cout << "NOT IMPLEMENTED" << endl;
     A = false;
 }
 
 question(A) ::= segment(B) DISTINCT segment(C) INTERRO. {
-    cout << "Check if " << B->getName() << " distinct " << C->getName() << endl;
+    cout << yellow << "Check if " << B->getName() << " distinct " << C->getName() << reset << endl;
     A = (*B != *C);
 }
 
 /* Equivalences */
 question(A) ::= point(B) EQUALS point(C) INTERRO. {
-    cout << "Check points equality" << endl;
+    cout << yellow << "Check points equality" << reset << endl;
     if (!B || !C) {
         cout << "syntax error: one of these points does not exist" << endl;
         token->setError(true);
+        A = false;
     }
     else
         A = (*B == *C);
 }
 
 question(A) ::= line(B) PARALLEL line(C) INTERRO. {
-    cout << "Check if lines " << B->getName() << " and " << C->getName() << " are parallel" << endl;
+    cout << yellow << "Check if lines " << B->getName() << " and " << C->getName() << " are parallel" << reset << endl;
     A = B->parallelTo(*C);
 }
 
 question(A) ::= line(B) EQUALS line(C) INTERRO. {
-    cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
-    A = (*B == *C);
+    if (!B || !C) {
+        token->setError(true);
+        A = false;
+    }
+    else {
+        cout << yellow << "Check if lines " << B->getName()
+             << " and " << C->getName() << " are equal" << reset << endl;
+        A = (*B == *C);
+    }
 }
 
 question(A) ::= segment(B) EQUALS segment(C) INTERRO. {
-    cout << "Check if " << B->getName() << " equals " << C->getName() << endl;
-    A = (*B == *C);
+    if (!B || !C) {
+        token->setError(true);
+        A = false;
+    }
+    else {
+        cout << yellow << "Check if segments " << B->getName()
+             << " and " << C->getName() << " are equal " << reset << endl;
+        A = (*B == *C);
+    }
 }
 
 /* Getters */
@@ -189,6 +206,7 @@ line(A) ::= LPAR point(B) point(C) RPAR. {
     if (!B || !C) {
         cout << "syntax error: one of those points does not exist" << endl;
         token->setError(true);
+        A = nullptr;
     }
     else {
         A = token->getPlane()->getLine(B, C);
@@ -205,6 +223,7 @@ segment(A) ::= LBRA point(B) point(C) RBRA. {
         cout << "First point " << (B ? B->getName(): "No name") << endl;
         cout << "Second point " << (C ? C->getName(): "No name") << endl;
         token->setError(true);
+        A = nullptr;
     }
     else {
         A = token->getPlane()->getSegment(B, C);
