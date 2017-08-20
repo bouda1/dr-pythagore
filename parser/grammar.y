@@ -58,17 +58,9 @@ static const char *reset = "\x1b[0m";
 }
 
 %syntax_error {
-    cout << "syntax error - ";
-#ifndef NDEBUG
-    int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
-    for (int i = 0; i < n; ++i) {
-        int a = yy_find_shift_action(yypParser, (YYCODETYPE)i);
-        if (a < YYNSTATE + YYNRULE) {
-            std::cout << "expected " << yyTokenName[i] << std::endl;
-        }
-    }
-#endif
-    dPParseFinalize(yypParser);
+    cout << " --- syntax error --- ";
+    while (yypParser->yytos>yypParser->yystack)
+        yy_pop_parser_stack(yypParser);
 }
 
 %start_symbol program
@@ -96,6 +88,10 @@ list(L) ::= list(A) VIRG IDENT(B). {
 }
 
 /* Definitions */
+program ::= END. {
+    cout << "Nothing yo do..." << endl;
+}
+
 program ::= LET list(A) COLON POINT END. {
     cout << "Points definition" << endl;
     for (string s : *A) {

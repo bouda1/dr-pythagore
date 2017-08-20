@@ -114,8 +114,9 @@ cont:
  */
 void Lexer::parse(const char *s)
 {
-    //FILE *f = fopen("/tmp/parser.dbr", "a");
-    //dPParseTrace(f, const_cast<char *>("DP => "));
+//    FILE *f = fopen("/tmp/parser.dbr", "a");
+//    dPParseTrace(f, const_cast<char *>("DP => "));
+//    fprintf(f, "BEGIN\n");
     char *word;
     int op_token;
     _content = s;
@@ -129,10 +130,13 @@ void Lexer::parse(const char *s)
     }
     while (!_token.onError() && op_token != CALC_TOKEN_END);
 
-    if (!_token.onError())
-        dPParse(_parser, 0, NULL, &_token);
-    else
+    if (_token.onError()) {
+        dPParse(_parser, CALC_TOKEN_END, NULL, &_token);
         _token.setResult(false);
+    }
+    dPParse(_parser, 0, NULL, &_token);
+//    fprintf(f, "CLOSE\n");
+//    fclose(f);
 }
 
 /**
